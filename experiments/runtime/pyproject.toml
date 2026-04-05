@@ -1,0 +1,10 @@
+[project]
+name = "oct-runtime"
+version = "0.1.0"
+description = "Organizational Causal Twin simulation runtime (purchase-approval prototype)"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra -q"

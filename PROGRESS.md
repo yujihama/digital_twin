@@ -3,7 +3,7 @@
 > **運用ルール**: タスクに進捗があるたびに本ファイルを更新し、feature ブランチでコミット → PR 作成 → main にマージする。
 > 詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照。
 
-最終更新: 2026-04-05 (T-004 完了)
+最終更新: 2026-04-06 (T-014 完了 / exp001 実行)
 
 ---
 
@@ -51,10 +51,6 @@ _（次のPRで着手）_
 - [ ] **T-011** Layer 2: 経路依存性テスト（CV算出）
 - [ ] **T-012** Layer 3: 相互作用遮断モードの実装
 - [ ] **T-013** baseline 実験ランナー（N=10回、50ステップ、複数エージェント）
-- [ ] **T-014** OpenAIClient 実装（`oct/llm.py`に追加、T-013までに完了）
-  - 現在 `AnthropicClient` のみ実装済み。複数モデルでの比較検証を可能にするため OpenAI API 呼び出しラッパーを追加。
-  - `LLMClient` Protocol を満たす形で実装し、既存の agent / runner からモデルを差し替え可能にする。
-
 ### ✅ Done
 
 - [x] **T-000** 研究コンセプト・7ドキュメントの整備（2026-04-05）
@@ -64,6 +60,8 @@ _（次のPRで着手）_
 - [x] **T-006** Anthropic API 呼び出しラッパー（AnthropicClient + 指数バックオフ・リトライ）（2026-04-05）
 - [x] **T-007** 最小シミュレーションループ（runner + PurchaseDispatcher + buyer_a × 5ステップ、56テスト passing）（2026-04-05）
 - [x] **T-004** 全エージェント実装（buyer_b / approver_c / accountant_d / vendor_e）＋runner エージェント順ランダム化（shuffle_agents / rng_seed）＋ wait_ends_turn（69テスト passing）（2026-04-05）
+- [x] **T-014** OpenAIClient 実装（`oct/llm.py`、LLMClient Protocol 準拠、.env 読み込み、76テスト passing）（2026-04-06）
+- [x] **exp001** 初回実LLM実行（OpenAI gpt-4.1-mini × 5 agents × 15 days × seed=42、75 API calls / 0 errors、全エージェント wait のみという重要な発見）（2026-04-06）
 
 ---
 
@@ -71,6 +69,8 @@ _（次のPRで着手）_
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|--------------|
+| 2026-04-06 | exp001 初回実LLM実行（gpt-4.1-mini × 5 agents × 15 days × seed=42）。75/75 API calls 成功・parse error 0。全エージェントが wait のみで業務活動ゼロという発見 → 内在的動機設計の必要性が明らかに | #8 |
+| 2026-04-06 | T-014 OpenAIClient 実装（gpt-4.1-mini、retry、.env 読み込み、76テスト passing） | #8 |
 | 2026-04-05 | T-004 全エージェント実装（buyer_b/approver_c/accountant_d/vendor_e）+ runnerランダム化（69テスト passing） | #7 |
 | 2026-04-05 | T-007 最小シミュレーションループ実装（汎用runner + PurchaseDispatcher + demo, 56テスト passing） | #6 |
 | 2026-04-05 | T-006 AnthropicClient 実装 + PR#4レビュー反映バグ修正（43テスト passing） | #5 |
@@ -107,7 +107,9 @@ _（次のPRで着手）_
 
 ## オープンな論点・意思決定待ち
 
-- **LLMモデル選定**: Claude Sonnet vs Opus、コスト vs 再現性のトレードオフ
-- **エージェント人数**: 3体スタートか5体スタートか
-- **temperature**: 0.7 / 1.0 のどちらをデフォルトにするか
+- **[exp001 由来・最優先] 内在的動機の設計**: 現ペルソナは受動型で、observation に「対応すべきタスク」が無いと全員 wait する（exp001 で 75/75 が wait）。因果連鎖の起点を作るため、(A) observation に在庫/予算等の state を追加する、(B) system prompt に役割固有の動機を仕込む、(C) 環境側で外因イベントを生成する、のいずれか/組み合わせを選択する必要がある。
+- **[exp001 由来] 介入設計への影響**: ベースライン行動が「何もしない」だと T-008/T-009 の介入効果が観測できない。動機注入後に exp002 として再ベースラインを取る必要がある。
+- **LLMモデル選定**: gpt-4.1-mini でスタート済み。Anthropic（Sonnet / Opus）との比較検証は T-013 以降で実施予定。
+- **エージェント人数**: 5体で運用開始（exp001）
+- **temperature**: 0.8 を exp001 で採用。0.7 / 1.0 との比較は T-013 のロバストネス確認で実施。
 - **失敗ケースの扱い**: LLMが無効なJSONを返したときのフォールバック設計

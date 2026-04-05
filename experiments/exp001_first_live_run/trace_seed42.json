@@ -1,0 +1,1937 @@
+{
+  "steps": [
+    {
+      "day": 0,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 0,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "本日処理可能な支払案件がないため、支払いを保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 0,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現状、起票すべき購買要求がなく、承認済み案件もないため、無理に動かず待機するのが安全と判断した。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 0,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、判断保留し次に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 0,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注案件がなく納品や請求の対象がないため、本日は待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 0,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で対応すべき案件がないため待機します。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 1,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、調査待ちで保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 1,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、本日は処理を待つ"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 1,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現状、新規要求も発注も受領もないため待機するのが合理的だから"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 1,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注案件がないため、特に対応することがないので待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 1,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で新規要求も承認済み案件もないため、開始はwaitで様子を見るのが保守的で安全。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 2,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払い可能な案件がないため、本日は保留とする"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 2,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で購買要求も承認済みの発注もなく、行動すべき案件がないため待機するのが保守的な選択です。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 2,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、判断を保留し次の日に回す"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 2,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在処理すべき案件がなく、新たな購買要求もないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 2,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注も納品済みもなく、行動できる案件がないため待機します。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 3,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で購買要求も承認済み発注もなく、新規依頼の指示もないため、慎重に待機するのが適切と判断した。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 3,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、本日は判断保留し次に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 3,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "三者照合OKの支払案件がないため、処理を保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 3,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注済み案件がなく、できる行動がないため待機するのが最適です。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 3,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で起票案件も発注待ちも受領待ちもなく、優先すべきタスクがないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 4,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注も納品待ちもないため、行動の必要がない。待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 4,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、支払いを保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 4,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は行動を保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 4,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現状、購買要求も発注も受領もないため、行動する案件がないから待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 4,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在、新たな購買要求や発注待ちがなく、判断に迷うため保守的に待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 5,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、本日は判断保留"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 5,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "購買要求や発注できる案件がないため、安全に待機するのが無難と判断した"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 5,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で処理すべき案件がないため、待機するのが効率的であるため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 5,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、処理を保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 5,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注案件がなく納品・請求もないため、行動なしで待機するのが適切な判断です。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 6,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で処理すべき案件がなく、判断に迷うため慎重に待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 6,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な三者照合OK案件がないため、本日は支払いを保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 6,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現状、処理すべき案件がなく、無理に動く必要がないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 6,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、判断を保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 6,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注案件がなく、行動資源を温存するため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 7,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注済み案件がなく、請求書発行も不要なため、本日は待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 7,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で対応すべき案件がなく、他の行動をとる理由がないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 7,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在購買要求や受注待ちが無いため、無理に行動せず待機するのが安全と判断したため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 7,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、本日は保留して次に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 7,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、支払いを保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 8,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注案件がなく、やるべき作業もないため待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 8,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な三者照合OKの案件がないため、支払いを保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 8,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "新しい要求も発注も受領もないため、待機するのが最適です。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 8,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は判断保留とする"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 8,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "新規の購買要求も承認済みの発注可能案件もないため、次の指示を待つのが適切と判断したため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 9,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注済み案件がなく、特に動くべき事項もないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 9,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、本日は判断保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 9,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在処理すべき案件がなく、保守的に待機するのが適切と判断したため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 9,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現状、起票すべき要求や発注・受領すべき案件がないため待機"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 9,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な三者照合OKの案件がないため、現状は保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 10,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "本日は支払可能な三者照合OK案件がないため、支払いを保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 10,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在、購買要求も承認済み案件もなく、先輩の動きを参考にしつつ慎重に待機するのが適切と判断したため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 10,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で起票も発注も受領もないため、待機して状況を待つべきだから"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 10,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、判断を保留して次の日に回す"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 10,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注案件がなく、納品も請求もできる状況にないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 11,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、判断を保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 11,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "本日処理可能な三者照合OK案件がないため支払いを保留し、次のステップに進みます。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 11,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在新しい要求も承認済み発注もなく、判断に迷うため慎重に待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 11,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "新規要求や発注待ちがないため、行動する案件がないから"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 11,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注済みの注文がなく、納品や請求の必要もないため待機します。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 12,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現状、発注待ちや受領待ちがなく、新たな購買要求もないため、待機して次の指示を待つ"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 12,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現状で発注可能な案件や納品待ちがなく、新規要求も特にないため慎重に待機するのが無難と判断した"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 12,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "三者照合OKの案件がないため支払いを保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 12,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、処理を保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 12,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注案件がなく、納品や請求もできないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 13,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払い可能な案件がないため、資金支払いは保留する必要がある"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 13,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で新規要求・発注・受領すべき案件がなく、無理に動く必要がないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 13,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、判断を保留し次の日に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 13,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で購買要求も承認待ちもなく、先輩の動きを参考にしても特に動く理由がないため慎重に待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 13,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注済み案件がなく、新たな動きがないため待機します。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 14,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、処理を保留し次の日に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 14,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注済み案件がなく現時点での作業がないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 14,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、調査待ちとするため待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 14,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で受け持ちの要求や発注可能な案件がなく、無理に行動せず様子を見るのが安全と判断したため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 14,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で新規要求も発注待ちも受領待ちもないため、行動せず待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    }
+  ],
+  "final_snapshot": {
+    "current_day": 15,
+    "deviation_count": 0,
+    "error_count": 0,
+    "counts": {
+      "purchase_requests": 0,
+      "approvals": 0,
+      "orders": 0,
+      "receipts": 0,
+      "invoices": 0,
+      "payments": 0
+    }
+  }
+}

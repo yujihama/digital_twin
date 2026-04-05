@@ -3,7 +3,7 @@
 > **運用ルール**: タスクに進捗があるたびに本ファイルを更新し、feature ブランチでコミット → PR 作成 → main にマージする。
 > 詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照。
 
-最終更新: 2026-04-06 (T-014 完了 / exp001 実行)
+最終更新: 2026-04-06 (需要生成メカニズム実装 / exp001 → exp002 準備)
 
 ---
 
@@ -36,7 +36,7 @@
 
 ### 🟢 In Progress
 
-_（次のPRで着手）_
+- [ ] **exp002** 需要生成あり実LLM再実行（exp001と同条件 + DemandConfig, seed=42 で比較）
 
 ### 🟡 Next Up
 
@@ -62,6 +62,7 @@ _（次のPRで着手）_
 - [x] **T-004** 全エージェント実装（buyer_b / approver_c / accountant_d / vendor_e）＋runner エージェント順ランダム化（shuffle_agents / rng_seed）＋ wait_ends_turn（69テスト passing）（2026-04-05）
 - [x] **T-014** OpenAIClient 実装（`oct/llm.py`、LLMClient Protocol 準拠、.env 読み込み、76テスト passing）（2026-04-06）
 - [x] **exp001** 初回実LLM実行（OpenAI gpt-4.1-mini × 5 agents × 15 days × seed=42、75 API calls / 0 errors、全エージェント wait のみという重要な発見）（2026-04-06）
+- [x] **需要生成メカニズム** DemandEvent / DemandConfig / generate_demands / fulfill_demand を実装。Option A+C（環境が確率的需要を生成 → buyer observation に pending_demands として提示）。95テスト passing（2026-04-06）
 
 ---
 
@@ -69,6 +70,7 @@ _（次のPRで着手）_
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|--------------|
+| 2026-04-06 | 需要生成メカニズム実装（DemandEvent / DemandConfig / generate_demands / fulfill_demand）。Option A+C: 環境が確率的需要を生成し buyer observation に pending_demands として提示。95テスト passing | #9 |
 | 2026-04-06 | exp001 初回実LLM実行（gpt-4.1-mini × 5 agents × 15 days × seed=42）。75/75 API calls 成功・parse error 0。全エージェントが wait のみで業務活動ゼロという発見 → 内在的動機設計の必要性が明らかに | #8 |
 | 2026-04-06 | T-014 OpenAIClient 実装（gpt-4.1-mini、retry、.env 読み込み、76テスト passing） | #8 |
 | 2026-04-05 | T-004 全エージェント実装（buyer_b/approver_c/accountant_d/vendor_e）+ runnerランダム化（69テスト passing） | #7 |
@@ -107,8 +109,8 @@ _（次のPRで着手）_
 
 ## オープンな論点・意思決定待ち
 
-- **[exp001 由来・最優先] 内在的動機の設計**: 現ペルソナは受動型で、observation に「対応すべきタスク」が無いと全員 wait する（exp001 で 75/75 が wait）。因果連鎖の起点を作るため、(A) observation に在庫/予算等の state を追加する、(B) system prompt に役割固有の動機を仕込む、(C) 環境側で外因イベントを生成する、のいずれか/組み合わせを選択する必要がある。
-- **[exp001 由来] 介入設計への影響**: ベースライン行動が「何もしない」だと T-008/T-009 の介入効果が観測できない。動機注入後に exp002 として再ベースラインを取る必要がある。
+- **[exp001 由来・解決済み] 内在的動機の設計**: Option A+C を採用し実装済み。環境が確率的に需要イベント（DemandEvent）を生成し、buyer observation に `pending_demands` として提示する。LLM には「需要に対応するか/今日は他を優先するか」の判断余地を残す。→ exp002 で検証予定。
+- **[exp001 由来] 介入設計への影響**: exp002 で需要ありのベースラインを取得後、T-008/T-009 の介入設計に進む。
 - **LLMモデル選定**: gpt-4.1-mini でスタート済み。Anthropic（Sonnet / Opus）との比較検証は T-013 以降で実施予定。
 - **エージェント人数**: 5体で運用開始（exp001）
 - **temperature**: 0.8 を exp001 で採用。0.7 / 1.0 との比較は T-013 のロバストネス確認で実施。

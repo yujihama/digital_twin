@@ -15,11 +15,15 @@ Guiding semantics:
 
 from __future__ import annotations
 
+import random
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 from .environment import (
     Approval,
     ApprovalDecision,
+    DemandEvent,
+    DemandUrgency,
     EnvironmentState,
     Invoice,
     Order,
@@ -53,6 +57,135 @@ def consume_capacity(state: EnvironmentState, actor: str) -> None:
     if remaining <= 0:
         raise TransitionError(f"Capacity exhausted for actor {actor} on day {state.current_day}")
     state.remaining_capacity[actor] = remaining - 1
+
+
+# ---------------------------------------------------------------------------
+# Demand generation
+# ---------------------------------------------------------------------------
+
+# Catalog of items that departments can request. Each entry is a tuple of
+# (department, item, amount_hint, weight).  Weights control relative
+# frequency; they need not sum to 1.
+DEMAND_CATALOG = [
+    ("製造部", "ボルトセット M8", 50_000, 3),
+    ("製造部", "切削油 20L", 120_000, 2),
+    ("製造部", "安全手袋 100双", 35_000, 2),
+    ("品質管理部", "測定器校正サービス", 800_000, 1),
+    ("品質管理部", "検査用ゲージ", 250_000, 1),
+    ("総務部", "コピー用紙 A4 50箱", 45_000, 2),
+    ("総務部", "オフィスチェア", 180_000, 1),
+    ("情報システム部", "ノートPC", 1_500_000, 1),
+    ("情報システム部", "USBメモリ 50個", 75_000, 1),
+    ("製造部", "溶接棒 5kg", 60_000, 2),
+]
+
+
+@dataclass
+class DemandConfig:
+    """Configuration for probabilistic demand generation.
+
+    Parameters control the distribution of demand events generated each day.
+    Keeping them in a dataclass (rather than module-level constants) allows
+    experiments to adjust demand intensity without editing source.
+    """
+
+    mean_daily_demands: float = 1.5
+    """Expected number of demand events per day (Poisson λ)."""
+
+    urgency_weights: dict = field(
+        default_factory=lambda: {"low": 0.3, "normal": 0.5, "high": 0.2}
+    )
+    """Relative probability of each urgency level."""
+
+    amount_jitter: float = 0.2
+    """Relative jitter applied to amount_hint (±20% by default)."""
+
+    catalog: list = field(default_factory=lambda: list(DEMAND_CATALOG))
+    """(department, item, amount_hint, weight) tuples."""
+
+
+def generate_demands(
+    state: EnvironmentState,
+    config: DemandConfig,
+    rng: Optional[random.Random] = None,
+) -> List[DemandEvent]:
+    """Generate stochastic demand events and append them to state.demand_queue.
+
+    Called once per day (typically inside advance_day or the dispatcher).
+    The number of events follows a Poisson distribution controlled by
+    ``config.mean_daily_demands``.
+
+    Returns the newly generated events (also appended to state).
+    """
+    if rng is None:
+        rng = random.Random()
+
+    # Sample count from Poisson (manual: sum of exponential inter-arrivals)
+    n = 0
+    limit = rng.expovariate(1.0)
+    total = 0.0
+    while total < config.mean_daily_demands:
+        total += limit
+        limit = rng.expovariate(1.0)
+        n += 1
+    # n is now Poisson-distributed with mean ≈ config.mean_daily_demands
+    # (using the standard exponential-sum algorithm)
+    # Actually, let's use a cleaner approach:
+    n = _poisson_sample(config.mean_daily_demands, rng)
+
+    if n == 0:
+        return []
+
+    # Weighted sampling from catalog
+    items = config.catalog
+    weights = [w for _, _, _, w in items]
+
+    # Sample urgency
+    urgency_labels = list(config.urgency_weights.keys())
+    urgency_weights = list(config.urgency_weights.values())
+
+    new_demands: List[DemandEvent] = []
+    for _ in range(n):
+        dept, item, base_amount, _ = rng.choices(items, weights=weights, k=1)[0]
+        jitter = 1.0 + rng.uniform(-config.amount_jitter, config.amount_jitter)
+        amount = max(1, round(base_amount * jitter))
+        urgency_str = rng.choices(urgency_labels, weights=urgency_weights, k=1)[0]
+
+        demand = DemandEvent(
+            id=state.next_id("dem"),
+            department=dept,
+            item=item,
+            amount_hint=amount,
+            urgency=DemandUrgency(urgency_str),
+            generated_day=state.current_day,
+        )
+        state.demand_queue.append(demand)
+        new_demands.append(demand)
+
+    return new_demands
+
+
+def _poisson_sample(lam: float, rng: random.Random) -> int:
+    """Sample from Poisson(lam) using Knuth's algorithm."""
+    L = 2.718281828 ** (-lam)
+    k = 0
+    p = 1.0
+    while True:
+        k += 1
+        p *= rng.random()
+        if p < L:
+            return k - 1
+
+
+def fulfill_demand(state: EnvironmentState, demand_id: str, request_id: str) -> None:
+    """Mark a demand as fulfilled by linking it to a purchase request."""
+    demand = state.get_demand(demand_id)
+    if demand is None:
+        raise TransitionError(f"Demand {demand_id} not found")
+    if demand.fulfilled:
+        raise TransitionError(f"Demand {demand_id} already fulfilled")
+    demand.fulfilled = True
+    demand.fulfilled_by_request_id = request_id
 
 
 def advance_day(state: EnvironmentState) -> None:
@@ -284,12 +417,16 @@ def awaiting_payment(state: EnvironmentState) -> List[Order]:
 
 
 __all__ = [
+    "DEMAND_CATALOG",
+    "DemandConfig",
     "TransitionError",
     "advance_day",
     "approve_request",
     "awaiting_payment",
     "consume_capacity",
     "draft_request",
+    "fulfill_demand",
+    "generate_demands",
     "pay_order",
     "pending_for_approval",
     "place_order",

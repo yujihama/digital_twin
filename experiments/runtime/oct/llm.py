@@ -110,6 +110,87 @@ def _extract_text(response: object) -> str:
     return "".join(parts)
 
 
+DEFAULT_OPENAI_MODEL = "gpt-4.1-mini"
+
+
+@dataclass
+class OpenAIClient:
+    """Thin wrapper around `openai.OpenAI().chat.completions.create`.
+
+    Satisfies `oct.agent.LLMClient`: exposes `.complete(system, user, temperature)`.
+
+    Mirrors the AnthropicClient design: same RetryConfig, same lazy SDK
+    import, same `sleep_fn` injection, same LLMError on give-up.
+
+    Construction:
+        client = OpenAIClient(api_key=..., model="gpt-4.1-mini")
+    If `api_key` is None, the OpenAI SDK picks up `OPENAI_API_KEY` from env.
+    """
+
+    api_key: Optional[str] = None
+    model: str = DEFAULT_OPENAI_MODEL
+    max_tokens: int = DEFAULT_MAX_TOKENS
+    retry: RetryConfig = field(default_factory=RetryConfig)
+    sleep_fn: Callable[[float], None] = time.sleep
+    _client: object = field(default=None, init=False, repr=False)
+    call_count: int = field(default=0, init=False)
+
+    def __post_init__(self) -> None:
+        try:
+            import openai  # type: ignore
+        except ImportError as exc:  # pragma: no cover
+            raise ImportError(
+                "The `openai` package is required for OpenAIClient. "
+                "Install it with `pip install openai`."
+            ) from exc
+        api_key = self.api_key or os.environ.get("OPENAI_API_KEY")
+        self._client = openai.OpenAI(api_key=api_key) if api_key else openai.OpenAI()
+
+    def complete(self, system: str, user: str, temperature: float = 0.8) -> str:
+        """Invoke the Chat Completions API with retry. Returns the assistant text."""
+        self.call_count += 1
+        last_exc: Optional[BaseException] = None
+        delay = self.retry.initial_backoff_sec
+        for attempt in range(1, self.retry.max_attempts + 1):
+            try:
+                response = self._client.chat.completions.create(  # type: ignore[attr-defined]
+                    model=self.model,
+                    max_tokens=self.max_tokens,
+                    temperature=temperature,
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user},
+                    ],
+                )
+                return _extract_openai_text(response)
+            except Exception as exc:
+                last_exc = exc
+                if not _is_retryable(exc) or attempt >= self.retry.max_attempts:
+                    break
+                jitter_range = delay * self.retry.jitter
+                actual_delay = delay + random.uniform(-jitter_range, jitter_range)
+                self.sleep_fn(max(0.0, actual_delay))
+                delay *= self.retry.backoff_multiplier
+        raise LLMError(
+            f"OpenAI API call failed after {self.retry.max_attempts} attempt(s): {last_exc!r}"
+        ) from last_exc
+
+
+def _extract_openai_text(response: object) -> str:
+    """Pull the assistant text out of an OpenAI Chat Completions response."""
+    choices = getattr(response, "choices", None)
+    if not choices:
+        raise LLMError(f"Response has no choices: {response!r}")
+    first = choices[0]
+    message = getattr(first, "message", None)
+    if message is None:
+        raise LLMError(f"Response choice has no message: {first!r}")
+    content = getattr(message, "content", None)
+    if not content:
+        raise LLMError(f"Response message has no content: {message!r}")
+    return content
+
+
 def _is_retryable(exc: BaseException) -> bool:
     """Decide whether an exception from the SDK is worth retrying.
 

@@ -146,6 +146,7 @@ DEFAULT_DAILY_CAPACITY: Dict[str, int] = {
     "buyer_b": 5,
     "approver_c": 10,
     "accountant_d": 8,
+    "vendor_e": 6,
 }
 
 

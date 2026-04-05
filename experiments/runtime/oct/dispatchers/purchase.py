@@ -9,11 +9,16 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from oct.agent import AgentAction
-from oct.environment import EnvironmentState
+from oct.environment import ApprovalDecision, EnvironmentState
+from oct.personas.accountant_d import build_observation as build_accountant_d_observation
+from oct.personas.approver_c import build_observation as build_approver_c_observation
 from oct.personas.buyer_a import build_observation as build_buyer_a_observation
+from oct.personas.buyer_b import build_observation as build_buyer_b_observation
+from oct.personas.vendor_e import build_observation as build_vendor_e_observation
 from oct.rules import (
     TransitionError,
     advance_day,
+    approve_request,
     draft_request,
     pay_order,
     place_order,
@@ -25,7 +30,10 @@ from oct.rules import (
 # Observation builder registry: agent_id -> callable(state, agent_id) -> dict
 _OBSERVATION_BUILDERS = {
     "buyer_a": build_buyer_a_observation,
-    # future: "buyer_b", "approver_c", "accountant_d", "vendor_e"
+    "buyer_b": build_buyer_b_observation,
+    "approver_c": build_approver_c_observation,
+    "accountant_d": build_accountant_d_observation,
+    "vendor_e": build_vendor_e_observation,
 }
 
 
@@ -147,6 +155,49 @@ def _handle_pay_order(
     }
 
 
+def _handle_approve_request(
+    state: EnvironmentState, agent_id: str, params: Dict[str, Any]
+) -> Dict[str, Any]:
+    decision_raw = str(params["decision"]).lower()
+    try:
+        decision = ApprovalDecision(decision_raw)
+    except ValueError as exc:
+        raise ValueError(
+            f"invalid decision {decision_raw!r}; expected 'approved' or 'rejected'"
+        ) from exc
+    approval = approve_request(
+        state,
+        approver=agent_id,
+        request_id=str(params["request_id"]),
+        decision=decision,
+        note=params.get("note"),
+    )
+    return {
+        "approval_id": approval.id,
+        "decision": approval.decision.value,
+        "request_id": approval.request_id,
+    }
+
+
+def _handle_deliver(
+    state: EnvironmentState, agent_id: str, params: Dict[str, Any]
+) -> Dict[str, Any]:
+    """vendor_e-side alias for record_receipt.
+
+    A delivery event from the vendor's perspective is the same physical
+    event as a receipt from the buyer's perspective. We reuse the
+    `record_receipt` transition but attribute capacity consumption to
+    the vendor.
+    """
+    receipt = record_receipt(
+        state,
+        buyer=agent_id,  # charge capacity to the actor taking the action
+        order_id=str(params["order_id"]),
+        delivered_amount=int(params["delivered_amount"]),
+    )
+    return {"receipt_id": receipt.id, "delivered_amount": receipt.delivered_amount}
+
+
 def _handle_wait(
     state: EnvironmentState, agent_id: str, params: Dict[str, Any]
 ) -> Dict[str, Any]:
@@ -156,8 +207,10 @@ def _handle_wait(
 
 _ACTION_HANDLERS = {
     "draft_request": _handle_draft_request,
+    "approve_request": _handle_approve_request,
     "place_order": _handle_place_order,
     "record_receipt": _handle_record_receipt,
+    "deliver": _handle_deliver,
     "register_invoice": _handle_register_invoice,
     "pay_order": _handle_pay_order,
     "wait": _handle_wait,

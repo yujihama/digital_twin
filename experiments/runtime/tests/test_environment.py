@@ -22,8 +22,14 @@ def test_environment_state_defaults() -> None:
     assert state.error_count == 0
     assert state.controls.approval_threshold == 1_000_000.0
     assert state.controls.three_way_match_required is True
-    # daily_capacity seeded with defaults for the 4 roles
-    assert set(state.daily_capacity) == {"buyer_a", "buyer_b", "approver_c", "accountant_d"}
+    # daily_capacity seeded with defaults for the 5 roles (incl. external vendor_e)
+    assert set(state.daily_capacity) == {
+        "buyer_a",
+        "buyer_b",
+        "approver_c",
+        "accountant_d",
+        "vendor_e",
+    }
 
 
 def test_ensure_capacity_initialized_is_idempotent() -> None:

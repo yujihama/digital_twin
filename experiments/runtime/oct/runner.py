@@ -9,6 +9,7 @@ Domain-specific glue (e.g. purchase approval) lives in `oct/dispatchers/`.
 """
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Protocol
 
@@ -84,18 +85,35 @@ def run_simulation(
     max_days: int,
     temperature: float = 0.8,
     actions_per_agent_per_day: int = 1,
+    shuffle_agents: bool = True,
+    rng_seed: Optional[int] = None,
+    wait_ends_turn: bool = True,
 ) -> SimulationTrace:
     """Drive `max_days` rounds through `agents`.
 
     On each day, each agent is asked up to `actions_per_agent_per_day` times
     for an action, provided they still have capacity. LLM / parsing / dispatch
     errors are captured in the trace and the loop continues — robustness over
-    strictness is appropriate for exploratory T-007 runs.
+    strictness is appropriate for exploratory runs.
+
+    Design notes (PR#6 review):
+    - `shuffle_agents=True` randomizes per-day agent order to avoid imposing
+      an implicit causal structure (e.g. "buyer_a always acts before buyer_b").
+      This is critical once vendor_e / imitation scenarios are in play.
+    - `rng_seed` makes the shuffle deterministic for reproducibility.
+    - `wait_ends_turn=True` lets `wait` close out the agent's turn for the
+      current day even when `actions_per_agent_per_day > 1` (a wait is an
+      intentional "I'm done for today" signal, not a free repeat slot).
     """
+    rng = random.Random(rng_seed)
     trace = SimulationTrace()
 
     for _day_index in range(max_days):
-        for agent in agents:
+        day_agents = list(agents)
+        if shuffle_agents:
+            rng.shuffle(day_agents)
+
+        for agent in day_agents:
             for _turn in range(actions_per_agent_per_day):
                 if env.remaining_capacity(agent.agent_id) <= 0:
                     break
@@ -127,6 +145,9 @@ def run_simulation(
                         error=err,
                     )
                 )
+
+                if wait_ends_turn and action is not None and action.action_type == "wait":
+                    break
         env.advance_day()
 
     trace.final_snapshot = env.snapshot()

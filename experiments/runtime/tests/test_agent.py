@@ -180,3 +180,36 @@ def test_build_observation_includes_only_own_requests():
     assert obs["my_requests"][0]["id"] == "req-1"
     # under-threshold drafted request is orderable
     assert "req-1" in obs["ready_to_order_request_ids"]
+
+
+def test_build_observation_ready_to_order_logic():
+    """Regression test (PR#4 review fix): ready_to_order judgment.
+
+    Verifies three cases after the boolean precedence fix:
+      - DRAFTED under threshold        -> orderable
+      - DRAFTED over threshold         -> NOT orderable (needs approval)
+      - APPROVED regardless of amount  -> orderable
+    """
+    state = EnvironmentState(current_day=0)
+    state.ensure_capacity_initialized()
+    state.purchase_requests.extend(
+        [
+            PurchaseRequest(
+                id="r-under", requester="buyer_a", vendor="V", item="x",
+                amount=500_000, created_day=0, status=RequestStatus.DRAFTED,
+            ),
+            PurchaseRequest(
+                id="r-over", requester="buyer_a", vendor="V", item="x",
+                amount=2_000_000, created_day=0, status=RequestStatus.DRAFTED,
+            ),
+            PurchaseRequest(
+                id="r-approved-big", requester="buyer_a", vendor="V", item="x",
+                amount=5_000_000, created_day=0, status=RequestStatus.APPROVED,
+            ),
+        ]
+    )
+    obs = build_observation(state, agent_id="buyer_a")
+    ready = set(obs["ready_to_order_request_ids"])
+    assert "r-under" in ready
+    assert "r-over" not in ready
+    assert "r-approved-big" in ready

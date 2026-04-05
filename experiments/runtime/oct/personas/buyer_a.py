@@ -110,12 +110,16 @@ def build_observation(state: EnvironmentState, agent_id: str = "buyer_a") -> Dic
         if r.requester == agent_id
     ]
 
+    # Fix (PR#4 review): make intent explicit. Orderable = APPROVED, OR
+    # DRAFTED with amount under the approval threshold (auto-approve path).
     ready_to_order = [
         r["id"]
         for r in my_requests
-        if r["status"] in (RequestStatus.DRAFTED.value, RequestStatus.APPROVED.value)
-        and r["amount"] < state.controls.approval_threshold
-        or r["status"] == RequestStatus.APPROVED.value
+        if r["status"] == RequestStatus.APPROVED.value
+        or (
+            r["status"] == RequestStatus.DRAFTED.value
+            and r["amount"] < state.controls.approval_threshold
+        )
     ]
 
     awaiting_receipt = [

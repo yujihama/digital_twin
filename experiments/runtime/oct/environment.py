@@ -1,0 +1,236 @@
+"""Environment State and domain entities for the OCT purchase-approval prototype.
+
+This module defines the data schema for the Environment State, following
+the design in docs/05_oct_framework.md and docs/07_prototype_experiment.md.
+
+Design principle (from docs/05_oct_framework.md §5.5):
+    "LLMは環境状態を『想像』しない。環境状態は独立モジュールがルールベースで管理する。
+     LLMの役割は『行動の選択』であり『結果の予測』ではない。"
+
+Therefore, this module contains NO LLM calls. It is a pure, deterministic
+state container manipulated by the transition rules in `rules.py`.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Dict, List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
+
+
+# ---------------------------------------------------------------------------
+# Enums
+# ---------------------------------------------------------------------------
+
+
+class RequestStatus(str, Enum):
+    """Lifecycle of a purchase request."""
+
+    DRAFTED = "drafted"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    ORDERED = "ordered"
+    RECEIVED = "received"
+    MATCHED = "matched"
+    PAID = "paid"
+    ON_HOLD = "on_hold"
+
+
+class ApprovalDecision(str, Enum):
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
+class ActorRole(str, Enum):
+    """Roles participating in the purchase approval flow."""
+
+    BUYER = "buyer"
+    APPROVER = "approver"
+    ACCOUNTANT = "accountant"
+    VENDOR = "vendor"
+
+
+# ---------------------------------------------------------------------------
+# Domain entities
+# ---------------------------------------------------------------------------
+
+
+class PurchaseRequest(BaseModel):
+    """A purchase request initiated by a buyer."""
+
+    model_config = ConfigDict(frozen=False)
+
+    id: str
+    requester: str  # actor id, e.g. "buyer_a"
+    vendor: str
+    item: str
+    amount: float = Field(gt=0.0)
+    created_day: int = Field(ge=0)
+    status: RequestStatus = RequestStatus.DRAFTED
+
+
+class Approval(BaseModel):
+    id: str
+    request_id: str
+    approver: str
+    decision: ApprovalDecision
+    day: int = Field(ge=0)
+    note: Optional[str] = None
+
+
+class Order(BaseModel):
+    id: str
+    request_id: str
+    vendor: str
+    amount: float = Field(gt=0.0)
+    placed_day: int = Field(ge=0)
+
+
+class Receipt(BaseModel):
+    id: str
+    order_id: str
+    delivered_amount: float = Field(ge=0.0)
+    received_day: int = Field(ge=0)
+
+
+class Invoice(BaseModel):
+    id: str
+    order_id: str
+    amount: float = Field(gt=0.0)
+    issued_day: int = Field(ge=0)
+
+
+class Payment(BaseModel):
+    id: str
+    order_id: str
+    amount: float = Field(gt=0.0)
+    paid_day: int = Field(ge=0)
+    three_way_matched: bool = True
+
+
+# ---------------------------------------------------------------------------
+# Intervention parameters (exposed to `do()`)
+# ---------------------------------------------------------------------------
+
+
+class ControlParameters(BaseModel):
+    """Control parameters that can be changed via intervention."""
+
+    model_config = ConfigDict(frozen=False)
+
+    approval_threshold: float = Field(
+        default=1_000_000.0,
+        ge=0.0,
+        description="Requests at or above this amount require approver sign-off.",
+    )
+    three_way_match_required: bool = Field(
+        default=True,
+        description="If True, payments require PO/GR/Invoice match.",
+    )
+    three_way_match_tolerance: float = Field(
+        default=0.0,
+        ge=0.0,
+        description="Allowed absolute difference in three-way match (in currency units).",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Environment State
+# ---------------------------------------------------------------------------
+
+
+DEFAULT_DAILY_CAPACITY: Dict[str, int] = {
+    "buyer_a": 5,
+    "buyer_b": 5,
+    "approver_c": 10,
+    "accountant_d": 8,
+}
+
+
+class EnvironmentState(BaseModel):
+    """Container for the full state of the purchase-approval environment.
+
+    All state is held explicitly; transitions are implemented in `rules.py`
+    as pure functions that return a new (or mutated) state.
+    """
+
+    model_config = ConfigDict(frozen=False, arbitrary_types_allowed=True)
+
+    # Time & resources
+    current_day: int = Field(default=0, ge=0)
+    daily_capacity: Dict[str, int] = Field(default_factory=lambda: dict(DEFAULT_DAILY_CAPACITY))
+    remaining_capacity: Dict[str, int] = Field(default_factory=dict)
+
+    # Business flow
+    purchase_requests: List[PurchaseRequest] = Field(default_factory=list)
+    approvals: List[Approval] = Field(default_factory=list)
+    orders: List[Order] = Field(default_factory=list)
+    receipts: List[Receipt] = Field(default_factory=list)
+    invoices: List[Invoice] = Field(default_factory=list)
+    payments: List[Payment] = Field(default_factory=list)
+
+    # Control parameters (intervention target)
+    controls: ControlParameters = Field(default_factory=ControlParameters)
+
+    # Observable KPIs
+    deviation_count: int = 0
+    error_count: int = 0
+
+    # Bookkeeping
+    _next_id_counters: Dict[str, int] = PrivateAttr(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    # ------------------------------------------------------------------
+    # Convenience helpers (read-only views; mutations live in rules.py)
+    # ------------------------------------------------------------------
+
+    def ensure_capacity_initialized(self) -> None:
+        """Initialize remaining_capacity from daily_capacity on day 0."""
+        if not self.remaining_capacity:
+            self.remaining_capacity = dict(self.daily_capacity)
+
+    def next_id(self, prefix: str) -> str:
+        """Generate a monotonically increasing id with the given prefix."""
+        counter = self._next_id_counters.get(prefix, 0) + 1
+        self._next_id_counters[prefix] = counter
+        return f"{prefix}_{counter:05d}"
+
+    def get_request(self, request_id: str) -> Optional[PurchaseRequest]:
+        return next((r for r in self.purchase_requests if r.id == request_id), None)
+
+    def get_order(self, order_id: str) -> Optional[Order]:
+        return next((o for o in self.orders if o.id == order_id), None)
+
+    def total_amount(self) -> float:
+        """Total currency amount across all paid payments."""
+        return sum(p.amount for p in self.payments)
+
+    def approval_for(self, request_id: str) -> Optional[Approval]:
+        return next(
+            (a for a in self.approvals if a.request_id == request_id),
+            None,
+        )
+
+    def receipt_for(self, order_id: str) -> Optional[Receipt]:
+        return next((r for r in self.receipts if r.order_id == order_id), None)
+
+    def invoice_for(self, order_id: str) -> Optional[Invoice]:
+        return next((i for i in self.invoices if i.order_id == order_id), None)
+
+
+__all__ = [
+    "ActorRole",
+    "Approval",
+    "ApprovalDecision",
+    "ControlParameters",
+    "DEFAULT_DAILY_CAPACITY",
+    "EnvironmentState",
+    "Invoice",
+    "Order",
+    "Payment",
+    "PurchaseRequest",
+    "Receipt",
+    "RequestStatus",
+]

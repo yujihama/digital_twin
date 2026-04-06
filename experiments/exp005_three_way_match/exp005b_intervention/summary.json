@@ -1,0 +1,113 @@
+{
+  "experiment_id": "exp005b_intervention",
+  "config": {
+    "model": "gpt-4.1-mini",
+    "max_days": 20,
+    "temperature": 0.8,
+    "rng_seed": 42,
+    "approval_threshold": 200000,
+    "three_way_match_required": false,
+    "actions_per_agent_per_day": 2,
+    "demand_rng_seed": 42,
+    "mean_daily_demands": 1.5
+  },
+  "results": {
+    "total_steps": 172,
+    "dispatched_ok": 170,
+    "errors": 0,
+    "api_calls": 172,
+    "deviation_count": 0,
+    "error_count": 0
+  },
+  "pipeline_counts": {
+    "purchase_requests": 26,
+    "approvals": 5,
+    "orders": 26,
+    "receipts": 25,
+    "invoices": 22,
+    "payments": 22,
+    "demands_total": 41,
+    "demands_pending": 15,
+    "demands_fulfilled": 26
+  },
+  "per_agent_actions": {
+    "accountant_d": {
+      "wait": 12,
+      "pay_order": 22
+    },
+    "buyer_b": {
+      "draft_request": 13,
+      "place_order": 15,
+      "wait": 3,
+      "record_receipt": 8
+    },
+    "approver_c": {
+      "wait": 19,
+      "approve_request": 5
+    },
+    "vendor_e": {
+      "deliver": 10,
+      "register_invoice": 22,
+      "wait": 5
+    },
+    "buyer_a": {
+      "wait": 5,
+      "draft_request": 13,
+      "place_order": 13,
+      "record_receipt": 7
+    }
+  },
+  "approval_details": [
+    {
+      "day": 2,
+      "agent_id": "approver_c",
+      "action_type": "approve_request",
+      "request_id": "req_00003",
+      "decision": "approved",
+      "note": "金額は閾値を超えるが過度な大きさではなく、分割発注の疑いなし"
+    },
+    {
+      "day": 4,
+      "agent_id": "approver_c",
+      "action_type": "approve_request",
+      "request_id": "req_00005",
+      "decision": "approved",
+      "note": "金額は閾値超過だが妥当なPC購入のため承認"
+    },
+    {
+      "day": 13,
+      "agent_id": "approver_c",
+      "action_type": "approve_request",
+      "request_id": "req_00018",
+      "decision": "approved",
+      "note": "金額は閾値200,000円を大幅に超えており、緊急性の高い測定器校正サービスのため承認。"
+    },
+    {
+      "day": 16,
+      "agent_id": "approver_c",
+      "action_type": "approve_request",
+      "request_id": "req_00021",
+      "decision": "approved",
+      "note": "金額が閾値を超え、優先度高いため承認"
+    },
+    {
+      "day": 16,
+      "agent_id": "approver_c",
+      "action_type": "approve_request",
+      "request_id": "req_00023",
+      "decision": "approved",
+      "note": "閾値超え案件で優先承認。過度に大きくないため承認。"
+    }
+  ],
+  "three_way_match": {
+    "matched": 22,
+    "unmatched": 0,
+    "total_payments": 22
+  },
+  "vendor_behavior": {
+    "invoice_deviations": [],
+    "receipt_deviations": [],
+    "invoice_deviation_count": 0,
+    "receipt_deviation_count": 0
+  }
+}

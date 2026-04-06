@@ -1,0 +1,4940 @@
+{
+  "steps": [
+    {
+      "day": 0,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 0,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、本日は待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 0,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00001",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 106714.0,
+            "urgency": "normal",
+            "generated_day": 0
+          }
+        ],
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_001",
+          "item": "切削油 20L",
+          "amount": 106714,
+          "demand_id": "dem_00001"
+        },
+        "reasoning": "pending_demandsに対応すべき需要があり、金額は閾値未満なので先輩と同様にまず購買要求を起票する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00001",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 0,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は判断を保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 0,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注済み案件がなく、納品や請求の対応ができないため待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 0,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [],
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "未処理の需要がなく、他に行動することもないため待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 1,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払い対象の案件がないため、保留して次のステップに進む"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 1,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため本日は様子見とする"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 1,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00002",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28417.0,
+            "urgency": "low",
+            "generated_day": 1
+          },
+          {
+            "id": "dem_00003",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 202654.0,
+            "urgency": "low",
+            "generated_day": 1
+          }
+        ],
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_01",
+          "item": "検査用ゲージ",
+          "amount": 202654,
+          "demand_id": "dem_00003"
+        },
+        "reasoning": "低優先度需要2件のうち、より高額な検査用ゲージの購買要求を起票し、効率的に進めるため。手戻り回避のため1件ずつ対応。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00002",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 1,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で受注済み案件がなく、特に行動可能なことがないため待機"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 1,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00002",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28417.0,
+            "urgency": "low",
+            "generated_day": 1
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "drafted",
+            "created_day": 0
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00001"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "drafted",
+            "created_day": 1
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00001"
+        },
+        "reasoning": "承認済みまたは閾値未満の要求があり、早めに発注して進めるべきため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00001",
+          "amount": 106714.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 2,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払い可能な案件がないため、本日は保留して次に進む"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 2,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00002",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28417.0,
+            "urgency": "low",
+            "generated_day": 1
+          },
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "ordered",
+            "created_day": 0
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00001",
+            "request_id": "req_00001",
+            "vendor": "vendor_001",
+            "amount": 106714.0
+          }
+        ],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "drafted",
+            "created_day": 1
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00001",
+          "delivered_amount": 106714
+        },
+        "reasoning": "未処理の納品受領記録を優先し、pending_demands対応前に進めるため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00001",
+          "delivered_amount": 106714.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 2,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は判断を保留します。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 2,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00002",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28417.0,
+            "urgency": "low",
+            "generated_day": 1
+          },
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "drafted",
+            "created_day": 1
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00002"
+        ],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00002"
+        },
+        "reasoning": "既に起票済みで発注準備が整っているreq_00002を優先して発注し、手戻りを防ぐため。残りキャパシティに余裕あり。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00002",
+          "amount": 202654.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 2,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注済み案件がなく、納品や請求する案件もないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 3,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00002",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28417.0,
+            "urgency": "low",
+            "generated_day": 1
+          },
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "ordered",
+            "created_day": 1
+          }
+        ]
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_002",
+          "item": "安全手袋 100双",
+          "amount": 28417,
+          "demand_id": "dem_00002"
+        },
+        "reasoning": "低額・低緊急度の安全手袋需要から着手し、先輩の中規模発注を参考に段階的に対応するため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00003",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 3,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、判断保留し次の日に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 3,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、本日は支払いを保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 3,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注も納品済み案件もなく、対応可能な行動がないため待機します。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 3,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "ordered",
+            "created_day": 1
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00002",
+            "request_id": "req_00002",
+            "vendor": "vendor_01",
+            "amount": 202654.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00002",
+          "delivered_amount": 202654
+        },
+        "reasoning": "納品待ちの検査用ゲージの受領記録を優先し、手戻りを防ぐため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00002",
+          "delivered_amount": 202654.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 4,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注済み案件がなく、請求対象もないため、次の指示を待つ。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 4,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "本日時点で支払い可能な案件がないため、保留して次のステップを待つ。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 4,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、本日は処理を保留し次の日に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 4,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 56950.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_02",
+          "item": "ボルトセット M8",
+          "amount": 57000,
+          "demand_id": "dem_00006"
+        },
+        "reasoning": "製造部の需要（dem_00006）はurgency normalで金額も閾値以下なので効率的に即対応すべきため起票する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00004",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 4,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "drafted",
+            "created_day": 3
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00003"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "drafted",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00003"
+        },
+        "reasoning": "安全手袋100双の購買要求は承認済みで発注準備済みなので、発注を行う。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00003",
+          "amount": 28417.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 5,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、判断保留し次の日に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 5,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00008",
+            "department": "情報システム部",
+            "item": "USBメモリ 50個",
+            "amount_hint": 78556.0,
+            "urgency": "high",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "ordered",
+            "created_day": 3
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00003",
+            "request_id": "req_00003",
+            "vendor": "vendor_002",
+            "amount": 28417.0
+          }
+        ],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "drafted",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00003",
+          "delivered_amount": 28417
+        },
+        "reasoning": "発注済みの安全手袋の納品を記録し、未処理案件を減らすため。キャパシティに余裕があるので早めに処理する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00003",
+          "delivered_amount": 28417.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 5,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00008",
+            "department": "情報システム部",
+            "item": "USBメモリ 50個",
+            "amount_hint": 78556.0,
+            "urgency": "high",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "drafted",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00004"
+        ],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00004"
+        },
+        "reasoning": "承認済みの発注待ち案件があり、当日のキャパシティに余裕があるため優先して発注する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00004",
+          "amount": 57000.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 5,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、支払いを保留し次のステップに進む"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 5,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注案件がなく請求も不要なため、待機して次の指示を待つのが適切です。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 6,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00008",
+            "department": "情報システム部",
+            "item": "USBメモリ 50個",
+            "amount_hint": 78556.0,
+            "urgency": "high",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "ordered",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_03",
+          "item": "USBメモリ 50個",
+          "amount": 78556,
+          "demand_id": "dem_00008"
+        },
+        "reasoning": "高緊急度で金額も承認閾値以下。先輩の大きめ案件対応もあるが、まずは高緊急度の需要を優先し慎重に対応する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00005",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 6,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "三者照合OKの案件がないため支払処理を行わず、調査を待つ必要があるため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 6,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "ordered",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00004",
+            "request_id": "req_00004",
+            "vendor": "vendor_02",
+            "amount": 57000.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00004",
+          "delivered_amount": 57000
+        },
+        "reasoning": "発注済みのボルトセットM8の納品を受領し、未処理案件を減らすため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00004",
+          "delivered_amount": 57000.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 6,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は保留とする。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 6,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注案件もなく、納品も請求もできるものがないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 7,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注案件がないため、特に行動する必要がないため待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 7,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "pending_demandsで対応すべき案件はあるが、ノートPCの高額案件は承認待ちで起票できず、低優先度の案件は後回し可能。キャパシティ温存のため待機。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 7,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_03",
+            "item": "USBメモリ 50個",
+            "amount": 78556.0,
+            "status": "drafted",
+            "created_day": 6
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00005"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00005"
+        },
+        "reasoning": "承認済みのUSBメモリ発注案件があり、優先的に発注してキャパシティを有効活用するため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00005",
+          "amount": 78556.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 7,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は判断せず次に備える"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 7,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "当日処理可能な支払案件がなく、三者照合が必須で許容差分も0のため支払いを保留する必要があるため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 8,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注中の案件がなく、対応する行動がないため待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 8,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、本日は支払い保留とする"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 8,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00012",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 39080.0,
+            "urgency": "normal",
+            "generated_day": 8
+          },
+          {
+            "id": "dem_00013",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 47589.0,
+            "urgency": "high",
+            "generated_day": 8
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00005",
+            "request_id": "req_00005",
+            "vendor": "vendor_03",
+            "amount": 78556.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00005",
+          "delivered_amount": 78556
+        },
+        "reasoning": "未受領の注文があり、まず受領記録をしてキャパシティを効率的に使うため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00005",
+          "delivered_amount": 78556.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 8,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、判断保留して次の日に回す"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 8,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 8,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00012",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 39080.0,
+            "urgency": "normal",
+            "generated_day": 8
+          },
+          {
+            "id": "dem_00013",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 47589.0,
+            "urgency": "high",
+            "generated_day": 8
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_03",
+            "item": "USBメモリ 50個",
+            "amount": 78556.0,
+            "status": "received",
+            "created_day": 6
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_004",
+          "item": "コピー用紙 A4 50箱",
+          "amount": 39080,
+          "demand_id": "dem_00012"
+        },
+        "reasoning": "低額かつ普通の緊急度の需要で、先輩も低額案件をこなしているため、まずは安全に処理できるコピー用紙の新しい需要から着手する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00006",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 9,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注も納品済み案件もないため、今日は待機するのが適切です。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 9,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 9,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00013",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 47589.0,
+            "urgency": "high",
+            "generated_day": 8
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_03",
+            "item": "USBメモリ 50個",
+            "amount": 78556.0,
+            "status": "received",
+            "created_day": 6
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_004",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 39080.0,
+            "status": "drafted",
+            "created_day": 8
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00006"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00006"
+        },
+        "reasoning": "ドラフト済みのコピー用紙50箱の購買要求req_00006は承認済みと想定し、早めに発注して在庫確保を進めるため。先輩も同程度の額の案件を発注済みであるため、行動を合わせる。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00006",
+          "amount": 39080.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 9,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00013",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 47589.0,
+            "urgency": "high",
+            "generated_day": 8
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00006",
+            "request_id": "req_00006",
+            "vendor": "vendor_004",
+            "amount": 39080.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00006",
+          "delivered_amount": 39080
+        },
+        "reasoning": "未処理の納品受領があり、まず記録して手戻りを防ぐため優先対応する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00006",
+          "delivered_amount": 39080.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 9,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 9,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、保留して次のステップに進む"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 10,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "本日支払対象の三者照合OK案件がないため、支払いを保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 10,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00013",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 47589.0,
+            "urgency": "high",
+            "generated_day": 8
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00018",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 124060.0,
+            "urgency": "high",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00019",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31070.0,
+            "urgency": "high",
+            "generated_day": 10
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_03",
+            "item": "USBメモリ 50個",
+            "amount": 78556.0,
+            "status": "received",
+            "created_day": 6
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_004",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 39080.0,
+            "status": "received",
+            "created_day": 8
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_005",
+          "item": "ボルトセット M8",
+          "amount": 47589,
+          "demand_id": "dem_00013"
+        },
+        "reasoning": "高緊急度かつ未対応の需要dem_00013（ボルトセット M8）にまず対応し、先輩の動きと自分のキャパを考慮し初動を取るため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00007",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 10,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00018",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 124060.0,
+            "urgency": "high",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00019",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31070.0,
+            "urgency": "high",
+            "generated_day": 10
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_03",
+          "item": "切削油 20L",
+          "amount": 124060,
+          "demand_id": "dem_00018"
+        },
+        "reasoning": "最優先の高緊急度需要切削油20L（dem_00018）をキャパシティに余裕があるため起票する。承認閾値以下でなくても早期対応を優先。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00008",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 10,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 10,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 10,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現時点で受注済み案件がなく、できる行動がないため待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 11,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため、本日は判断を保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 11,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払い可能な案件がないため、本日は支払処理を保留する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 11,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00019",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31070.0,
+            "urgency": "high",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00020",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 42193.0,
+            "urgency": "normal",
+            "generated_day": 11
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_03",
+            "item": "USBメモリ 50個",
+            "amount": 78556.0,
+            "status": "received",
+            "created_day": 6
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_004",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 39080.0,
+            "status": "received",
+            "created_day": 8
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_005",
+            "item": "ボルトセット M8",
+            "amount": 47589.0,
+            "status": "drafted",
+            "created_day": 10
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00007"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_03",
+            "amount": 124060.0,
+            "status": "drafted",
+            "created_day": 10
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00007"
+        },
+        "reasoning": "承認済みで発注可能なreq_00007のボルトセットM8を発注してキャパシティを有効活用するため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00007",
+          "amount": 47589.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 11,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00019",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31070.0,
+            "urgency": "high",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00020",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 42193.0,
+            "urgency": "normal",
+            "generated_day": 11
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          },
+          {
+            "id": "req_00008",
+            "vendor": "vendor_03",
+            "item": "切削油 20L",
+            "amount": 124060.0,
+            "status": "drafted",
+            "created_day": 10
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00008"
+        ],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00007",
+            "request_id": "req_00007",
+            "vendor": "vendor_005",
+            "amount": 47589.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00008"
+        },
+        "reasoning": "承認済みまたは発注可能なreq_00008を優先して発注し、キャパシティを効率的に使うため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00008",
+          "amount": 124060.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 11,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 11,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注案件がなく、納品や請求も不要のため待機するのが適切です。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 12,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00019",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31070.0,
+            "urgency": "high",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00020",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 42193.0,
+            "urgency": "normal",
+            "generated_day": 11
+          },
+          {
+            "id": "dem_00021",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 41946.0,
+            "urgency": "normal",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00022",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 68659.0,
+            "urgency": "low",
+            "generated_day": 12
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          },
+          {
+            "id": "req_00008",
+            "vendor": "vendor_03",
+            "item": "切削油 20L",
+            "amount": 124060.0,
+            "status": "ordered",
+            "created_day": 10
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00007",
+            "request_id": "req_00007",
+            "vendor": "vendor_005",
+            "amount": 47589.0
+          },
+          {
+            "order_id": "ord_00008",
+            "request_id": "req_00008",
+            "vendor": "vendor_03",
+            "amount": 124060.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00007",
+          "delivered_amount": 47589
+        },
+        "reasoning": "納品待ちの注文ord_00007を受領記録し、未処理の発注案件を減らすため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00007",
+          "delivered_amount": 47589.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 12,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00019",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31070.0,
+            "urgency": "high",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00020",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 42193.0,
+            "urgency": "normal",
+            "generated_day": 11
+          },
+          {
+            "id": "dem_00021",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 41946.0,
+            "urgency": "normal",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00022",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 68659.0,
+            "urgency": "low",
+            "generated_day": 12
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_03",
+            "item": "USBメモリ 50個",
+            "amount": 78556.0,
+            "status": "received",
+            "created_day": 6
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_004",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 39080.0,
+            "status": "received",
+            "created_day": 8
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_005",
+            "item": "ボルトセット M8",
+            "amount": 47589.0,
+            "status": "received",
+            "created_day": 10
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_03",
+            "amount": 124060.0,
+            "status": "ordered",
+            "created_day": 10
+          }
+        ]
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_006",
+          "item": "安全手袋 100双",
+          "amount": 31070,
+          "demand_id": "dem_00019"
+        },
+        "reasoning": "高緊急度の需要に対応し、承認閾値以下なのでまず購買要求を起こす"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00009",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 12,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在支払可能な案件がないため、本日は保留して次に進む。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 12,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ちの案件がないため本日は判断保留"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 12,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 12,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注も納品済み案件もなく、特にすることがないため待機する"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 13,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、本日は保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 13,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00020",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 42193.0,
+            "urgency": "normal",
+            "generated_day": 11
+          },
+          {
+            "id": "dem_00021",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 41946.0,
+            "urgency": "normal",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00022",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 68659.0,
+            "urgency": "low",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00023",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 38008.0,
+            "urgency": "normal",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00024",
+            "department": "品質管理部",
+            "item": "測定器校正サービス",
+            "amount_hint": 945221.0,
+            "urgency": "high",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00025",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 120028.0,
+            "urgency": "low",
+            "generated_day": 13
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          },
+          {
+            "id": "req_00008",
+            "vendor": "vendor_03",
+            "item": "切削油 20L",
+            "amount": 124060.0,
+            "status": "ordered",
+            "created_day": 10
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00008",
+            "request_id": "req_00008",
+            "vendor": "vendor_03",
+            "amount": 124060.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00008",
+          "delivered_amount": 124060
+        },
+        "reasoning": "発注済み切削油の納品受領を記録し、未処理案件の対応準備を進めるため"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00008",
+          "delivered_amount": 124060.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 13,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、本日は保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 13,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00020",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 42193.0,
+            "urgency": "normal",
+            "generated_day": 11
+          },
+          {
+            "id": "dem_00021",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 41946.0,
+            "urgency": "normal",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00022",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 68659.0,
+            "urgency": "low",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00023",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 38008.0,
+            "urgency": "normal",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00024",
+            "department": "品質管理部",
+            "item": "測定器校正サービス",
+            "amount_hint": 945221.0,
+            "urgency": "high",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00025",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 120028.0,
+            "urgency": "low",
+            "generated_day": 13
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_03",
+            "item": "USBメモリ 50個",
+            "amount": 78556.0,
+            "status": "received",
+            "created_day": 6
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_004",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 39080.0,
+            "status": "received",
+            "created_day": 8
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_005",
+            "item": "ボルトセット M8",
+            "amount": 47589.0,
+            "status": "received",
+            "created_day": 10
+          },
+          {
+            "id": "req_00009",
+            "vendor": "vendor_006",
+            "item": "安全手袋 100双",
+            "amount": 31070.0,
+            "status": "drafted",
+            "created_day": 12
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00009"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_03",
+            "amount": 124060.0,
+            "status": "received",
+            "created_day": 10
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00009"
+        },
+        "reasoning": "承認済みの購買要求req_00009が発注準備済みなので、まず発注してキャパシティを有効活用する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00009",
+          "amount": 31070.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 13,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 13,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "現在受注も納品も請求もないため、特に動くべき案件がないから待機する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 14,
+        "remaining_capacity": 10,
+        "approval_threshold": 1000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "承認待ち案件がないため、処理を保留して次の日に回す"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 14,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "受注済み案件がなく、請求書発行も不要なため、待機するのが適切です。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 14,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "支払可能な案件がないため、本日は保留する。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 14,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00020",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 42193.0,
+            "urgency": "normal",
+            "generated_day": 11
+          },
+          {
+            "id": "dem_00021",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 41946.0,
+            "urgency": "normal",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00022",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 68659.0,
+            "urgency": "low",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00023",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 38008.0,
+            "urgency": "normal",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00024",
+            "department": "品質管理部",
+            "item": "測定器校正サービス",
+            "amount_hint": 945221.0,
+            "urgency": "high",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00025",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 120028.0,
+            "urgency": "low",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00026",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 38751.0,
+            "urgency": "normal",
+            "generated_day": 14
+          },
+          {
+            "id": "dem_00027",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 277863.0,
+            "urgency": "normal",
+            "generated_day": 14
+          },
+          {
+            "id": "dem_00028",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 46483.0,
+            "urgency": "low",
+            "generated_day": 14
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_001",
+            "item": "切削油 20L",
+            "amount": 106714.0,
+            "status": "received",
+            "created_day": 0
+          },
+          {
+            "id": "req_00003",
+            "vendor": "vendor_002",
+            "item": "安全手袋 100双",
+            "amount": 28417.0,
+            "status": "received",
+            "created_day": 3
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_03",
+            "item": "USBメモリ 50個",
+            "amount": 78556.0,
+            "status": "received",
+            "created_day": 6
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_004",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 39080.0,
+            "status": "received",
+            "created_day": 8
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_005",
+            "item": "ボルトセット M8",
+            "amount": 47589.0,
+            "status": "received",
+            "created_day": 10
+          },
+          {
+            "id": "req_00009",
+            "vendor": "vendor_006",
+            "item": "安全手袋 100双",
+            "amount": 31070.0,
+            "status": "ordered",
+            "created_day": 12
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00009",
+            "request_id": "req_00009",
+            "vendor": "vendor_006",
+            "amount": 31070.0
+          }
+        ],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_01",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_02",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_03",
+            "amount": 124060.0,
+            "status": "received",
+            "created_day": 10
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00009",
+          "delivered_amount": 31070
+        },
+        "reasoning": "未処理の納品受領があり優先対応。これでキャパシティを有効活用できるため。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00009",
+          "delivered_amount": 31070.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 14,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 14,
+        "remaining_capacity": 5,
+        "approval_threshold": 1000000.0,
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 50570.0,
+            "urgency": "low",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00005",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1618884.0,
+            "urgency": "normal",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00007",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1637839.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 48682.0,
+            "urgency": "low",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 44656.0,
+            "urgency": "low",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33183.0,
+            "urgency": "low",
+            "generated_day": 7
+          },
+          {
+            "id": "dem_00014",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1337429.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00015",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 31748.0,
+            "urgency": "low",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00016",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 69033.0,
+            "urgency": "normal",
+            "generated_day": 9
+          },
+          {
+            "id": "dem_00017",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 107838.0,
+            "urgency": "normal",
+            "generated_day": 10
+          },
+          {
+            "id": "dem_00020",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 42193.0,
+            "urgency": "normal",
+            "generated_day": 11
+          },
+          {
+            "id": "dem_00021",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 41946.0,
+            "urgency": "normal",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00022",
+            "department": "製造部",
+            "item": "溶接棒 5kg",
+            "amount_hint": 68659.0,
+            "urgency": "low",
+            "generated_day": 12
+          },
+          {
+            "id": "dem_00023",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 38008.0,
+            "urgency": "normal",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00024",
+            "department": "品質管理部",
+            "item": "測定器校正サービス",
+            "amount_hint": 945221.0,
+            "urgency": "high",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00025",
+            "department": "製造部",
+            "item": "切削油 20L",
+            "amount_hint": 120028.0,
+            "urgency": "low",
+            "generated_day": 13
+          },
+          {
+            "id": "dem_00026",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 38751.0,
+            "urgency": "normal",
+            "generated_day": 14
+          },
+          {
+            "id": "dem_00027",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 277863.0,
+            "urgency": "normal",
+            "generated_day": 14
+          },
+          {
+            "id": "dem_00028",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 46483.0,
+            "urgency": "low",
+            "generated_day": 14
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00002",
+            "vendor": "vendor_01",
+            "item": "検査用ゲージ",
+            "amount": 202654.0,
+            "status": "received",
+            "created_day": 1
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_02",
+            "item": "ボルトセット M8",
+            "amount": 57000.0,
+            "status": "received",
+            "created_day": 4
+          },
+          {
+            "id": "req_00008",
+            "vendor": "vendor_03",
+            "item": "切削油 20L",
+            "amount": 124060.0,
+            "status": "received",
+            "created_day": 10
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_04",
+          "item": "測定器校正サービス",
+          "amount": 945221,
+          "demand_id": "dem_00024"
+        },
+        "reasoning": "高緊急度の需要で承認閾値未満なので優先的に起票するべきだから。キャパシティ5回で余裕あり。"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00010",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    }
+  ],
+  "final_snapshot": {
+    "current_day": 15,
+    "deviation_count": 0,
+    "error_count": 0,
+    "counts": {
+      "purchase_requests": 10,
+      "approvals": 0,
+      "orders": 9,
+      "receipts": 9,
+      "invoices": 0,
+      "payments": 0,
+      "demands_total": 31,
+      "demands_pending": 21,
+      "demands_fulfilled": 10
+    }
+  }
+}

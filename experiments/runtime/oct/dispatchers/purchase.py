@@ -256,6 +256,18 @@ def _handle_deliver(
     return {"receipt_id": receipt.id, "delivered_amount": receipt.delivered_amount}
 
 
+def _handle_reject_request(
+    state: EnvironmentState, agent_id: str, params: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Alias: approver_c may emit reject_request instead of approve_request
+    with decision=rejected. Internally delegates to _handle_approve_request
+    with decision forced to 'rejected'.
+    """
+    params = dict(params)  # shallow copy to avoid mutating caller's dict
+    params["decision"] = "rejected"
+    return _handle_approve_request(state, agent_id, params)
+
+
 def _handle_wait(
     state: EnvironmentState, agent_id: str, params: Dict[str, Any]
 ) -> Dict[str, Any]:
@@ -266,6 +278,7 @@ def _handle_wait(
 _ACTION_HANDLERS = {
     "draft_request": _handle_draft_request,
     "approve_request": _handle_approve_request,
+    "reject_request": _handle_reject_request,
     "place_order": _handle_place_order,
     "record_receipt": _handle_record_receipt,
     "deliver": _handle_deliver,

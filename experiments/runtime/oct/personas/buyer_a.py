@@ -134,6 +134,8 @@ def build_observation(state: EnvironmentState, agent_id: str = "buyer_a") -> Dic
         }
         for o in state.orders
         if state.receipt_for(o.id) is None
+        and state.get_request(o.request_id) is not None
+        and state.get_request(o.request_id).requester == agent_id
     ]
 
     # Pending demands from the environment (unfulfilled internal needs)

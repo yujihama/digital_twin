@@ -3,7 +3,7 @@
 > **運用ルール**: タスクに進捗があるたびに本ファイルを更新し、feature ブランチでコミット → PR 作成 → main にマージする。
 > 詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照。
 
-最終更新: 2026-04-06 (T-012 Layer 3完了 / 三層検証プロトコル全層完了 / 創発事象の相互作用依存性=0件)
+最終更新: 2026-04-06 (T-017/T-015バグ修正 / 実験計画拡張 / Phase 1-3計画策定)
 
 ---
 
@@ -27,6 +27,7 @@
 | M5 | 介入 I1 シミュレーション実行 (Phase 3) | 2026-06 | ✅ 完了 |
 | M6 | 三層検証プロトコル実施 (Phase 4) | 2026-07 | ✅ 完了（Layer 1-3全完了） |
 | M7 | 国内学会発表用の初稿作成 | 2026-08 | ⬜ 未着手 |
+| M8 | 2介入×2LLMの実験マトリクス完了 | 2026-08 | ⬜ 未着手 |
 
 状態: ✅ 完了 / 🟢 進行中 / 🟡 次に着手 / ⬜ 未着手 / 🔴 ブロック中
 
@@ -36,11 +37,12 @@
 
 ### 🟢 In Progress
 
-- [ ] **T-017** reject_request ハンドラ追加またはaction schema明確化（PR#16レビュー指摘。seed=44でapprover_cの8件rejectがサイレント失敗）
+- [ ] **T-018** gpt-5.4-miniへのモデル切替え + I2（三者照合無効化）介入実験（exp005a/exp005b）
+- [ ] **T-019** Claude Sonnetでの再実行（I1 + I2 = exp006a-d）
 
 ### 🟡 Next Up
 
-- [ ] **T-015** buyer_a awaiting_receipt フィルター非対称性の修正判断
+- [ ] **T-020** LLM間比較分析 + 修正Emergence Ratio算出
 
 ### ⬜ Backlog
 
@@ -49,6 +51,8 @@
 - [ ] **T-013** baseline 実験ランナー（N=10回、50ステップ、複数エージェント）
 ### ✅ Done
 
+- [x] **T-017** reject_requestハンドラ追加。PurchaseDispatcherに`reject_request`→`approve_request(decision=rejected)`エイリアスを追加。approver_cのaction schemaにも`reject_request`を明示追加。4テスト追加（2026-04-06）
+- [x] **T-015** buyer_a awaiting_receipt非対称性修正。buyer_aの`awaiting_receipt_orders`にrequesterフィルタを追加し、buyer_bと対称な動作に統一。テスト追加（2026-04-06）
 - [x] **T-000** 研究コンセプト・7ドキュメントの整備（2026-04-05）
 - [x] **T-001** Environment State スキーマの Python 実装（`experiments/runtime/oct/environment.py`）（2026-04-05）
 - [x] **T-002** 状態遷移ルールの実装（承認・三者照合・日次キャパシティ）（2026-04-05）
@@ -75,6 +79,7 @@
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|--------------|
+| 2026-04-06 | T-017/T-015バグ修正（reject_requestハンドラ追加 + buyer_a awaiting_receipt対称化）。実験計画拡張（I2三者照合無効化 + LLM間比較 + 2×2マトリクス）。PROGRESS.md更新（T-018/T-019/T-020/M8追加） | TBD |
 | 2026-04-06 | T-012 Layer 3相互作用遮断テスト完了。4実験実施、創発事象の相互作用依存性=0件。三層検証プロトコル全完了 | #18 |
 | 2026-04-06 | T-016複数seed検証完了。seed=42-45×2閾値=8実験。修正Emergence Ratio=62.5%。reject_requestサイレント失敗を特定。PROGRESS.md更新 | #16→#17 |
 | 2026-04-06 | T-008 Mode R完了。18件のLLM知識予測を収集、Layer 1テストでEmergence Ratio=66.7%を算出 | #15 |
@@ -125,8 +130,9 @@
 - **[解決済み] 内在的動機の設計**: Option A+C を採用し実装・検証済み（exp002 で buyer デッドロック解消を確認）。
 - **[解決済み] vendor_id 不一致**: available_vendors フィールド追加で解決（exp003 で全件 vendor_e を選択）。
 - **[解決済み] 承認フロー不足**: exp003bで閾値50万（承認2件）、exp003cで閾値20万（承認3件）に引き下げてベースライン確立。T-009（exp004: 閾値500万）との比較で介入効果を観測済み。
-- **[T-016 由来] reject_requestサイレント失敗**: PurchaseDispatcherに`reject_request`ハンドラが存在せず、seed=44のapprover_cによる8件の却下判断が全て無視されている。ATEの正確な推定に影響する可能性あり。論文化前に対処必要（T-017）。
-- **[exp002 由来] buyer_a awaiting_receipt 非対称性**: buyer_a は全注文を見るが buyer_b は自分の注文のみ。意図的設計か修正対象か要判断。
+- **[解決済み] reject_requestサイレント失敗**: T-017で修正。`reject_request`ハンドラを追加し、approver_cのaction schemaにも明示。
+- **[解決済み] buyer_a awaiting_receipt 非対称性**: T-015で修正。buyer_aにもrequesterフィルタを追加し、buyer_bと対称に。
+- **gpt-5.4-miniへの切替え**: gpt-4.1-miniでの過去実験との直接比較が不可能になる。過去実験の再実行が必要か、それとも「モデル世代の進化も含めた robustness」として扱うか要判断。
 - **[解決済み] 介入設計への影響**: T-008/T-009/T-016で介入実験とLayer 1-2検証を完了。T-012でLayer 3も完了、三層検証プロトコル全完了。
 - **LLMモデル選定**: gpt-4.1-mini でスタート済み。Anthropic（Sonnet / Opus）との比較検証は T-013 以降で実施予定。
 - **エージェント人数**: 5体で運用開始（exp001〜exp003）

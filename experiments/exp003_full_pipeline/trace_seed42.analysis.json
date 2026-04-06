@@ -1,0 +1,86 @@
+{
+  "total_steps": 158,
+  "dispatched_ok": 158,
+  "errors": 0,
+  "error_details": [],
+  "per_agent": {
+    "accountant_d": {
+      "wait": 16,
+      "pay_order": 18
+    },
+    "buyer_b": {
+      "draft_request": 10,
+      "place_order": 10,
+      "record_receipt": 3,
+      "wait": 9
+    },
+    "approver_c": {
+      "wait": 20,
+      "approve_request": 1
+    },
+    "vendor_e": {
+      "deliver": 7,
+      "register_invoice": 18,
+      "wait": 11
+    },
+    "buyer_a": {
+      "wait": 9,
+      "draft_request": 9,
+      "place_order": 9,
+      "record_receipt": 8
+    }
+  },
+  "action_counts": {
+    "wait": 65,
+    "draft_request": 19,
+    "place_order": 19,
+    "deliver": 7,
+    "register_invoice": 18,
+    "pay_order": 18,
+    "record_receipt": 11,
+    "approve_request": 1
+  },
+  "vendor_ids_used": {
+    "vendor_e": 19
+  },
+  "three_way_match": {
+    "matched": 18,
+    "unmatched": 0
+  },
+  "approvals": [
+    {
+      "day": 3,
+      "agent": "approver_c",
+      "request_id": "req_00005",
+      "decision": "approved",
+      "note": "閾値超過案件で優先処理。金額は妥当範囲内で分割発注の疑いなし。"
+    }
+  ],
+  "pipeline": {
+    "purchase_requests": 19,
+    "approvals": 1,
+    "orders": 19,
+    "receipts": 18,
+    "invoices": 18,
+    "payments": 18,
+    "demands_total": 41,
+    "demands_pending": 22,
+    "demands_fulfilled": 19
+  },
+  "final_snapshot": {
+    "current_day": 20,
+    "deviation_count": 0,
+    "error_count": 0,
+    "counts": {
+      "purchase_requests": 19,
+      "approvals": 1,
+      "orders": 19,
+      "receipts": 18,
+      "invoices": 18,
+      "payments": 18,
+      "demands_total": 41,
+      "demands_pending": 22,
+      "demands_fulfilled": 19
+    }
+  }
+}

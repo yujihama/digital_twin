@@ -1,0 +1,93 @@
+{
+  "total_steps": 166,
+  "dispatched_ok": 166,
+  "errors": 0,
+  "error_details": [],
+  "per_agent": {
+    "accountant_d": {
+      "wait": 11,
+      "pay_order": 23
+    },
+    "buyer_b": {
+      "draft_request": 12,
+      "place_order": 12,
+      "wait": 6,
+      "record_receipt": 5
+    },
+    "approver_c": {
+      "wait": 20,
+      "approve_request": 2
+    },
+    "vendor_e": {
+      "deliver": 7,
+      "register_invoice": 23,
+      "wait": 7
+    },
+    "buyer_a": {
+      "wait": 3,
+      "draft_request": 12,
+      "place_order": 12,
+      "record_receipt": 11
+    }
+  },
+  "action_counts": {
+    "wait": 47,
+    "draft_request": 24,
+    "place_order": 24,
+    "deliver": 7,
+    "register_invoice": 23,
+    "pay_order": 23,
+    "record_receipt": 16,
+    "approve_request": 2
+  },
+  "vendor_ids_used": {
+    "vendor_e": 24
+  },
+  "three_way_match": {
+    "matched": 23,
+    "unmatched": 0
+  },
+  "approvals": [
+    {
+      "day": 4,
+      "agent": "approver_c",
+      "request_id": "req_00005",
+      "decision": "approved",
+      "note": "金額は大きいが分割発注の疑いなし。業務停滞を避け優先承認。"
+    },
+    {
+      "day": 13,
+      "agent": "approver_c",
+      "request_id": "req_00018",
+      "decision": "approved",
+      "note": "金額945,221円は閾値を超え、サービス内容も適正と判断"
+    }
+  ],
+  "pipeline": {
+    "purchase_requests": 24,
+    "approvals": 2,
+    "orders": 24,
+    "receipts": 23,
+    "invoices": 23,
+    "payments": 23,
+    "demands_total": 41,
+    "demands_pending": 17,
+    "demands_fulfilled": 24
+  },
+  "final_snapshot": {
+    "current_day": 20,
+    "deviation_count": 0,
+    "error_count": 0,
+    "counts": {
+      "purchase_requests": 24,
+      "approvals": 2,
+      "orders": 24,
+      "receipts": 23,
+      "invoices": 23,
+      "payments": 23,
+      "demands_total": 41,
+      "demands_pending": 17,
+      "demands_fulfilled": 24
+    }
+  }
+}

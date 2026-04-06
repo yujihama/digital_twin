@@ -64,10 +64,12 @@ class PurchaseDispatcher:
         state: EnvironmentState,
         demand_config: Optional[DemandConfig] = None,
         demand_rng_seed: Optional[int] = None,
+        isolated_mode: bool = False,
     ) -> None:
         self.state = state
         self.state.ensure_capacity_initialized()
         self.demand_config = demand_config
+        self.isolated_mode = isolated_mode
         self._demand_rng = random.Random(demand_rng_seed) if demand_config else None
         # Seed day-0 demands so buyers have something to act on immediately
         if self.demand_config is not None and self._demand_rng is not None:
@@ -79,7 +81,34 @@ class PurchaseDispatcher:
         builder = _OBSERVATION_BUILDERS.get(agent_id)
         if builder is None:
             raise KeyError(f"No observation builder registered for agent_id={agent_id!r}")
-        return builder(self.state, agent_id)
+        obs = builder(self.state, agent_id)
+        if self.isolated_mode:
+            obs = self._apply_isolation(agent_id, obs)
+        return obs
+
+    def _apply_isolation(self, agent_id: str, obs: Dict[str, Any]) -> Dict[str, Any]:
+        """Remove cross-agent information for isolated mode.
+
+        This implements the Layer 3 interaction-blocking test from docs/06.
+        Each agent loses visibility into other agents' behavior patterns,
+        while retaining access to the shared state needed for basic workflow
+        progression (e.g., approver_c still sees pending_approvals so the
+        flow doesn't deadlock, but loses feedback from recent_approvals).
+        """
+        obs = dict(obs)  # shallow copy to avoid mutating original
+        if agent_id == "buyer_b":
+            # Remove peer (buyer_a) recent request patterns -- blocks imitation
+            obs["peer_recent_requests"] = []
+        if agent_id == "approver_c":
+            # Remove own approval history feedback -- blocks pattern learning
+            obs["recent_approvals"] = []
+        if agent_id == "vendor_e":
+            # Remove payment receipt history -- blocks payment timing learning
+            obs["recent_payments_received"] = []
+        if agent_id == "accountant_d":
+            # Fix deviation count to 0 -- blocks cumulative deviation awareness
+            obs["deviation_count"] = 0
+        return obs
 
     def dispatch(self, agent_id: str, action: AgentAction) -> Dict[str, Any]:
         handler = _ACTION_HANDLERS.get(action.action_type)
@@ -217,16 +246,10 @@ def _handle_approve_request(
 def _handle_deliver(
     state: EnvironmentState, agent_id: str, params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """vendor_e-side alias for record_receipt.
-
-    A delivery event from the vendor's perspective is the same physical
-    event as a receipt from the buyer's perspective. We reuse the
-    `record_receipt` transition but attribute capacity consumption to
-    the vendor.
-    """
+    """vendor_e-side alias for record_receipt."""
     receipt = record_receipt(
         state,
-        buyer=agent_id,  # charge capacity to the actor taking the action
+        buyer=agent_id,
         order_id=str(params["order_id"]),
         delivered_amount=int(params["delivered_amount"]),
     )
@@ -236,7 +259,7 @@ def _handle_deliver(
 def _handle_wait(
     state: EnvironmentState, agent_id: str, params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    # wait consumes no capacity — intentional no-op
+    # wait consumes no capacity -- intentional no-op
     return {"action": "wait"}
 
 

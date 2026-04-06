@@ -260,11 +260,23 @@ class TestBuyerObservationDemands:
         assert obs["pending_demands"][0]["id"] == "dem_00001"
         assert obs["pending_demands"][0]["urgency"] == "high"
 
+    def test_buyer_a_sees_available_vendors(self):
+        state = self._make_state_with_demands()
+        obs = build_buyer_a_obs(state, "buyer_a")
+        assert "available_vendors" in obs
+        assert "vendor_e" in obs["available_vendors"]
+
     def test_buyer_b_sees_pending_demands(self):
         state = self._make_state_with_demands()
         obs = build_buyer_b_obs(state, "buyer_b")
         assert "pending_demands" in obs
         assert len(obs["pending_demands"]) == 2
+
+    def test_buyer_b_sees_available_vendors(self):
+        state = self._make_state_with_demands()
+        obs = build_buyer_b_obs(state, "buyer_b")
+        assert "available_vendors" in obs
+        assert "vendor_e" in obs["available_vendors"]
 
     def test_no_demands_means_empty_list(self):
         state = EnvironmentState(current_day=0)

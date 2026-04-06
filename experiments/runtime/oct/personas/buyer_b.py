@@ -30,6 +30,7 @@ BUYER_B_PERSONA = """あなたは中堅製造業の購買担当B（buyer_b）で
 
 ## 行動原則
 - pending_demands に未処理の需要がある場合は、先輩（buyer_a）の動きも参考にしつつ対応を検討する
+- draft_request の vendor には available_vendors に含まれるIDのいずれかを指定すること
 - ただし、全ての需要に即座に対応する必要はない。自分のキャパシティや先輩の動きを見て判断する
 - その日のキャパシティ（1日5アクション）を意識する
 - 承認閾値（100万円）は厳格に守る
@@ -155,11 +156,18 @@ def build_observation(state: EnvironmentState, agent_id: str = "buyer_b") -> Dic
         for d in state.pending_demands()
     ]
 
+    # Available vendors — buyer must use one of these IDs when drafting
+    available_vendors = [
+        aid for aid, cap in state.daily_capacity.items()
+        if aid.startswith("vendor_")
+    ]
+
     return {
         "agent_id": agent_id,
         "current_day": state.current_day,
         "remaining_capacity": state.remaining_capacity.get(agent_id, 0),
         "approval_threshold": state.controls.approval_threshold,
+        "available_vendors": available_vendors,
         "pending_demands": pending_demands,
         "my_requests": my_requests,
         "ready_to_order_request_ids": sorted(set(ready_to_order)),

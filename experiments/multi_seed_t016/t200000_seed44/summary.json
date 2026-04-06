@@ -1,0 +1,81 @@
+{
+  "tag": "t200000_seed44",
+  "threshold": 200000,
+  "rng_seed": 44,
+  "demand_seed": 42,
+  "model": "gpt-4.1-mini",
+  "temperature": 0.8,
+  "max_days": 20,
+  "elapsed_seconds": 224.5,
+  "api_calls": 174,
+  "total_steps": 174,
+  "counts": {
+    "purchase_requests": 26,
+    "approvals": 3,
+    "orders": 24,
+    "receipts": 24,
+    "invoices": 23,
+    "payments": 22,
+    "demands_total": 41,
+    "demands_pending": 15,
+    "demands_fulfilled": 26
+  },
+  "approvals": [
+    {
+      "day": 2,
+      "agent_id": "approver_c",
+      "request_id": "req_00003",
+      "decision": "approved"
+    },
+    {
+      "day": 5,
+      "agent_id": "approver_c",
+      "request_id": "req_00007",
+      "decision": "approved"
+    },
+    {
+      "day": 14,
+      "agent_id": "approver_c",
+      "request_id": "req_00018",
+      "decision": "approved"
+    }
+  ],
+  "errors": [],
+  "per_agent": {
+    "approver_c": {
+      "wait": 16,
+      "approve_request": 3,
+      "reject_request": 8
+    },
+    "buyer_b": {
+      "draft_request": 15,
+      "place_order": 13,
+      "wait": 4,
+      "record_receipt": 5
+    },
+    "vendor_e": {
+      "deliver": 10,
+      "register_invoice": 25,
+      "wait": 4
+    },
+    "buyer_a": {
+      "wait": 5,
+      "draft_request": 11,
+      "place_order": 11,
+      "record_receipt": 9
+    },
+    "accountant_d": {
+      "pay_order": 22,
+      "wait": 13
+    }
+  },
+  "agent_waits": {
+    "approver_c": 16,
+    "buyer_b": 4,
+    "vendor_e": 4,
+    "buyer_a": 5,
+    "accountant_d": 13
+  },
+  "three_way_match": {},
+  "deviation_count": 0
+}

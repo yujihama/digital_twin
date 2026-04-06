@@ -120,17 +120,6 @@ def generate_demands(
     if rng is None:
         rng = random.Random()
 
-    # Sample count from Poisson (manual: sum of exponential inter-arrivals)
-    n = 0
-    limit = rng.expovariate(1.0)
-    total = 0.0
-    while total < config.mean_daily_demands:
-        total += limit
-        limit = rng.expovariate(1.0)
-        n += 1
-    # n is now Poisson-distributed with mean ≈ config.mean_daily_demands
-    # (using the standard exponential-sum algorithm)
-    # Actually, let's use a cleaner approach:
     n = _poisson_sample(config.mean_daily_demands, rng)
 
     if n == 0:

@@ -3,7 +3,7 @@
 > **運用ルール**: タスクに進捗があるたびに本ファイルを更新し、feature ブランチでコミット → PR 作成 → main にマージする。
 > 詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照。
 
-最終更新: 2026-04-06 (需要生成メカニズム実装 / exp001 → exp002 準備)
+最終更新: 2026-04-06 (exp002 実行完了 / buyer デッドロック解消確認)
 
 ---
 
@@ -36,7 +36,7 @@
 
 ### 🟢 In Progress
 
-- [ ] **exp002** 需要生成あり実LLM再実行（exp001と同条件 + DemandConfig, seed=42 で比較）
+_（次のPRで着手）_
 
 ### 🟡 Next Up
 
@@ -63,6 +63,7 @@
 - [x] **T-014** OpenAIClient 実装（`oct/llm.py`、LLMClient Protocol 準拠、.env 読み込み、76テスト passing）（2026-04-06）
 - [x] **exp001** 初回実LLM実行（OpenAI gpt-4.1-mini × 5 agents × 15 days × seed=42、75 API calls / 0 errors、全エージェント wait のみという重要な発見）（2026-04-06）
 - [x] **需要生成メカニズム** DemandEvent / DemandConfig / generate_demands / fulfill_demand を実装。Option A+C（環境が確率的需要を生成 → buyer observation に pending_demands として提示）。95テスト passing（2026-04-06）
+- [x] **exp002** 需要生成あり実LLM再実行。buyer デッドロック解消を確認（purchase_requests=8, orders=8, receipts=7）。vendor_id 不一致・承認フロー未到達を次課題として特定（2026-04-06）
 
 ---
 
@@ -70,6 +71,7 @@
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|--------------|
+| 2026-04-06 | exp002 需要生成あり実行。buyer デッドロック解消（8 requests / 8 orders / 7 receipts）。generate_demands デッドコード修正。vendor_id 不一致・承認フロー未到達を次課題として特定 | #10 |
 | 2026-04-06 | 需要生成メカニズム実装（DemandEvent / DemandConfig / generate_demands / fulfill_demand）。Option A+C: 環境が確率的需要を生成し buyer observation に pending_demands として提示。95テスト passing | #9 |
 | 2026-04-06 | exp001 初回実LLM実行（gpt-4.1-mini × 5 agents × 15 days × seed=42）。75/75 API calls 成功・parse error 0。全エージェントが wait のみで業務活動ゼロという発見 → 内在的動機設計の必要性が明らかに | #8 |
 | 2026-04-06 | T-014 OpenAIClient 実装（gpt-4.1-mini、retry、.env 読み込み、76テスト passing） | #8 |
@@ -109,8 +111,10 @@
 
 ## オープンな論点・意思決定待ち
 
-- **[exp001 由来・解決済み] 内在的動機の設計**: Option A+C を採用し実装済み。環境が確率的に需要イベント（DemandEvent）を生成し、buyer observation に `pending_demands` として提示する。LLM には「需要に対応するか/今日は他を優先するか」の判断余地を残す。→ exp002 で検証予定。
-- **[exp001 由来] 介入設計への影響**: exp002 で需要ありのベースラインを取得後、T-008/T-009 の介入設計に進む。
+- **[exp001 由来・解決済み] 内在的動機の設計**: Option A+C を採用し実装・検証済み（exp002 で buyer デッドロック解消を確認）。
+- **[exp002 由来・最優先] vendor_id 不一致**: buyer が指定する vendor_id（vendor_01 等）が agent_id `vendor_e` と不一致。vendor_e は自分宛の注文が見えずwaitのまま → deliver/invoice 未発生 → 支払い到達不可。対策: buyer observation に利用可能取引先リストを追加、または demand_event に vendor 情報を含める。
+- **[exp002 由来] 承認フロー未テスト**: 全購買要求が100万円未満でauto-approve → approver_c 未動作。高額品目追加 or 閾値引き下げで対応。
+- **[exp001/exp002 由来] 介入設計への影響**: 全フロー（draft→order→deliver→invoice→pay）完遂後に T-008/T-009 に進む。
 - **LLMモデル選定**: gpt-4.1-mini でスタート済み。Anthropic（Sonnet / Opus）との比較検証は T-013 以降で実施予定。
 - **エージェント人数**: 5体で運用開始（exp001）
 - **temperature**: 0.8 を exp001 で採用。0.7 / 1.0 との比較は T-013 のロバストネス確認で実施。

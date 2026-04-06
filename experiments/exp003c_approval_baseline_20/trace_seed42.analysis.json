@@ -1,0 +1,100 @@
+{
+  "total_steps": 163,
+  "dispatched_ok": 163,
+  "errors": 0,
+  "error_details": [],
+  "per_agent": {
+    "accountant_d": {
+      "wait": 13,
+      "pay_order": 20
+    },
+    "buyer_b": {
+      "draft_request": 13,
+      "place_order": 13,
+      "wait": 6,
+      "record_receipt": 2
+    },
+    "approver_c": {
+      "wait": 20,
+      "approve_request": 3
+    },
+    "vendor_e": {
+      "deliver": 8,
+      "register_invoice": 20,
+      "wait": 8
+    },
+    "buyer_a": {
+      "wait": 5,
+      "draft_request": 10,
+      "place_order": 10,
+      "record_receipt": 12
+    }
+  },
+  "action_counts": {
+    "wait": 52,
+    "draft_request": 23,
+    "place_order": 23,
+    "deliver": 8,
+    "register_invoice": 20,
+    "pay_order": 20,
+    "record_receipt": 14,
+    "approve_request": 3
+  },
+  "vendor_ids_used": {
+    "vendor_e": 23
+  },
+  "three_way_match": {
+    "matched": 20,
+    "unmatched": 0
+  },
+  "approvals": [
+    {
+      "day": 3,
+      "agent": "approver_c",
+      "request_id": "req_00004",
+      "decision": "approved",
+      "note": "金額は閾値をわずかに超え妥当と判断"
+    },
+    {
+      "day": 13,
+      "agent": "approver_c",
+      "request_id": "req_00015",
+      "decision": "approved",
+      "note": "金額945,221円は閾値20万円を大きく超え、業務必須の測定器校正サービスのため承認"
+    },
+    {
+      "day": 17,
+      "agent": "approver_c",
+      "request_id": "req_00020",
+      "decision": "approved",
+      "note": "金額は閾値を超えており、正常範囲の請求と判断"
+    }
+  ],
+  "pipeline": {
+    "purchase_requests": 23,
+    "approvals": 3,
+    "orders": 23,
+    "receipts": 22,
+    "invoices": 20,
+    "payments": 20,
+    "demands_total": 41,
+    "demands_pending": 18,
+    "demands_fulfilled": 23
+  },
+  "final_snapshot": {
+    "current_day": 20,
+    "deviation_count": 0,
+    "error_count": 0,
+    "counts": {
+      "purchase_requests": 23,
+      "approvals": 3,
+      "orders": 23,
+      "receipts": 22,
+      "invoices": 20,
+      "payments": 20,
+      "demands_total": 41,
+      "demands_pending": 18,
+      "demands_fulfilled": 23
+    }
+  }
+}

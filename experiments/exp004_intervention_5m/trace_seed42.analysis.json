@@ -1,0 +1,83 @@
+{
+  "total_steps": 171,
+  "dispatched_ok": 170,
+  "errors": 1,
+  "error_details": [
+    {
+      "day": 13,
+      "agent_id": "vendor_e",
+      "action": "register_invoice",
+      "error": "transition_error: Order ord_00016 already invoiced"
+    }
+  ],
+  "per_agent": {
+    "accountant_d": {
+      "wait": 11,
+      "pay_order": 24
+    },
+    "buyer_b": {
+      "draft_request": 15,
+      "place_order": 15,
+      "record_receipt": 7,
+      "wait": 2
+    },
+    "approver_c": {
+      "wait": 20
+    },
+    "vendor_e": {
+      "deliver": 13,
+      "register_invoice": 26,
+      "wait": 1
+    },
+    "buyer_a": {
+      "wait": 3,
+      "draft_request": 13,
+      "place_order": 13,
+      "record_receipt": 8
+    }
+  },
+  "action_counts": {
+    "wait": 37,
+    "draft_request": 28,
+    "place_order": 28,
+    "deliver": 13,
+    "register_invoice": 26,
+    "pay_order": 24,
+    "record_receipt": 15
+  },
+  "vendor_ids_used": {
+    "vendor_e": 28
+  },
+  "three_way_match": {
+    "matched": 24,
+    "unmatched": 0
+  },
+  "approvals": [],
+  "pipeline": {
+    "purchase_requests": 28,
+    "approvals": 0,
+    "orders": 28,
+    "receipts": 28,
+    "invoices": 25,
+    "payments": 24,
+    "demands_total": 41,
+    "demands_pending": 13,
+    "demands_fulfilled": 28
+  },
+  "final_snapshot": {
+    "current_day": 20,
+    "deviation_count": 0,
+    "error_count": 0,
+    "counts": {
+      "purchase_requests": 28,
+      "approvals": 0,
+      "orders": 28,
+      "receipts": 28,
+      "invoices": 25,
+      "payments": 24,
+      "demands_total": 41,
+      "demands_pending": 13,
+      "demands_fulfilled": 28
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "experiment_id": "exp005a_baseline",
+  "config": {
+    "model": "gpt-4.1-mini",
+    "max_days": 20,
+    "temperature": 0.8,
+    "rng_seed": 42,
+    "approval_threshold": 200000,
+    "three_way_match_required": true,
+    "actions_per_agent_per_day": 2,
+    "demand_rng_seed": 42,
+    "mean_daily_demands": 1.5
+  },
+  "results": {
+    "total_steps": 162,
+    "dispatched_ok": 161,
+    "errors": 0,
+    "api_calls": 162,
+    "deviation_count": 0,
+    "error_count": 0
+  },
+  "pipeline_counts": {
+    "purchase_requests": 22,
+    "approvals": 4,
+    "orders": 21,
+    "receipts": 21,
+    "invoices": 20,
+    "payments": 20,
+    "demands_total": 41,
+    "demands_pending": 19,
+    "demands_fulfilled": 22
+  },
+  "per_agent_actions": {
+    "accountant_d": {
+      "wait": 14,
+      "pay_order": 20
+    },
+    "buyer_b": {
+      "draft_request": 13,
+      "place_order": 12,
+      "wait": 6,
+      "record_receipt": 5
+    },
+    "approver_c": {
+      "wait": 19,
+      "approve_request": 3,
+      "reject_request": 1
+    },
+    "vendor_e": {
+      "deliver": 13,
+      "register_invoice": 21,
+      "wait": 4
+    },
+    "buyer_a": {
+      "wait": 10,
+      "draft_request": 9,
+      "place_order": 9,
+      "record_receipt": 3
+    }
+  },
+  "approval_details": [
+    {
+      "day": 2,
+      "agent_id": "approver_c",
+      "action_type": "approve_request",
+      "request_id": "req_00003",
+      "decision": "approved",
+      "note": "金額が基準を超えているが通常範囲内のため承認"
+    },
+    {
+      "day": 15,
+      "agent_id": "approver_c",
+      "action_type": "approve_request",
+      "request_id": "req_00016",
+      "decision": "approved",
+      "note": "重要な測定器校正サービスで高額だが妥当な支出。業務停滞防止のため承認。"
+    },
+    {
+      "day": 19,
+      "agent_id": "approver_c",
+      "action_type": "reject_request",
+      "request_id": "req_00021",
+      "decision": "rejected",
+      "note": "同一品目の同額発注が連続しており分割発注の疑いがあるため却下"
+    },
+    {
+      "day": 19,
+      "agent_id": "approver_c",
+      "action_type": "approve_request",
+      "request_id": "req_00020",
+      "decision": "approved",
+      "note": "金額277,863円は閾値20万円を超え、分割発注の疑いなし。迅速に承認。"
+    }
+  ],
+  "three_way_match": {
+    "matched": 20,
+    "unmatched": 0,
+    "total_payments": 20
+  },
+  "vendor_behavior": {
+    "invoice_deviations": [],
+    "receipt_deviations": [],
+    "invoice_deviation_count": 0,
+    "receipt_deviation_count": 0
+  }
+}

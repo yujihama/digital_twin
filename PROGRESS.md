@@ -3,7 +3,7 @@
 > **運用ルール**: タスクに進捗があるたびに本ファイルを更新し、feature ブランチでコミット → PR 作成 → main にマージする。
 > 詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照。
 
-最終更新: 2026-04-06 (T-017/T-015バグ修正 / 実験計画拡張 / Phase 1-3計画策定)
+最終更新: 2026-04-06 (T-018 exp005完了 / I2三者照合無効化介入実験 / S-005はLLMバイアスと判定)
 
 ---
 
@@ -37,7 +37,6 @@
 
 ### 🟢 In Progress
 
-- [ ] **T-018** gpt-5.4-miniへのモデル切替え + I2（三者照合無効化）介入実験（exp005a/exp005b）
 - [ ] **T-019** Claude Sonnetでの再実行（I1 + I2 = exp006a-d）
 
 ### 🟡 Next Up
@@ -51,6 +50,7 @@
 - [ ] **T-013** baseline 実験ランナー（N=10回、50ステップ、複数エージェント）
 ### ✅ Done
 
+- [x] **T-018 / exp005** I2介入実験（三者照合無効化）。exp005a（ベースライン: three_way_match=True）とexp005b（介入: three_way_match=False）を実行。S-005はLLMバイアス（コンプライアンス従順傾向）と判定：vendor_eは三者照合の有無に関わらずdeviation_count=0、invoice_deviations=0。副次的にスループット+10%（payments 20→22）を観測（2026-04-06）
 - [x] **T-017** reject_requestハンドラ追加。PurchaseDispatcherに`reject_request`→`approve_request(decision=rejected)`エイリアスを追加。approver_cのaction schemaにも`reject_request`を明示追加。4テスト追加（2026-04-06）
 - [x] **T-015** buyer_a awaiting_receipt非対称性修正。buyer_aの`awaiting_receipt_orders`にrequesterフィルタを追加し、buyer_bと対称な動作に統一。テスト追加（2026-04-06）
 - [x] **T-000** 研究コンセプト・7ドキュメントの整備（2026-04-05）
@@ -79,7 +79,8 @@
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|--------------|
-| 2026-04-06 | T-017/T-015バグ修正（reject_requestハンドラ追加 + buyer_a awaiting_receipt対称化）。実験計画拡張（I2三者照合無効化 + LLM間比較 + 2×2マトリクス）。PROGRESS.md更新（T-018/T-019/T-020/M8追加） | TBD |
+| 2026-04-06 | T-018 exp005完了。I2三者照合無効化介入実験（exp005a baseline + exp005b intervention）。S-005はLLMコンプライアンスバイアスと判定（deviation_count=0→0）。スループット+10%（payments 20→22）。末尾改行修正3件。run_exp005.py新規作成 | TBD |
+| 2026-04-06 | T-017/T-015バグ修正（reject_requestハンドラ追加 + buyer_a awaiting_receipt対称化）。実験計画拡張（I2三者照合無効化 + LLM間比較 + 2×2マトリクス）。PROGRESS.md更新（T-018/T-019/T-020/M8追加） | #19 |
 | 2026-04-06 | T-012 Layer 3相互作用遮断テスト完了。4実験実施、創発事象の相互作用依存性=0件。三層検証プロトコル全完了 | #18 |
 | 2026-04-06 | T-016複数seed検証完了。seed=42-45×2閾値=8実験。修正Emergence Ratio=62.5%。reject_requestサイレント失敗を特定。PROGRESS.md更新 | #16→#17 |
 | 2026-04-06 | T-008 Mode R完了。18件のLLM知識予測を収集、Layer 1テストでEmergence Ratio=66.7%を算出 | #15 |

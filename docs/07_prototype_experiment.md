@@ -208,3 +208,100 @@ experiments/
 ### 結果の報告
 - 各実験の結果は `experiments/` に記録し、git push
 - 判断に迷う設計選択は `experiments/README.md` に論点として記録し、確認を求める
+
+---
+
+## 7.9 追加介入シナリオ（exp003c/exp004の結果を踏まえた拡張）
+
+### 検証空間の拡張方針
+
+exp001-exp004 + Layer 1-3で確認された知見:
+
+- Emergence Ratio 62.5%（Layer 1）
+- 集計CV<6%の再現性（Layer 2）
+- 創発事象は構造的因果連鎖に起因、情報的相互作用への依存なし（Layer 3）
+
+残る課題:
+
+- 介入タイプが1種（閾値変更）のみ
+- LLMが1種（gpt-4.1-mini）のみ
+- S-005（統制品質維持）がLLMの行動バイアスか実際の創発かの区別が未完
+
+### 介入シナリオ一覧
+
+| # | 介入内容 | 検証する因果メカニズム | 実装方法 |
+|---|---------|---------------------|---------|
+| I1 | 承認閾値 20万→500万 | 承認統制の緩和効果（実施済み） | ControlParameters.approval_threshold |
+| **I2** | **三者照合の無効化** | **統制除去時のvendor行動変化（S-005の反証テスト）** | **ControlParameters.three_way_match_required=False** |
+| I3 | 経理担当の経験年数変更 | 人的要因の因果効果（将来課題） | ペルソナ差し替え |
+| I4 | 需要強度倍増 | 業務量圧力の因果効果（Phase 3候補） | DemandConfig.mean_daily_demands |
+
+### LLM比較検証
+
+| モデル | 用途 | 状態 |
+|-------|------|------|
+| gpt-4.1-mini | exp001-exp004の全実験 | 完了→gpt-5.4-miniで再実行予定 |
+| **gpt-5.4-mini** | **Phase 1以降の主要モデル** | 未実施 |
+| **Claude Sonnet** | **robustness check（Phase 2）** | 未実施、AnthropicClient実装済み |
+
+### 実験マトリクス（Phase 1-2完了後の目標状態）
+
+|  | I1（閾値変更） | I2（三者照合無効化） |
+|---|---|---|
+| gpt-5.4-mini | ベースライン + 介入 | ベースライン + 介入 |
+| Claude Sonnet | ベースライン + 介入 | ベースライン + 介入 |
+
+この2×2マトリクスにより「介入タイプ × LLM」の交差検証が可能になり、結論の一般化可能性が大幅に向上する。
+
+### Phase 1: 三者照合無効化の介入実験（I2 / exp005）
+
+**研究上の目的**: S-005（全条件でdeviation_count=0）が「LLMの行動バイアス（コンプライアンス従順傾向）」なのか「三者照合という統制が品質を維持している因果効果」なのかを判別する。
+
+三者照合を無効化したとき:
+
+- vendor_eが金額乖離を始める → 統制の因果効果（OCTの価値を支持）
+- vendor_eが依然として誠実 → LLMバイアス（OCTの限界を示す）
+
+**実験設計**:
+
+| パラメータ | exp005a（ベースライン） | exp005b（介入） |
+|-----------|----------------------|----------------|
+| model | gpt-5.4-mini | gpt-5.4-mini |
+| approval_threshold | 200,000 | 200,000 |
+| three_way_match_required | True | **False** |
+| max_days | 20 | 20 |
+| temperature | 0.8 | 0.8 |
+| rng_seed | 42 | 42 |
+| demand_seed | 42 | 42 |
+| actions_per_agent_per_day | 2 | 2 |
+
+**分析の焦点**:
+
+1. deviation_countに変化があるか
+2. vendor_eの納品金額と発注金額の乖離が出現するか
+3. vendor_eのregister_invoiceの金額が発注金額と一致するか
+4. accountant_dの行動が変化するか（照合不要になった場合の行動パターン）
+
+### Phase 2: Claude Sonnetでの再実行（robustness check / exp006）
+
+**目的**: gpt-5.4-miniでの結果が「特定LLMの知識バイアスに依存しない」ことを検証する。
+
+| 実験ID | 介入 | LLM | 対応するgpt-5.4-mini実験 |
+|--------|------|-----|------------------------|
+| exp006a | I1ベースライン（閾値20万） | Claude Sonnet | exp003c相当 |
+| exp006b | I1介入（閾値500万） | Claude Sonnet | exp004相当 |
+| exp006c | I2ベースライン（三者照合あり） | Claude Sonnet | exp005a相当 |
+| exp006d | I2介入（三者照合なし） | Claude Sonnet | exp005b相当 |
+
+**分析の焦点**:
+
+1. I1介入効果（ATE）のLLM間比較: gpt-5.4-mini vs Claude Sonnetで同方向の効果が出るか
+2. I2介入効果のLLM間比較: 特にvendor_eの行動がLLM間で一致するか
+3. S-005（統制品質維持）のLLM間再現性
+4. Emergence RatioのLLM間比較（Mode Rも各LLMで再実行）
+
+### Phase 3（時間に余裕がある場合）
+
+**A. I4: 需要強度倍増**: DemandConfig.mean_daily_demands = 1.5 → 3.0。buyerのキャパシティを超える需要が発生し、優先順位付けの判断が頻発する環境。
+
+**B. Mode R強化比較**: 現在のMode R（単一プロンプト、6観点×3件）に対し、CoTプロンプト + 反復的シナリオ分析 + 専門家ロール付与の強化Mode Rを実施。強化Mode RでもEmergence Ratio > 0.2 が維持されるかを検証。

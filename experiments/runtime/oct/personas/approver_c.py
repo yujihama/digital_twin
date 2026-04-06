@@ -50,6 +50,14 @@ APPROVER_C_ACTIONS: List[ActionOption] = [
         },
     ),
     ActionOption(
+        name="reject_request",
+        description="承認待ちのPurchaseRequestを却下する（approve_requestでdecision='rejected'と同等）",
+        parameters_schema={
+            "request_id": "対象のPurchaseRequest ID (str)",
+            "note": "却下理由の短いメモ (str, 任意)",
+        },
+    ),
+    ActionOption(
         name="wait",
         description="この日は判断を保留し次のステップに進む",
         parameters_schema={},

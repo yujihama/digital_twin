@@ -3,7 +3,7 @@
 > **運用ルール**: タスクに進捗があるたびに本ファイルを更新し、feature ブランチでコミット → PR 作成 → main にマージする。
 > 詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照。
 
-最終更新: 2026-04-06 (exp002 results.md 修正 / vendor_id 問題修正 / 97テスト passing)
+最終更新: 2026-04-06 (exp003 全フロー完遂達成 / 18件 draft→pay / 97テスト passing)
 
 ---
 
@@ -36,12 +36,13 @@
 
 ### 🟢 In Progress
 
-_（次のPRで着手）_
+- [ ] **T-009** 介入 I1（承認閾値 100万→500万）実装 — exp003 で baseline 確立済み、次は介入実験
 
 ### 🟡 Next Up
 
 - [ ] **T-008** Mode R 質問プロンプト設計 + 回答構造化
-- [ ] **T-009** 介入 I1（承認閾値 100万→500万）実装
+- [ ] **T-015** buyer_a awaiting_receipt フィルター非対称性の修正判断
+- [ ] **T-016** 複数 seed での再現性検証（exp003 パラメータ、seed=43,44,45）
 
 ### ⬜ Backlog
 
@@ -63,7 +64,8 @@ _（次のPRで着手）_
 - [x] **T-014** OpenAIClient 実装（`oct/llm.py`、LLMClient Protocol 準拠、.env 読み込み、76テスト passing）（2026-04-06）
 - [x] **exp001** 初回実LLM実行（OpenAI gpt-4.1-mini × 5 agents × 15 days × seed=42、75 API calls / 0 errors、全エージェント wait のみという重要な発見）（2026-04-06）
 - [x] **需要生成メカニズム** DemandEvent / DemandConfig / generate_demands / fulfill_demand を実装。Option A+C（環境が確率的需要を生成 → buyer observation に pending_demands として提示）。95テスト passing（2026-04-06）
-- [x] **exp002** 需要生成あり実LLM再実行。buyer デッドロック解消を確認（purchase_requests=8, orders=8, receipts=7）。vendor_id 不一致・承認フロー未到達を次課題として特定（2026-04-06）
+- [x] **exp002** 需要生成あり実LLM再実行。buyer デッドロック解消を確認（purchase_requests=10, orders=9, receipts=9）。vendor_id 不一致・承認フロー未到達を次課題として特定（2026-04-06）
+- [x] **exp003** 全購買フロー完遂テスト。vendor_id 修正（available_vendors）の有効性を確認。18件が draft→order→receipt→invoice→pay を完遂、三者照合 100% 一致。154 API calls / 0 errors（2026-04-06）
 
 ---
 
@@ -71,6 +73,7 @@ _（次のPRで着手）_
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|--------------|
+| 2026-04-06 | exp003 全フロー完遂テスト実行。18件が draft→pay 完遂、三者照合 100% 一致。vendor_e が deliver/invoice を積極実行。154 API calls / 0 errors | #12 |
 | 2026-04-06 | exp002 results.md をトレースから再集計して修正（10 req / 9 ord / 9 rcp）。vendor_id 問題修正（available_vendors 追加）。buyer_a receipt 非対称性を記録。97テスト passing | #11 |
 | 2026-04-06 | exp002 需要生成あり実行。buyer デッドロック解消（10 requests / 9 orders / 9 receipts）。generate_demands デッドコード修正。vendor_id 不一致・承認フロー未到達を次課題として特定 | #10 |
 | 2026-04-06 | 需要生成メカニズム実装（DemandEvent / DemandConfig / generate_demands / fulfill_demand）。Option A+C: 環境が確率的需要を生成し buyer observation に pending_demands として提示。95テスト passing | #9 |
@@ -89,34 +92,4 @@ _（次のPRで着手）_
 
 ## 設計原則：スコープ分離（PR#2レビュー反映）
 
-購買承認フローは OCT プロトタイプの **controlled setting（下限を示す環境）** として位置づける。将来 "購買 + 経費精算 + 在庫管理" のように環境を拡張できるよう、モジュールは以下のレイヤに分離して実装する。
-
-| レイヤ | 役割 | 汎用性 | 該当モジュール |
-|-------|------|--------|---------------|
-| Domain | 業務ルール・状態・遷移 | **購買承認フロー固有**（OK） | `oct/environment.py`, `oct/rules.py` |
-| Agent | LLMエージェントの思考・行動選択 | **汎用**（環境非依存） | `oct/agent.py`（予定） |
-| Runner | シミュレーションループ・ステップ進行 | **汎用**（環境非依存） | `oct/runner.py`（予定） |
-| Logger | 観測イベントのJSONL記録 | **汎用**（環境非依存） | `oct/logger.py`（予定） |
-
-**目指す姿**: 将来新しい業務ドメインを追加する際に、`oct/environment.py` / `oct/rules.py` の差し替えのみで agent / runner / logger は変更不要となること。
-
----
-
-## 進め方の方針（PR#2レビュー反映）
-
-**最速で「環境が動く」ことを確認する**ことを優先する。完璧なプロンプト設計やログ設計は、動くものを見てから調整する。
-
-推奨順序: `T-003（最小プロンプト）→ T-006（APIラッパー）→ T-007（1体5ステップ動作確認）→ T-004（全エージェント追加）→ T-005（ログ整備）`
-
----
-
-## オープンな論点・意思決定待ち
-
-- **[exp001 由来・解決済み] 内在的動機の設計**: Option A+C を採用し実装・検証済み（exp002 で buyer デッドロック解消を確認）。
-- **[exp002 由来・解決済み] vendor_id 不一致**: buyer observation に `available_vendors` フィールドを追加、persona に「available_vendors のIDを使うこと」を明記。exp003 で検証予定。
-- **[exp002 由来] 承認フロー未テスト**: 全購買要求が100万円未満でauto-approve → approver_c 未動作。高額品目追加 or 閾値引き下げで対応。
-- **[exp001/exp002 由来] 介入設計への影響**: 全フロー（draft→order→deliver→invoice→pay）完遂後に T-008/T-009 に進む。
-- **LLMモデル選定**: gpt-4.1-mini でスタート済み。Anthropic（Sonnet / Opus）との比較検証は T-013 以降で実施予定。
-- **エージェント人数**: 5体で運用開始（exp001）
-- **temperature**: 0.8 を exp001 で採用。0.7 / 1.0 との比較は T-013 のロバストネス確認で実施。
-- **失敗ケースの扱い**: LLMが無効なJSONを返したときのフォールバック設計
+購買承認フローは OCT プロトタイプの **controlled setting（下限を示す環境）** として位置づける。将来 "購買 + 経費精算 + 在庫管理" のように環境を拡張できるよう、モジュールは以下のレイヤに分離して実装する

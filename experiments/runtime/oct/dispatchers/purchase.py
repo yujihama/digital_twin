@@ -6,20 +6,24 @@ on the purchase-approval environment without knowing any domain details.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+import random
+from typing import Any, Dict, List, Optional
 
 from oct.agent import AgentAction
-from oct.environment import ApprovalDecision, EnvironmentState
+from oct.environment import ApprovalDecision, DemandEvent, EnvironmentState
 from oct.personas.accountant_d import build_observation as build_accountant_d_observation
 from oct.personas.approver_c import build_observation as build_approver_c_observation
 from oct.personas.buyer_a import build_observation as build_buyer_a_observation
 from oct.personas.buyer_b import build_observation as build_buyer_b_observation
 from oct.personas.vendor_e import build_observation as build_vendor_e_observation
 from oct.rules import (
+    DemandConfig,
     TransitionError,
     advance_day,
     approve_request,
     draft_request,
+    fulfill_demand,
+    generate_demands,
     pay_order,
     place_order,
     record_receipt,
@@ -47,11 +51,27 @@ class PurchaseDispatcher:
       - register_invoice -> rules.register_invoice
       - pay_order       -> rules.pay_order
       - wait            -> no-op
+
+    Demand generation:
+      When ``demand_config`` is provided, ``advance_day()`` generates
+      stochastic demand events each day. This is the Option A+C mechanism
+      identified in exp001: the environment provides internal needs as state,
+      and the LLM decides how to act on them.
     """
 
-    def __init__(self, state: EnvironmentState) -> None:
+    def __init__(
+        self,
+        state: EnvironmentState,
+        demand_config: Optional[DemandConfig] = None,
+        demand_rng_seed: Optional[int] = None,
+    ) -> None:
         self.state = state
         self.state.ensure_capacity_initialized()
+        self.demand_config = demand_config
+        self._demand_rng = random.Random(demand_rng_seed) if demand_config else None
+        # Seed day-0 demands so buyers have something to act on immediately
+        if self.demand_config is not None and self._demand_rng is not None:
+            generate_demands(self.state, self.demand_config, self._demand_rng)
 
     # ---- EnvironmentAdapter Protocol ---------------------------------------
 
@@ -82,8 +102,13 @@ class PurchaseDispatcher:
 
     def advance_day(self) -> None:
         advance_day(self.state)
+        # Generate new demand events for the new day (if configured)
+        if self.demand_config is not None and self._demand_rng is not None:
+            generate_demands(self.state, self.demand_config, self._demand_rng)
 
     def snapshot(self) -> Dict[str, Any]:
+        pending = [d for d in self.state.demand_queue if not d.fulfilled]
+        fulfilled = [d for d in self.state.demand_queue if d.fulfilled]
         return {
             "current_day": self.state.current_day,
             "deviation_count": self.state.deviation_count,
@@ -95,6 +120,9 @@ class PurchaseDispatcher:
                 "receipts": len(self.state.receipts),
                 "invoices": len(self.state.invoices),
                 "payments": len(self.state.payments),
+                "demands_total": len(self.state.demand_queue),
+                "demands_pending": len(pending),
+                "demands_fulfilled": len(fulfilled),
             },
         }
 
@@ -111,6 +139,13 @@ def _handle_draft_request(
         item=str(params["item"]),
         amount=int(params["amount"]),
     )
+    # If a demand_id was specified, mark the demand as fulfilled
+    demand_id = params.get("demand_id")
+    if demand_id:
+        try:
+            fulfill_demand(state, str(demand_id), req.id)
+        except TransitionError:
+            pass  # Non-fatal: demand link is optional
     return {"request_id": req.id, "status": req.status.value}
 
 

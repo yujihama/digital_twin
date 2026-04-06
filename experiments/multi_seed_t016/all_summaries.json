@@ -1,0 +1,430 @@
+[
+  {
+    "tag": "t200000_seed43",
+    "threshold": 200000,
+    "rng_seed": 43,
+    "demand_seed": 42,
+    "model": "gpt-4.1-mini",
+    "temperature": 0.8,
+    "max_days": 20,
+    "elapsed_seconds": 232.9,
+    "api_calls": 172,
+    "total_steps": 172,
+    "counts": {
+      "purchase_requests": 23,
+      "approvals": 3,
+      "orders": 23,
+      "receipts": 23,
+      "invoices": 22,
+      "payments": 22,
+      "demands_total": 41,
+      "demands_pending": 18,
+      "demands_fulfilled": 23
+    },
+    "approvals": [
+      {
+        "day": 2,
+        "agent_id": "approver_c",
+        "request_id": "req_00004",
+        "decision": "approved"
+      },
+      {
+        "day": 13,
+        "agent_id": "approver_c",
+        "request_id": "req_00016",
+        "decision": "approved"
+      },
+      {
+        "day": 14,
+        "agent_id": "approver_c",
+        "request_id": "req_00018",
+        "decision": "approved"
+      }
+    ],
+    "errors": [],
+    "per_agent": {
+      "buyer_b": {
+        "draft_request": 14,
+        "place_order": 14,
+        "wait": 5,
+        "record_receipt": 3
+      },
+      "vendor_e": {
+        "deliver": 10,
+        "register_invoice": 26,
+        "wait": 4
+      },
+      "accountant_d": {
+        "pay_order": 22,
+        "wait": 15
+      },
+      "approver_c": {
+        "wait": 20,
+        "approve_request": 3
+      },
+      "buyer_a": {
+        "wait": 7,
+        "draft_request": 9,
+        "record_receipt": 10,
+        "place_order": 10
+      }
+    },
+    "agent_waits": {
+      "buyer_b": 5,
+      "vendor_e": 4,
+      "accountant_d": 15,
+      "approver_c": 20,
+      "buyer_a": 7
+    },
+    "three_way_match": {},
+    "deviation_count": 0
+  },
+  {
+    "tag": "t200000_seed44",
+    "threshold": 200000,
+    "rng_seed": 44,
+    "demand_seed": 42,
+    "model": "gpt-4.1-mini",
+    "temperature": 0.8,
+    "max_days": 20,
+    "elapsed_seconds": 224.5,
+    "api_calls": 174,
+    "total_steps": 174,
+    "counts": {
+      "purchase_requests": 26,
+      "approvals": 3,
+      "orders": 24,
+      "receipts": 24,
+      "invoices": 23,
+      "payments": 22,
+      "demands_total": 41,
+      "demands_pending": 15,
+      "demands_fulfilled": 26
+    },
+    "approvals": [
+      {
+        "day": 2,
+        "agent_id": "approver_c",
+        "request_id": "req_00003",
+        "decision": "approved"
+      },
+      {
+        "day": 5,
+        "agent_id": "approver_c",
+        "request_id": "req_00007",
+        "decision": "approved"
+      },
+      {
+        "day": 14,
+        "agent_id": "approver_c",
+        "request_id": "req_00018",
+        "decision": "approved"
+      }
+    ],
+    "errors": [],
+    "per_agent": {
+      "approver_c": {
+        "wait": 16,
+        "approve_request": 3,
+        "reject_request": 8
+      },
+      "buyer_b": {
+        "draft_request": 15,
+        "place_order": 13,
+        "wait": 4,
+        "record_receipt": 5
+      },
+      "vendor_e": {
+        "deliver": 10,
+        "register_invoice": 25,
+        "wait": 4
+      },
+      "buyer_a": {
+        "wait": 5,
+        "draft_request": 11,
+        "place_order": 11,
+        "record_receipt": 9
+      },
+      "accountant_d": {
+        "pay_order": 22,
+        "wait": 13
+      }
+    },
+    "agent_waits": {
+      "approver_c": 16,
+      "buyer_b": 4,
+      "vendor_e": 4,
+      "buyer_a": 5,
+      "accountant_d": 13
+    },
+    "three_way_match": {},
+    "deviation_count": 0
+  },
+  {
+    "tag": "t200000_seed45",
+    "threshold": 200000,
+    "rng_seed": 45,
+    "demand_seed": 42,
+    "model": "gpt-4.1-mini",
+    "temperature": 0.8,
+    "max_days": 20,
+    "elapsed_seconds": 199.0,
+    "api_calls": 168,
+    "total_steps": 168,
+    "counts": {
+      "purchase_requests": 24,
+      "approvals": 4,
+      "orders": 23,
+      "receipts": 23,
+      "invoices": 22,
+      "payments": 21,
+      "demands_total": 41,
+      "demands_pending": 17,
+      "demands_fulfilled": 24
+    },
+    "approvals": [
+      {
+        "day": 2,
+        "agent_id": "approver_c",
+        "request_id": "req_00003",
+        "decision": "approved"
+      },
+      {
+        "day": 14,
+        "agent_id": "approver_c",
+        "request_id": "req_00016",
+        "decision": "approved"
+      },
+      {
+        "day": 17,
+        "agent_id": "approver_c",
+        "request_id": "req_00020",
+        "decision": "rejected"
+      },
+      {
+        "day": 17,
+        "agent_id": "approver_c",
+        "request_id": "req_00021",
+        "decision": "approved"
+      }
+    ],
+    "errors": [],
+    "per_agent": {
+      "buyer_a": {
+        "draft_request": 8,
+        "place_order": 8,
+        "record_receipt": 10,
+        "wait": 9
+      },
+      "vendor_e": {
+        "deliver": 9,
+        "register_invoice": 23,
+        "wait": 5
+      },
+      "buyer_b": {
+        "wait": 3,
+        "draft_request": 16,
+        "place_order": 15,
+        "record_receipt": 4
+      },
+      "accountant_d": {
+        "pay_order": 21,
+        "wait": 13
+      },
+      "approver_c": {
+        "wait": 18,
+        "approve_request": 4,
+        "reject_request": 2
+      }
+    },
+    "agent_waits": {
+      "buyer_a": 9,
+      "vendor_e": 5,
+      "buyer_b": 3,
+      "accountant_d": 13,
+      "approver_c": 18
+    },
+    "three_way_match": {},
+    "deviation_count": 0
+  },
+  {
+    "tag": "t5000000_seed43",
+    "threshold": 5000000,
+    "rng_seed": 43,
+    "demand_seed": 42,
+    "model": "gpt-4.1-mini",
+    "temperature": 0.8,
+    "max_days": 20,
+    "elapsed_seconds": 201.4,
+    "api_calls": 174,
+    "total_steps": 174,
+    "counts": {
+      "purchase_requests": 28,
+      "approvals": 0,
+      "orders": 28,
+      "receipts": 27,
+      "invoices": 26,
+      "payments": 26,
+      "demands_total": 41,
+      "demands_pending": 13,
+      "demands_fulfilled": 28
+    },
+    "approvals": [],
+    "errors": [],
+    "per_agent": {
+      "buyer_b": {
+        "draft_request": 15,
+        "place_order": 15,
+        "wait": 2,
+        "record_receipt": 6
+      },
+      "vendor_e": {
+        "deliver": 9,
+        "register_invoice": 26,
+        "wait": 4
+      },
+      "accountant_d": {
+        "pay_order": 26,
+        "wait": 12
+      },
+      "approver_c": {
+        "wait": 20
+      },
+      "buyer_a": {
+        "wait": 1,
+        "record_receipt": 12,
+        "draft_request": 13,
+        "place_order": 13
+      }
+    },
+    "agent_waits": {
+      "buyer_b": 2,
+      "vendor_e": 4,
+      "accountant_d": 12,
+      "approver_c": 20,
+      "buyer_a": 1
+    },
+    "three_way_match": {},
+    "deviation_count": 0
+  },
+  {
+    "tag": "t5000000_seed44",
+    "threshold": 5000000,
+    "rng_seed": 44,
+    "demand_seed": 42,
+    "model": "gpt-4.1-mini",
+    "temperature": 0.8,
+    "max_days": 20,
+    "elapsed_seconds": 195.6,
+    "api_calls": 173,
+    "total_steps": 173,
+    "counts": {
+      "purchase_requests": 28,
+      "approvals": 0,
+      "orders": 28,
+      "receipts": 27,
+      "invoices": 26,
+      "payments": 25,
+      "demands_total": 41,
+      "demands_pending": 13,
+      "demands_fulfilled": 28
+    },
+    "approvals": [],
+    "errors": [],
+    "per_agent": {
+      "approver_c": {
+        "wait": 20
+      },
+      "buyer_b": {
+        "draft_request": 15,
+        "place_order": 15,
+        "record_receipt": 7,
+        "wait": 2
+      },
+      "vendor_e": {
+        "deliver": 11,
+        "register_invoice": 26,
+        "wait": 2
+      },
+      "buyer_a": {
+        "wait": 3,
+        "draft_request": 13,
+        "place_order": 13,
+        "record_receipt": 9
+      },
+      "accountant_d": {
+        "pay_order": 25,
+        "wait": 12
+      }
+    },
+    "agent_waits": {
+      "approver_c": 20,
+      "buyer_b": 2,
+      "vendor_e": 2,
+      "buyer_a": 3,
+      "accountant_d": 12
+    },
+    "three_way_match": {},
+    "deviation_count": 0
+  },
+  {
+    "tag": "t5000000_seed45",
+    "threshold": 5000000,
+    "rng_seed": 45,
+    "demand_seed": 42,
+    "model": "gpt-4.1-mini",
+    "temperature": 0.8,
+    "max_days": 20,
+    "elapsed_seconds": 211.9,
+    "api_calls": 173,
+    "total_steps": 173,
+    "counts": {
+      "purchase_requests": 29,
+      "approvals": 0,
+      "orders": 28,
+      "receipts": 28,
+      "invoices": 27,
+      "payments": 26,
+      "demands_total": 41,
+      "demands_pending": 12,
+      "demands_fulfilled": 29
+    },
+    "approvals": [],
+    "errors": [],
+    "per_agent": {
+      "buyer_a": {
+        "draft_request": 13,
+        "place_order": 13,
+        "wait": 1,
+        "record_receipt": 12
+      },
+      "vendor_e": {
+        "deliver": 9,
+        "register_invoice": 27,
+        "wait": 3
+      },
+      "buyer_b": {
+        "wait": 1,
+        "draft_request": 16,
+        "place_order": 15,
+        "record_receipt": 7
+      },
+      "accountant_d": {
+        "pay_order": 26,
+        "wait": 10
+      },
+      "approver_c": {
+        "wait": 20
+      }
+    },
+    "agent_waits": {
+      "buyer_a": 1,
+      "vendor_e": 3,
+      "buyer_b": 1,
+      "accountant_d": 10,
+      "approver_c": 20
+    },
+    "three_way_match": {},
+    "deviation_count": 0
+  }
+]

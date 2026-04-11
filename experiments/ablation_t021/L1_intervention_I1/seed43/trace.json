@@ -1,0 +1,4156 @@
+{
+  "steps": [
+    {
+      "day": 0,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 0,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [],
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: nothing to do"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 0,
+        "remaining_capacity": 6,
+        "my_orders": [],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no orders to handle"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 0,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no payable orders"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 0,
+        "remaining_capacity": 10,
+        "approval_threshold": 5000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no pending approvals"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 0,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 0,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [],
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: nothing to do"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 1,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00001",
+            "department": "品質管理部",
+            "item": "測定器校正サービス",
+            "amount_hint": 854927.0,
+            "urgency": "normal",
+            "generated_day": 1
+          }
+        ],
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "測定器校正サービス",
+          "amount": 854927,
+          "demand_id": "dem_00001"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00001",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 1,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "drafted",
+            "created_day": 1
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00001"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00001"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00001",
+          "amount": 854927.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 1,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [],
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: nothing to do"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 1,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": false,
+            "delivered_amount": null,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "deliver",
+        "parameters": {
+          "order_id": "ord_00001",
+          "delivered_amount": 854927.0
+        },
+        "reasoning": "RB-min: deliver oldest undelivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00001",
+          "delivered_amount": 854927.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 1,
+        "remaining_capacity": 5,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": []
+      },
+      "action": {
+        "action_type": "register_invoice",
+        "parameters": {
+          "order_id": "ord_00001",
+          "amount": 854927.0
+        },
+        "reasoning": "RB-min: invoice oldest delivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "invoice_id": "inv_00001",
+          "amount": 854927.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 1,
+        "remaining_capacity": 10,
+        "approval_threshold": 5000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no pending approvals"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 1,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [
+          {
+            "order_id": "ord_00001",
+            "vendor": "vendor_e",
+            "order_amount": 854927.0,
+            "invoice_amount": 854927.0,
+            "delivered_amount": 854927.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          }
+        ],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "pay_order",
+        "parameters": {
+          "order_id": "ord_00001",
+          "amount": 854927.0
+        },
+        "reasoning": "RB-min: pay oldest payable order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "payment_id": "pay_00001",
+          "amount": 854927.0,
+          "three_way_matched": true
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 1,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 1,
+        "remaining_capacity": 7,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no payable orders"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 2,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00002",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 33213.0,
+            "urgency": "high",
+            "generated_day": 2
+          },
+          {
+            "id": "dem_00003",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 275532.0,
+            "urgency": "normal",
+            "generated_day": 2
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "安全手袋 100双",
+          "amount": 33213,
+          "demand_id": "dem_00002"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00002",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 2,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00003",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 275532.0,
+            "urgency": "normal",
+            "generated_day": 2
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "drafted",
+            "created_day": 2
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00002"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": []
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00002"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00002",
+          "amount": 33213.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 2,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00003",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 275532.0,
+            "urgency": "normal",
+            "generated_day": 2
+          }
+        ],
+        "my_requests": [],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "検査用ゲージ",
+          "amount": 275532,
+          "demand_id": "dem_00003"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00003",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 2,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "drafted",
+            "created_day": 2
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00003"
+        ],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00003"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00003",
+          "amount": 275532.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 2,
+        "remaining_capacity": 10,
+        "approval_threshold": 5000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no pending approvals"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 2,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": false,
+            "delivered_amount": null,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": false,
+            "delivered_amount": null,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "deliver",
+        "parameters": {
+          "order_id": "ord_00002",
+          "delivered_amount": 33213.0
+        },
+        "reasoning": "RB-min: deliver oldest undelivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00002",
+          "delivered_amount": 33213.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 2,
+        "remaining_capacity": 5,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": false,
+            "delivered_amount": null,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "register_invoice",
+        "parameters": {
+          "order_id": "ord_00002",
+          "amount": 33213.0
+        },
+        "reasoning": "RB-min: invoice oldest delivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "invoice_id": "inv_00002",
+          "amount": 33213.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 2,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [
+          {
+            "order_id": "ord_00002",
+            "vendor": "vendor_e",
+            "order_amount": 33213.0,
+            "invoice_amount": 33213.0,
+            "delivered_amount": 33213.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          }
+        ],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "pay_order",
+        "parameters": {
+          "order_id": "ord_00002",
+          "amount": 33213.0
+        },
+        "reasoning": "RB-min: pay oldest payable order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "payment_id": "pay_00002",
+          "amount": 33213.0,
+          "three_way_matched": true
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 2,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 2,
+        "remaining_capacity": 7,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no payable orders"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 3,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "ordered",
+            "created_day": 2
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00003",
+            "request_id": "req_00003",
+            "vendor": "vendor_e",
+            "amount": 275532.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00003",
+          "delivered_amount": 275532.0
+        },
+        "reasoning": "RB-min: receive oldest awaiting order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00003",
+          "delivered_amount": 275532.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 3,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "received",
+            "created_day": 2
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: nothing to do"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 3,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "received",
+            "created_day": 2
+          }
+        ]
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: nothing to do"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 3,
+        "remaining_capacity": 10,
+        "approval_threshold": 5000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no pending approvals"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 3,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no payable orders"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 3,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "register_invoice",
+        "parameters": {
+          "order_id": "ord_00003",
+          "amount": 275532.0
+        },
+        "reasoning": "RB-min: invoice oldest delivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "invoice_id": "inv_00003",
+          "amount": 275532.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 3,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 3,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no orders to handle"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 4,
+        "remaining_capacity": 10,
+        "approval_threshold": 5000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no pending approvals"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 4,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00004",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 249598.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00005",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 45120.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "received",
+            "created_day": 2
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "検査用ゲージ",
+          "amount": 249598,
+          "demand_id": "dem_00004"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00004",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 4,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00005",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 45120.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "received",
+            "created_day": 2
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 249598.0,
+            "status": "drafted",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00004"
+        ],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00004"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00004",
+          "amount": 249598.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 4,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00005",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 45120.0,
+            "urgency": "normal",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "received",
+            "created_day": 2
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 249598.0,
+            "status": "ordered",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "コピー用紙 A4 50箱",
+          "amount": 45120,
+          "demand_id": "dem_00005"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00005",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 4,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 45120.0,
+            "status": "drafted",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00005"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "received",
+            "created_day": 2
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 249598.0,
+            "status": "ordered",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00005"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00005",
+          "amount": 45120.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 4,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [
+          {
+            "order_id": "ord_00003",
+            "vendor": "vendor_e",
+            "order_amount": 275532.0,
+            "invoice_amount": 275532.0,
+            "delivered_amount": 275532.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          }
+        ],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "pay_order",
+        "parameters": {
+          "order_id": "ord_00003",
+          "amount": 275532.0
+        },
+        "reasoning": "RB-min: pay oldest payable order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "payment_id": "pay_00003",
+          "amount": 275532.0,
+          "three_way_matched": true
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 4,
+        "remaining_capacity": 7,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no payable orders"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 4,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "placed_day": 4,
+            "delivered": false,
+            "delivered_amount": null,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "placed_day": 4,
+            "delivered": false,
+            "delivered_amount": null,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "paid_day": 4,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "deliver",
+        "parameters": {
+          "order_id": "ord_00004",
+          "delivered_amount": 249598.0
+        },
+        "reasoning": "RB-min: deliver oldest undelivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00004",
+          "delivered_amount": 249598.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 4,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 4,
+        "remaining_capacity": 5,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 249598.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "placed_day": 4,
+            "delivered": false,
+            "delivered_amount": null,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "paid_day": 4,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "register_invoice",
+        "parameters": {
+          "order_id": "ord_00004",
+          "amount": 249598.0
+        },
+        "reasoning": "RB-min: invoice oldest delivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "invoice_id": "inv_00004",
+          "amount": 249598.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 5,
+        "remaining_capacity": 10,
+        "approval_threshold": 5000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no pending approvals"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 5,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00007",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 210304.0,
+            "urgency": "high",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00008",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 52790.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 45120.0,
+            "status": "ordered",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00005",
+            "request_id": "req_00005",
+            "vendor": "vendor_e",
+            "amount": 45120.0
+          }
+        ],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 249598.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00005",
+          "delivered_amount": 45120.0
+        },
+        "reasoning": "RB-min: receive oldest awaiting order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00005",
+          "delivered_amount": 45120.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 5,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00007",
+            "department": "品質管理部",
+            "item": "検査用ゲージ",
+            "amount_hint": 210304.0,
+            "urgency": "high",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00008",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 52790.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 45120.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 249598.0,
+            "status": "received",
+            "created_day": 4
+          }
+        ]
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "検査用ゲージ",
+          "amount": 210304,
+          "demand_id": "dem_00007"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00006",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 5,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [
+          {
+            "order_id": "ord_00004",
+            "vendor": "vendor_e",
+            "order_amount": 249598.0,
+            "invoice_amount": 249598.0,
+            "delivered_amount": 249598.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          }
+        ],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "pay_order",
+        "parameters": {
+          "order_id": "ord_00004",
+          "amount": 249598.0
+        },
+        "reasoning": "RB-min: pay oldest payable order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "payment_id": "pay_00004",
+          "amount": 249598.0,
+          "three_way_matched": true
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 5,
+        "remaining_capacity": 7,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no payable orders"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 5,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 249598.0,
+            "invoiced": true,
+            "invoice_amount": 249598.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 45120.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "paid_day": 4,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "paid_day": 5,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "register_invoice",
+        "parameters": {
+          "order_id": "ord_00005",
+          "amount": 45120.0
+        },
+        "reasoning": "RB-min: invoice oldest delivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "invoice_id": "inv_00005",
+          "amount": 45120.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 5,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 249598.0,
+            "invoiced": true,
+            "invoice_amount": 249598.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 45120.0,
+            "invoiced": true,
+            "invoice_amount": 45120.0,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "paid_day": 4,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "paid_day": 5,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no orders to handle"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 5,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00008",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 52790.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "コピー用紙 A4 50箱",
+          "amount": 52790,
+          "demand_id": "dem_00008"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00007",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 5,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 5,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 52790.0,
+            "status": "drafted",
+            "created_day": 5
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00007"
+        ],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00007"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00006",
+          "amount": 52790.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 6,
+        "remaining_capacity": 10,
+        "approval_threshold": 5000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no pending approvals"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 6,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 249598.0,
+            "invoiced": true,
+            "invoice_amount": 249598.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 45120.0,
+            "invoiced": true,
+            "invoice_amount": 45120.0,
+            "paid": false
+          },
+          {
+            "order_id": "ord_00006",
+            "amount": 52790.0,
+            "placed_day": 5,
+            "delivered": false,
+            "delivered_amount": null,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "paid_day": 4,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "paid_day": 5,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "deliver",
+        "parameters": {
+          "order_id": "ord_00006",
+          "delivered_amount": 52790.0
+        },
+        "reasoning": "RB-min: deliver oldest undelivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00006",
+          "delivered_amount": 52790.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 6,
+        "remaining_capacity": 5,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 249598.0,
+            "invoiced": true,
+            "invoice_amount": 249598.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 45120.0,
+            "invoiced": true,
+            "invoice_amount": 45120.0,
+            "paid": false
+          },
+          {
+            "order_id": "ord_00006",
+            "amount": 52790.0,
+            "placed_day": 5,
+            "delivered": true,
+            "delivered_amount": 52790.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "paid_day": 4,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "paid_day": 5,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "register_invoice",
+        "parameters": {
+          "order_id": "ord_00006",
+          "amount": 52790.0
+        },
+        "reasoning": "RB-min: invoice oldest delivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "invoice_id": "inv_00006",
+          "amount": 52790.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 6,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [
+          {
+            "order_id": "ord_00005",
+            "vendor": "vendor_e",
+            "order_amount": 45120.0,
+            "invoice_amount": 45120.0,
+            "delivered_amount": 45120.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00006",
+            "vendor": "vendor_e",
+            "order_amount": 52790.0,
+            "invoice_amount": 52790.0,
+            "delivered_amount": 52790.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          }
+        ],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "pay_order",
+        "parameters": {
+          "order_id": "ord_00005",
+          "amount": 45120.0
+        },
+        "reasoning": "RB-min: pay oldest payable order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "payment_id": "pay_00005",
+          "amount": 45120.0,
+          "three_way_matched": true
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 6,
+        "remaining_capacity": 7,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [
+          {
+            "order_id": "ord_00006",
+            "vendor": "vendor_e",
+            "order_amount": 52790.0,
+            "invoice_amount": 52790.0,
+            "delivered_amount": 52790.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          }
+        ],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "pay_order",
+        "parameters": {
+          "order_id": "ord_00006",
+          "amount": 52790.0
+        },
+        "reasoning": "RB-min: pay oldest payable order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "payment_id": "pay_00006",
+          "amount": 52790.0,
+          "three_way_matched": true
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 6,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00010",
+            "department": "総務部",
+            "item": "オフィスチェア",
+            "amount_hint": 156011.0,
+            "urgency": "high",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00011",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1230058.0,
+            "urgency": "normal",
+            "generated_day": 6
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 52790.0,
+            "status": "paid",
+            "created_day": 5
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "オフィスチェア",
+          "amount": 156011,
+          "demand_id": "dem_00010"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00008",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 6,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00011",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1230058.0,
+            "urgency": "normal",
+            "generated_day": 6
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 52790.0,
+            "status": "paid",
+            "created_day": 5
+          },
+          {
+            "id": "req_00008",
+            "vendor": "vendor_e",
+            "item": "オフィスチェア",
+            "amount": 156011.0,
+            "status": "drafted",
+            "created_day": 6
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00008"
+        ],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00008"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00007",
+          "amount": 156011.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 6,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00011",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1230058.0,
+            "urgency": "normal",
+            "generated_day": 6
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 45120.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 210304.0,
+            "status": "drafted",
+            "created_day": 5
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00006"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 52790.0,
+            "status": "paid",
+            "created_day": 5
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 156011.0,
+            "status": "ordered",
+            "created_day": 6
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00006"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00008",
+          "amount": 210304.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 6,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 6,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00011",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1230058.0,
+            "urgency": "normal",
+            "generated_day": 6
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 45120.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 210304.0,
+            "status": "ordered",
+            "created_day": 5
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00008",
+            "request_id": "req_00006",
+            "vendor": "vendor_e",
+            "amount": 210304.0
+          }
+        ],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 52790.0,
+            "status": "paid",
+            "created_day": 5
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 156011.0,
+            "status": "ordered",
+            "created_day": 6
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00008",
+          "delivered_amount": 210304.0
+        },
+        "reasoning": "RB-min: receive oldest awaiting order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00007",
+          "delivered_amount": 210304.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 7,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00011",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1230058.0,
+            "urgency": "normal",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00012",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 53445.0,
+            "urgency": "normal",
+            "generated_day": 7
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 52790.0,
+            "status": "paid",
+            "created_day": 5
+          },
+          {
+            "id": "req_00008",
+            "vendor": "vendor_e",
+            "item": "オフィスチェア",
+            "amount": 156011.0,
+            "status": "ordered",
+            "created_day": 6
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [
+          {
+            "order_id": "ord_00007",
+            "request_id": "req_00008",
+            "vendor": "vendor_e",
+            "amount": 156011.0
+          }
+        ]
+      },
+      "action": {
+        "action_type": "record_receipt",
+        "parameters": {
+          "order_id": "ord_00007",
+          "delivered_amount": 156011.0
+        },
+        "reasoning": "RB-min: receive oldest awaiting order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "receipt_id": "rcp_00008",
+          "delivered_amount": 156011.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "buyer_a",
+      "observation": {
+        "agent_id": "buyer_a",
+        "current_day": 7,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00009",
+            "department": "製造部",
+            "item": "ボルトセット M8",
+            "amount_hint": 52455.0,
+            "urgency": "normal",
+            "generated_day": 5
+          },
+          {
+            "id": "dem_00011",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1230058.0,
+            "urgency": "normal",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00012",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 53445.0,
+            "urgency": "normal",
+            "generated_day": 7
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00003",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00004",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00007",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 52790.0,
+            "status": "paid",
+            "created_day": 5
+          },
+          {
+            "id": "req_00008",
+            "vendor": "vendor_e",
+            "item": "オフィスチェア",
+            "amount": 156011.0,
+            "status": "received",
+            "created_day": 6
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": []
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "ボルトセット M8",
+          "amount": 52455,
+          "demand_id": "dem_00009"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00009",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 7,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 249598.0,
+            "invoiced": true,
+            "invoice_amount": 249598.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 45120.0,
+            "invoiced": true,
+            "invoice_amount": 45120.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00006",
+            "amount": 52790.0,
+            "placed_day": 5,
+            "delivered": true,
+            "delivered_amount": 52790.0,
+            "invoiced": true,
+            "invoice_amount": 52790.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00007",
+            "amount": 156011.0,
+            "placed_day": 6,
+            "delivered": true,
+            "delivered_amount": 156011.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          },
+          {
+            "order_id": "ord_00008",
+            "amount": 210304.0,
+            "placed_day": 6,
+            "delivered": true,
+            "delivered_amount": 210304.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "paid_day": 4,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "paid_day": 5,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "paid_day": 6,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00006",
+            "amount": 52790.0,
+            "paid_day": 6,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "register_invoice",
+        "parameters": {
+          "order_id": "ord_00007",
+          "amount": 156011.0
+        },
+        "reasoning": "RB-min: invoice oldest delivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "invoice_id": "inv_00007",
+          "amount": 156011.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "vendor_e",
+      "observation": {
+        "agent_id": "vendor_e",
+        "current_day": 7,
+        "remaining_capacity": 6,
+        "my_orders": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "placed_day": 1,
+            "delivered": true,
+            "delivered_amount": 854927.0,
+            "invoiced": true,
+            "invoice_amount": 854927.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 33213.0,
+            "invoiced": true,
+            "invoice_amount": 33213.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "placed_day": 2,
+            "delivered": true,
+            "delivered_amount": 275532.0,
+            "invoiced": true,
+            "invoice_amount": 275532.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 249598.0,
+            "invoiced": true,
+            "invoice_amount": 249598.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "placed_day": 4,
+            "delivered": true,
+            "delivered_amount": 45120.0,
+            "invoiced": true,
+            "invoice_amount": 45120.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00006",
+            "amount": 52790.0,
+            "placed_day": 5,
+            "delivered": true,
+            "delivered_amount": 52790.0,
+            "invoiced": true,
+            "invoice_amount": 52790.0,
+            "paid": true
+          },
+          {
+            "order_id": "ord_00007",
+            "amount": 156011.0,
+            "placed_day": 6,
+            "delivered": true,
+            "delivered_amount": 156011.0,
+            "invoiced": true,
+            "invoice_amount": 156011.0,
+            "paid": false
+          },
+          {
+            "order_id": "ord_00008",
+            "amount": 210304.0,
+            "placed_day": 6,
+            "delivered": true,
+            "delivered_amount": 210304.0,
+            "invoiced": false,
+            "invoice_amount": null,
+            "paid": false
+          }
+        ],
+        "recent_payments_received": [
+          {
+            "order_id": "ord_00001",
+            "amount": 854927.0,
+            "paid_day": 1,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00002",
+            "amount": 33213.0,
+            "paid_day": 2,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00003",
+            "amount": 275532.0,
+            "paid_day": 4,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00004",
+            "amount": 249598.0,
+            "paid_day": 5,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00005",
+            "amount": 45120.0,
+            "paid_day": 6,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00006",
+            "amount": 52790.0,
+            "paid_day": 6,
+            "three_way_matched": true
+          }
+        ]
+      },
+      "action": {
+        "action_type": "register_invoice",
+        "parameters": {
+          "order_id": "ord_00008",
+          "amount": 210304.0
+        },
+        "reasoning": "RB-min: invoice oldest delivered order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "invoice_id": "inv_00008",
+          "amount": 210304.0
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "approver_c",
+      "observation": {
+        "agent_id": "approver_c",
+        "current_day": 7,
+        "remaining_capacity": 10,
+        "approval_threshold": 5000000.0,
+        "pending_approvals": [],
+        "recent_approvals": []
+      },
+      "action": {
+        "action_type": "wait",
+        "parameters": {},
+        "reasoning": "RB-min: no pending approvals"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "action": "wait"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 7,
+        "remaining_capacity": 8,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [
+          {
+            "order_id": "ord_00007",
+            "vendor": "vendor_e",
+            "order_amount": 156011.0,
+            "invoice_amount": 156011.0,
+            "delivered_amount": 156011.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          },
+          {
+            "order_id": "ord_00008",
+            "vendor": "vendor_e",
+            "order_amount": 210304.0,
+            "invoice_amount": 210304.0,
+            "delivered_amount": 210304.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          }
+        ],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "pay_order",
+        "parameters": {
+          "order_id": "ord_00007",
+          "amount": 156011.0
+        },
+        "reasoning": "RB-min: pay oldest payable order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "payment_id": "pay_00007",
+          "amount": 156011.0,
+          "three_way_matched": true
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "accountant_d",
+      "observation": {
+        "agent_id": "accountant_d",
+        "current_day": 7,
+        "remaining_capacity": 7,
+        "three_way_match_required": true,
+        "three_way_match_tolerance": 0.0,
+        "payable_orders": [
+          {
+            "order_id": "ord_00008",
+            "vendor": "vendor_e",
+            "order_amount": 210304.0,
+            "invoice_amount": 210304.0,
+            "delivered_amount": 210304.0,
+            "has_receipt": true,
+            "three_way_matched": true
+          }
+        ],
+        "deviation_count": 0
+      },
+      "action": {
+        "action_type": "pay_order",
+        "parameters": {
+          "order_id": "ord_00008",
+          "amount": 210304.0
+        },
+        "reasoning": "RB-min: pay oldest payable order"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "payment_id": "pay_00008",
+          "amount": 210304.0,
+          "three_way_matched": true
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 7,
+        "remaining_capacity": 5,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00011",
+            "department": "情報システム部",
+            "item": "ノートPC",
+            "amount_hint": 1230058.0,
+            "urgency": "normal",
+            "generated_day": 6
+          },
+          {
+            "id": "dem_00012",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 53445.0,
+            "urgency": "normal",
+            "generated_day": 7
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 45120.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 210304.0,
+            "status": "paid",
+            "created_day": 5
+          }
+        ],
+        "ready_to_order_request_ids": [],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 52790.0,
+            "status": "paid",
+            "created_day": 5
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 156011.0,
+            "status": "paid",
+            "created_day": 6
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 52455.0,
+            "status": "drafted",
+            "created_day": 7
+          }
+        ]
+      },
+      "action": {
+        "action_type": "draft_request",
+        "parameters": {
+          "vendor": "vendor_e",
+          "item": "ノートPC",
+          "amount": 1230058,
+          "demand_id": "dem_00011"
+        },
+        "reasoning": "RB-min: draft for highest-priority demand"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "request_id": "req_00010",
+          "status": "drafted"
+        },
+        "error": null
+      },
+      "error": null
+    },
+    {
+      "day": 7,
+      "agent_id": "buyer_b",
+      "observation": {
+        "agent_id": "buyer_b",
+        "current_day": 7,
+        "remaining_capacity": 4,
+        "approval_threshold": 5000000.0,
+        "available_vendors": [
+          "vendor_e"
+        ],
+        "pending_demands": [
+          {
+            "id": "dem_00006",
+            "department": "製造部",
+            "item": "安全手袋 100双",
+            "amount_hint": 28685.0,
+            "urgency": "low",
+            "generated_day": 4
+          },
+          {
+            "id": "dem_00012",
+            "department": "総務部",
+            "item": "コピー用紙 A4 50箱",
+            "amount_hint": 53445.0,
+            "urgency": "normal",
+            "generated_day": 7
+          }
+        ],
+        "my_requests": [
+          {
+            "id": "req_00001",
+            "vendor": "vendor_e",
+            "item": "測定器校正サービス",
+            "amount": 854927.0,
+            "status": "paid",
+            "created_day": 1
+          },
+          {
+            "id": "req_00002",
+            "vendor": "vendor_e",
+            "item": "安全手袋 100双",
+            "amount": 33213.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "id": "req_00005",
+            "vendor": "vendor_e",
+            "item": "コピー用紙 A4 50箱",
+            "amount": 45120.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "id": "req_00006",
+            "vendor": "vendor_e",
+            "item": "検査用ゲージ",
+            "amount": 210304.0,
+            "status": "paid",
+            "created_day": 5
+          },
+          {
+            "id": "req_00010",
+            "vendor": "vendor_e",
+            "item": "ノートPC",
+            "amount": 1230058.0,
+            "status": "drafted",
+            "created_day": 7
+          }
+        ],
+        "ready_to_order_request_ids": [
+          "req_00010"
+        ],
+        "awaiting_receipt_orders": [],
+        "peer_recent_requests": [
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 275532.0,
+            "status": "paid",
+            "created_day": 2
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 249598.0,
+            "status": "paid",
+            "created_day": 4
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 52790.0,
+            "status": "paid",
+            "created_day": 5
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 156011.0,
+            "status": "paid",
+            "created_day": 6
+          },
+          {
+            "requester": "buyer_a",
+            "vendor": "vendor_e",
+            "amount": 52455.0,
+            "status": "drafted",
+            "created_day": 7
+          }
+        ]
+      },
+      "action": {
+        "action_type": "place_order",
+        "parameters": {
+          "request_id": "req_00010"
+        },
+        "reasoning": "RB-min: place oldest approved request"
+      },
+      "dispatch_result": {
+        "ok": true,
+        "details": {
+          "order_id": "ord_00009",
+          "amount": 1230058.0
+        },
+        "error": null
+      },
+      "error": null
+    }
+  ],
+  "final_snapshot": {
+    "current_day": 8,
+    "deviation_count": 0,
+    "error_count": 0,
+    "counts": {
+      "purchase_requests": 10,
+      "approvals": 0,
+      "orders": 9,
+      "receipts": 8,
+      "invoices": 8,
+      "payments": 8,
+      "demands_total": 12,
+      "demands_pending": 2,
+      "demands_fulfilled": 10
+    }
+  }
+}

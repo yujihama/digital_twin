@@ -1,0 +1,472 @@
+"""T-021b ablation runner — Baseline Ladder × regime sweep.
+
+This script implements the experiment plan in ``docs/09_ablation_plan.md``:
+
+  axis 1 (role-wise)        : not yet swept here, defaults to "all RB-min"
+                              or "all LLM"; partial-swap sweeps are deferred
+                              to T-022.
+  axis 2 (Baseline Ladder)  : L0 random / L1 RB-min / L3 LLM
+                              (L2 RB-score is not implemented yet — see
+                              docs/08 §6.1; placeholder enum value is kept
+                              so result files line up with the planned
+                              ladder when L2 lands.)
+  axis 3 (regime)           : baseline / intervention_I1 (high threshold) /
+                              intervention_I2 (no three-way match)
+
+Usage examples
+--------------
+::
+
+    # Run a single cell
+    python scripts/run_ablation.py --level L1 --regime baseline --seeds 42
+
+    # Run the L1 sweep (no API key required)
+    python scripts/run_ablation.py --level L1 --all-regimes --seeds 42 43 44
+
+    # Run the L3 sweep (requires OPENAI_API_KEY)
+    python scripts/run_ablation.py --level L3 --all-regimes --seeds 42 43 44
+
+    # Full ladder × regime sweep (skips L3 if no API key is configured)
+    python scripts/run_ablation.py --all-levels --all-regimes --seeds 42 43 44
+
+Output layout
+-------------
+::
+
+    experiments/ablation_t021/
+        {level}_{regime}/
+            seed{N}/
+                trace.json
+                summary.json
+        ablation_summary.json   # combined summary across all cells
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import random
+import sys
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+# Ensure the runtime package root is on sys.path when invoked as a script.
+RUNTIME_ROOT = Path(__file__).resolve().parents[1]
+if str(RUNTIME_ROOT) not in sys.path:
+    sys.path.insert(0, str(RUNTIME_ROOT))
+
+from oct.agent import Agent, AgentAction, LLMClient  # noqa: E402
+from oct.agents.rb_min import build_rb_min_agents  # noqa: E402
+from oct.dispatchers.purchase import PurchaseDispatcher  # noqa: E402
+from oct.environment import EnvironmentState  # noqa: E402
+from oct.personas.accountant_d import make_agent as make_accountant_d  # noqa: E402
+from oct.personas.approver_c import make_agent as make_approver_c  # noqa: E402
+from oct.personas.buyer_a import make_agent as make_buyer_a  # noqa: E402
+from oct.personas.buyer_b import make_agent as make_buyer_b  # noqa: E402
+from oct.personas.vendor_e import make_agent as make_vendor_e  # noqa: E402
+from oct.rules import DemandConfig  # noqa: E402
+from oct.runner import run_simulation  # noqa: E402
+
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+
+
+OUTPUT_BASE = RUNTIME_ROOT.parent / "ablation_t021"
+
+# Ladder levels we know how to construct today.
+KNOWN_LEVELS = ("L0", "L1", "L3")
+
+# Regime presets — see docs/09_ablation_plan.md §2 axis 3.
+@dataclass(frozen=True)
+class Regime:
+    name: str
+    approval_threshold: float
+    three_way_match_required: bool
+    mean_daily_demands: float
+    actions_per_agent_per_day: int
+
+
+REGIMES: Dict[str, Regime] = {
+    "baseline": Regime(
+        name="baseline",
+        approval_threshold=200_000.0,
+        three_way_match_required=True,
+        mean_daily_demands=1.5,
+        actions_per_agent_per_day=2,
+    ),
+    "intervention_I1": Regime(
+        name="intervention_I1",
+        approval_threshold=5_000_000.0,
+        three_way_match_required=True,
+        mean_daily_demands=1.5,
+        actions_per_agent_per_day=2,
+    ),
+    "intervention_I2": Regime(
+        name="intervention_I2",
+        approval_threshold=200_000.0,
+        three_way_match_required=False,
+        mean_daily_demands=1.5,
+        actions_per_agent_per_day=2,
+    ),
+}
+
+DEFAULT_MAX_DAYS = 5
+DEFAULT_LLM_MODEL = os.environ.get("OCT_LLM_MODEL", "gpt-4.1-mini")
+
+
+# ---------------------------------------------------------------------------
+# Agent builders for each ladder level
+# ---------------------------------------------------------------------------
+
+
+class _RandomLLM:
+    """LLM stub that always returns a `wait` action.
+
+    Strictly speaking this is not L0 (random over the action space) — that
+    would require knowing each agent's action schema, which the runner does
+    not expose to the LLM client. As a stand-in we emit `wait`, which gives a
+    "do nothing" baseline. Real L0 lives on T-027 once trace metadata is in
+    place.
+    """
+
+    def __init__(self, seed: int = 0) -> None:
+        self._rng = random.Random(seed)
+        self.call_count = 0
+
+    def complete(self, system: str, user: str, temperature: float = 0.0) -> str:
+        self.call_count += 1
+        return '{"action_type": "wait", "parameters": {}}'
+
+
+class _ForbiddenLLM:
+    """LLM that fails the run if invoked. Used for L1 to prove no LLM call."""
+
+    def complete(self, system: str, user: str, temperature: float = 0.0) -> str:
+        raise RuntimeError("RB-min run must not call the LLM client")
+
+
+def _build_l1_agents() -> List[Agent]:
+    """RB-min cast as a list (runner expects a list).
+
+    NOTE: ``build_rb_min_agents()`` returns a dict keyed by agent_id; the
+    runner expects a list. We convert here so callers don't have to. (See
+    PR #22 review comment.)
+    """
+    return list(build_rb_min_agents().values())
+
+
+def _build_l3_agents() -> List[Agent]:
+    """Standard LLM cast (one of each persona)."""
+    return [
+        make_buyer_a(),
+        make_buyer_b(),
+        make_approver_c(),
+        make_accountant_d(),
+        make_vendor_e(),
+    ]
+
+
+def _build_llm(level: str, seed: int, model: str) -> LLMClient:
+    if level == "L0":
+        return _RandomLLM(seed=seed)
+    if level == "L1":
+        return _ForbiddenLLM()
+    if level == "L3":
+        try:
+            from oct.llm import OpenAIClient  # type: ignore  # noqa: E402
+        except ImportError as exc:
+            raise SystemExit(
+                f"L3 requires the openai client (oct.llm.OpenAIClient): {exc}"
+            )
+        if not os.environ.get("OPENAI_API_KEY"):
+            raise SystemExit(
+                "L3 requires OPENAI_API_KEY in the environment. Set it before"
+                " running, or restrict the sweep to --level L1."
+            )
+        return OpenAIClient(model=model)
+    raise ValueError(f"unknown level: {level}")
+
+
+def _build_agents(level: str) -> List[Agent]:
+    if level == "L0":
+        # L0 reuses the LLM persona shells but with the random/wait LLM.
+        return _build_l3_agents()
+    if level == "L1":
+        return _build_l1_agents()
+    if level == "L3":
+        return _build_l3_agents()
+    raise ValueError(f"unknown level: {level}")
+
+
+# ---------------------------------------------------------------------------
+# Single-cell run
+# ---------------------------------------------------------------------------
+
+
+def run_cell(
+    *,
+    level: str,
+    regime: Regime,
+    seed: int,
+    max_days: int,
+    model: str,
+    out_root: Path,
+) -> Dict[str, Any]:
+    """Run one (level, regime, seed) cell and return its summary dict."""
+    cell_tag = f"{level}_{regime.name}"
+    cell_dir = out_root / cell_tag / f"seed{seed}"
+    cell_dir.mkdir(parents=True, exist_ok=True)
+
+    state = EnvironmentState(current_day=0)
+    state.controls.approval_threshold = regime.approval_threshold
+    state.controls.three_way_match_required = regime.three_way_match_required
+
+    dispatcher = PurchaseDispatcher(
+        state,
+        demand_config=DemandConfig(mean_daily_demands=regime.mean_daily_demands),
+        demand_rng_seed=seed,
+    )
+
+    agents = _build_agents(level)
+    llm = _build_llm(level=level, seed=seed, model=model)
+
+    t0 = time.time()
+    trace = run_simulation(
+        env=dispatcher,
+        agents=agents,
+        llm=llm,
+        max_days=max_days,
+        temperature=0.0 if level in ("L0", "L1") else 0.8,
+        shuffle_agents=True,
+        rng_seed=seed,
+        actions_per_agent_per_day=regime.actions_per_agent_per_day,
+    )
+    elapsed = round(time.time() - t0, 3)
+
+    # Trace dump
+    (cell_dir / "trace.json").write_text(
+        json.dumps(trace.to_dict(), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+    snap = trace.final_snapshot or {}
+    counts = snap.get("counts", {})
+
+    per_agent_actions: Dict[str, Dict[str, int]] = {}
+    for step in trace.steps:
+        a_type = step.action.action_type if step.action else "(none)"
+        per_agent_actions.setdefault(step.agent_id, {}).setdefault(a_type, 0)
+        per_agent_actions[step.agent_id][a_type] += 1
+
+    error_records = [
+        {"day": e.day, "agent_id": e.agent_id, "error": str(e.error)[:200]}
+        for e in trace.errors()
+    ]
+
+    summary: Dict[str, Any] = {
+        # --- metadata --------------------------------------------------
+        "tag": cell_tag,
+        "level": level,
+        "policy_complexity": level,  # see docs/09 §2 axis 2 — recorded per cell
+        "regime": regime.name,
+        "seed": seed,
+        "max_days": max_days,
+        "model": model if level == "L3" else None,
+        "elapsed_seconds": elapsed,
+        # --- regime params (denormalized for downstream analysis) ------
+        "approval_threshold": regime.approval_threshold,
+        "three_way_match_required": regime.three_way_match_required,
+        "mean_daily_demands": regime.mean_daily_demands,
+        "actions_per_agent_per_day": regime.actions_per_agent_per_day,
+        # --- KPIs ------------------------------------------------------
+        "deviation_count": snap.get("deviation_count", 0),
+        "error_count": snap.get("error_count", 0),
+        "counts": counts,
+        "total_steps": len(trace.steps),
+        "dispatched_ok": len(trace.dispatched_actions()),
+        "decide_or_dispatch_errors": len(error_records),
+        "per_agent_actions": per_agent_actions,
+        "errors": error_records,
+        "api_calls": getattr(llm, "call_count", None),
+    }
+
+    (cell_dir / "summary.json").write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+    print(
+        f"  [{cell_tag} seed={seed}] payments={counts.get('payments', 0)} "
+        f"deviation={summary['deviation_count']} "
+        f"errors={summary['decide_or_dispatch_errors']} "
+        f"elapsed={elapsed}s",
+        file=sys.stderr,
+    )
+    return summary
+
+
+# ---------------------------------------------------------------------------
+# Aggregation
+# ---------------------------------------------------------------------------
+
+
+def aggregate(summaries: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Aggregate summaries by (level, regime) — mean / spread KPIs."""
+    by_cell: Dict[str, List[Dict[str, Any]]] = {}
+    for s in summaries:
+        key = f"{s['level']}_{s['regime']}"
+        by_cell.setdefault(key, []).append(s)
+
+    out = {}
+    for key, group in by_cell.items():
+        n = len(group)
+
+        def _mean(field: str) -> float:
+            return round(sum(s[field] for s in group) / max(n, 1), 3)
+
+        def _payments() -> float:
+            return round(
+                sum(s["counts"].get("payments", 0) for s in group) / max(n, 1), 3
+            )
+
+        out[key] = {
+            "level": group[0]["level"],
+            "regime": group[0]["regime"],
+            "n_seeds": n,
+            "mean_deviation_count": _mean("deviation_count"),
+            "mean_error_count": _mean("error_count"),
+            "mean_payments": _payments(),
+            "mean_dispatched_ok": _mean("dispatched_ok"),
+            "mean_decide_or_dispatch_errors": _mean("decide_or_dispatch_errors"),
+            "seeds": [s["seed"] for s in group],
+        }
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description="T-021b: Baseline Ladder ablation runner")
+    p.add_argument("--level", choices=KNOWN_LEVELS, help="Single level to run")
+    p.add_argument(
+        "--all-levels",
+        action="store_true",
+        help="Run every known ladder level (skips L3 if OPENAI_API_KEY is unset)",
+    )
+    p.add_argument("--regime", choices=tuple(REGIMES.keys()), help="Single regime to run")
+    p.add_argument(
+        "--all-regimes", action="store_true", help="Run every regime defined in REGIMES"
+    )
+    p.add_argument("--seeds", type=int, nargs="+", default=[42], help="RNG seeds")
+    p.add_argument("--days", type=int, default=DEFAULT_MAX_DAYS, help="max_days")
+    p.add_argument("--model", default=DEFAULT_LLM_MODEL, help="L3 LLM model name")
+    p.add_argument(
+        "--out",
+        type=Path,
+        default=OUTPUT_BASE,
+        help="Output directory (default: experiments/ablation_t021)",
+    )
+    return p.parse_args()
+
+
+def _resolve_levels(args: argparse.Namespace) -> List[str]:
+    if args.all_levels:
+        levels = list(KNOWN_LEVELS)
+        if not os.environ.get("OPENAI_API_KEY") and "L3" in levels:
+            print(
+                "[run_ablation] OPENAI_API_KEY not set — skipping L3 cells.",
+                file=sys.stderr,
+            )
+            levels = [l for l in levels if l != "L3"]
+        return levels
+    if args.level:
+        return [args.level]
+    raise SystemExit("Specify --level or --all-levels")
+
+
+def _resolve_regimes(args: argparse.Namespace) -> List[Regime]:
+    if args.all_regimes:
+        return list(REGIMES.values())
+    if args.regime:
+        return [REGIMES[args.regime]]
+    raise SystemExit("Specify --regime or --all-regimes")
+
+
+def main() -> int:
+    args = parse_args()
+    levels = _resolve_levels(args)
+    regimes = _resolve_regimes(args)
+    out_root: Path = args.out
+    out_root.mkdir(parents=True, exist_ok=True)
+
+    print(
+        f"[run_ablation] levels={levels} regimes={[r.name for r in regimes]} "
+        f"seeds={args.seeds} days={args.days}",
+        file=sys.stderr,
+    )
+
+    summaries: List[Dict[str, Any]] = []
+    for level in levels:
+        for regime in regimes:
+            for seed in args.seeds:
+                summaries.append(
+                    run_cell(
+                        level=level,
+                        regime=regime,
+                        seed=seed,
+                        max_days=args.days,
+                        model=args.model,
+                        out_root=out_root,
+                    )
+                )
+
+    aggregated = aggregate(summaries)
+    combined_path = out_root / "ablation_summary.json"
+    combined_path.write_text(
+        json.dumps(
+            {
+                "config": {
+                    "levels": levels,
+                    "regimes": [r.name for r in regimes],
+                    "seeds": args.seeds,
+                    "days": args.days,
+                    "model": args.model,
+                },
+                "cells": aggregated,
+                "raw_summaries": summaries,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    # Print compact table to stderr
+    print("\n--- ABLATION SUMMARY ---", file=sys.stderr)
+    print(
+        f"{'cell':<28} {'n':>3} {'mean_dev':>9} {'mean_err':>9} "
+        f"{'mean_pay':>9} {'mean_ok':>9}",
+        file=sys.stderr,
+    )
+    for key in sorted(aggregated.keys()):
+        c = aggregated[key]
+        print(
+            f"{key:<28} {c['n_seeds']:>3} {c['mean_deviation_count']:>9} "
+            f"{c['mean_error_count']:>9} {c['mean_payments']:>9} "
+            f"{c['mean_dispatched_ok']:>9}",
+            file=sys.stderr,
+        )
+    print(f"\nsaved: {combined_path}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

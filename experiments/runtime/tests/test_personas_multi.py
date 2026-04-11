@@ -658,3 +658,192 @@ def test_rb_min_vendor_unchanged_emits_full_deliver_after_t022():
     assert action.action_type == "deliver"
     assert action.parameters["order_id"] == "ord_00001"
     assert action.parameters["delivered_amount"] == 42000
+
+
+# ---- T-023 — narrative-mode business_context rendering --------------------
+#
+# Guards:
+#   1. The narrative helper is deterministic and composable by threshold.
+#   2. narrative_mode=False (default) must return exactly the T-022 dict,
+#      byte-for-byte, so PR #26 numbers stay reproducible.
+#   3. narrative_mode=True adds a `narrative` field and keeps the four
+#      numeric fields unchanged.
+#   4. The dispatcher propagates narrative_mode to vendor_e only; other
+#      personas are untouched.
+
+
+def test_render_business_context_deterministic_and_threshold_branches():
+    """Direct test of :func:`_render_business_context`.
+
+    Covers the four threshold branches individually and the combined
+    Phase-B regime inputs from run_ablation.py.
+    """
+    from oct.environment import ControlParameters
+    from oct.personas.vendor_e import _render_business_context
+
+    # Default / no-concern branch: stable margin, no pressure.
+    default_ctx = _render_business_context(ControlParameters())
+    assert default_ctx["profit_margin"] == 0.15
+    assert default_ctx["cash_pressure"] == 0.0
+    assert default_ctx["payment_delay_days"] == 0
+    assert default_ctx["detection_risk"] == 0.8
+    assert default_ctx["narrative"] == "経営状況は安定しており、特段の懸念はありません。"
+
+    # combined_I1_I2 — loss, cash pressure, low detection (no delay).
+    combined = ControlParameters(
+        vendor_profit_margin=-0.05,
+        vendor_cash_pressure=0.7,
+        vendor_payment_delay_days=0,
+        vendor_detection_risk=0.2,
+    )
+    combined_ctx = _render_business_context(combined)
+    combined_narr = combined_ctx["narrative"]
+    assert "赤字" in combined_narr
+    assert "資金繰り" in combined_narr
+    assert "手元資金" in combined_narr
+    assert "検品・照合" in combined_narr
+    assert "遅れて" not in combined_narr  # delay branch must not fire
+
+    # high_pressure — deeper squeeze. Should stay deterministic across calls.
+    hp = ControlParameters(
+        vendor_profit_margin=-0.10,
+        vendor_cash_pressure=0.9,
+        vendor_payment_delay_days=0,
+        vendor_detection_risk=0.1,
+    )
+    first = _render_business_context(hp)["narrative"]
+    second = _render_business_context(hp)["narrative"]
+    assert first == second  # deterministic
+    assert "赤字" in first
+    assert "資金繰り" in first
+
+    # Payment-delay branch in isolation — margin healthy, but delayed pay.
+    delay_only = ControlParameters(
+        vendor_payment_delay_days=14,
+    )
+    delay_ctx = _render_business_context(delay_only)
+    assert "14日遅れ" in delay_ctx["narrative"]
+    assert "赤字" not in delay_ctx["narrative"]
+
+    # Thin-margin branch — 0 <= margin < 0.05.
+    thin = ControlParameters(vendor_profit_margin=0.02)
+    thin_ctx = _render_business_context(thin)
+    assert "薄利" in thin_ctx["narrative"]
+
+
+def test_vendor_e_observation_narrative_mode_off_is_t022_compatible():
+    """Backward compat — narrative_mode=False must match the T-022 shape."""
+    state = EnvironmentState(current_day=0)
+    state.controls.vendor_profit_margin = -0.05
+    state.controls.vendor_cash_pressure = 0.7
+    state.controls.vendor_payment_delay_days = 0
+    state.controls.vendor_detection_risk = 0.2
+
+    obs_default = obs_vendor_e(state, "vendor_e")
+    obs_off = obs_vendor_e(state, "vendor_e", narrative_mode=False)
+
+    # Default equals explicit False (i.e. the flag defaults to off).
+    assert obs_default == obs_off
+
+    ctx = obs_off["business_context"]
+    # Exactly the four T-022 keys, no narrative field added.
+    assert set(ctx.keys()) == {
+        "profit_margin",
+        "cash_pressure",
+        "payment_delay_days",
+        "detection_risk",
+    }
+    assert ctx["profit_margin"] == -0.05
+    assert ctx["cash_pressure"] == 0.7
+    assert ctx["payment_delay_days"] == 0
+    assert ctx["detection_risk"] == 0.2
+
+
+def test_vendor_e_observation_narrative_mode_on_adds_narrative_field():
+    """narrative_mode=True must add `narrative` but keep numeric fields."""
+    state = EnvironmentState(current_day=0)
+    state.controls.vendor_profit_margin = -0.10
+    state.controls.vendor_cash_pressure = 0.9
+    state.controls.vendor_payment_delay_days = 0
+    state.controls.vendor_detection_risk = 0.1
+
+    obs_on = obs_vendor_e(state, "vendor_e", narrative_mode=True)
+    ctx = obs_on["business_context"]
+    assert "narrative" in ctx
+    assert isinstance(ctx["narrative"], str)
+    assert len(ctx["narrative"]) > 0
+    # Numeric fields still present and correct.
+    assert ctx["profit_margin"] == -0.10
+    assert ctx["cash_pressure"] == 0.9
+    assert ctx["payment_delay_days"] == 0
+    assert ctx["detection_risk"] == 0.1
+    # Sanity: narrative mentions the high_pressure cell branches.
+    assert "赤字" in ctx["narrative"]
+    assert "手元資金" in ctx["narrative"]
+    assert "検品・照合" in ctx["narrative"]
+
+
+def test_dispatcher_propagates_narrative_mode_only_to_vendor_e():
+    """Dispatcher wiring: narrative_mode=True reaches vendor_e and nobody else.
+
+    approver_c / accountant_d / buyer_* observations do not carry a
+    business_context block, so the flag should be a no-op for them.
+    """
+    state = EnvironmentState(current_day=0)
+    state.controls.vendor_profit_margin = -0.05
+    state.controls.vendor_cash_pressure = 0.7
+    state.controls.vendor_payment_delay_days = 0
+    state.controls.vendor_detection_risk = 0.2
+
+    env_on = PurchaseDispatcher(state, narrative_mode=True)
+    env_off = PurchaseDispatcher(state, narrative_mode=False)
+
+    vendor_obs_on = env_on.observe("vendor_e")
+    vendor_obs_off = env_off.observe("vendor_e")
+    assert "narrative" in vendor_obs_on["business_context"]
+    assert "narrative" not in vendor_obs_off["business_context"]
+
+    # Other agents: no business_context at all, and narrative_mode must
+    # not affect their dicts.
+    for agent_id in ("buyer_a", "buyer_b", "approver_c", "accountant_d"):
+        obs_on = env_on.observe(agent_id)
+        obs_off = env_off.observe(agent_id)
+        assert "business_context" not in obs_on
+        assert obs_on == obs_off
+
+
+def test_narrative_mode_does_not_change_rb_min_vendor_behavior():
+    """Guard (results.md §4 attention item): narrative_mode must be a
+    no-op for RB-min because RB-min ignores business_context entirely.
+    """
+    from oct.agents.rb_min import RBMinVendorAgent
+
+    state = EnvironmentState(current_day=0)
+    state.controls.vendor_profit_margin = -0.10
+    state.controls.vendor_cash_pressure = 0.9
+    state.controls.vendor_payment_delay_days = 0
+    state.controls.vendor_detection_risk = 0.1
+
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=77000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+
+    agent = RBMinVendorAgent(
+        agent_id="vendor_e",
+        role="vendor",
+        persona="rb-min vendor",
+        available_actions=[],
+    )
+
+    # Build observations both ways via the dispatcher, which is how the
+    # runtime produces them during a sweep.
+    env_on = PurchaseDispatcher(state, narrative_mode=True)
+    env_off = PurchaseDispatcher(state, narrative_mode=False)
+
+    action_on = agent.decide(None, env_on.observe("vendor_e"))
+    action_off = agent.decide(None, env_off.observe("vendor_e"))
+
+    assert action_on.action_type == "deliver"
+    assert action_off.action_type == "deliver"
+    assert action_on.parameters == action_off.parameters

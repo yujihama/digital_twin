@@ -1,0 +1,57 @@
+﻿{
+  "tag": "L1_intervention_I1",
+  "level": "L1",
+  "policy_complexity": "L1",
+  "regime": "intervention_I1",
+  "seed": 42,
+  "max_days": 8,
+  "model": null,
+  "elapsed_seconds": 0.001,
+  "approval_threshold": 5000000.0,
+  "three_way_match_required": true,
+  "mean_daily_demands": 1.5,
+  "actions_per_agent_per_day": 2,
+  "deviation_count": 0,
+  "error_count": 0,
+  "counts": {
+    "purchase_requests": 11,
+    "approvals": 0,
+    "orders": 11,
+    "receipts": 9,
+    "invoices": 9,
+    "payments": 9,
+    "demands_total": 13,
+    "demands_pending": 2,
+    "demands_fulfilled": 11
+  },
+  "total_steps": 66,
+  "dispatched_ok": 66,
+  "decide_or_dispatch_errors": 0,
+  "per_agent_actions": {
+    "accountant_d": {
+      "wait": 5,
+      "pay_order": 9
+    },
+    "buyer_b": {
+      "draft_request": 6,
+      "place_order": 6,
+      "record_receipt": 4
+    },
+    "approver_c": {
+      "wait": 8
+    },
+    "vendor_e": {
+      "deliver": 3,
+      "register_invoice": 9,
+      "wait": 2
+    },
+    "buyer_a": {
+      "wait": 2,
+      "draft_request": 5,
+      "place_order": 5,
+      "record_receipt": 2
+    }
+  },
+  "errors": [],
+  "api_calls": null
+}

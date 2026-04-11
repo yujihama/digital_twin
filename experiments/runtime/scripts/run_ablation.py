@@ -1,5 +1,20 @@
 """T-021b ablation runner — Baseline Ladder × regime sweep.
 
+Prerequisites
+-------------
+Run inside the repo's virtual environment so pinned dependency versions from
+``experiments/runtime/requirements.txt`` are active. See
+``experiments/runtime/README.md`` for setup. Quick version::
+
+    cd experiments/runtime
+    py -3.11 -m venv .venv
+    .venv\\Scripts\\activate        # Windows  (source .venv/bin/activate on *nix)
+    pip install -r requirements.txt
+
+L3 cells require ``OPENAI_API_KEY``. This script loads
+``experiments/runtime/.env`` (gitignored) at import time via python-dotenv,
+so storing the key there is enough.
+
 This script implements the experiment plan in ``docs/09_ablation_plan.md``:
 
   axis 1 (role-wise)        : not yet swept here, defaults to "all RB-min"
@@ -58,6 +73,48 @@ RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 if str(RUNTIME_ROOT) not in sys.path:
     sys.path.insert(0, str(RUNTIME_ROOT))
 
+
+def _load_dotenv() -> None:
+    """Load ``experiments/runtime/.env`` so L3 can pick up ``OPENAI_API_KEY``.
+
+    Uses :mod:`python-dotenv` (pinned in ``requirements.txt``) when available,
+    but via ``dotenv_values`` so we can strip a leading UTF-8 BOM from the
+    first key — BOMs are common on Windows-edited ``.env`` files and cause
+    ``load_dotenv`` to silently mis-name the first entry. Falls back to the
+    same hand-rolled parser that ``scripts/run_multi_seed.py`` uses if
+    python-dotenv is missing. Existing environment variables are never
+    overwritten.
+    """
+    env_path = RUNTIME_ROOT / ".env"
+    if not env_path.exists():
+        return
+    try:
+        from dotenv import dotenv_values  # type: ignore
+
+        for raw_key, value in dotenv_values(env_path).items():
+            if raw_key is None or value is None:
+                continue
+            key = raw_key.lstrip("\ufeff").strip()
+            if key and key not in os.environ:
+                os.environ[key] = value
+        return
+    except ImportError:
+        pass
+    # Fallback: same format as scripts/run_multi_seed.py::_load_dotenv
+    for raw in env_path.read_text(encoding="utf-8-sig").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+_load_dotenv()
+
+
 from oct.agent import Agent, AgentAction, LLMClient  # noqa: E402
 from oct.agents.rb_min import build_rb_min_agents  # noqa: E402
 from oct.dispatchers.purchase import PurchaseDispatcher  # noqa: E402
@@ -115,7 +172,10 @@ REGIMES: Dict[str, Regime] = {
     ),
 }
 
-DEFAULT_MAX_DAYS = 5
+# docs/09_ablation_plan.md §2 specifies max_days=20 (matches exp003c/exp004).
+# PR #23's 8-day preliminary L1 runs are kept as a separate folder for
+# historical reference but should not be compared head-to-head with L3.
+DEFAULT_MAX_DAYS = 20
 DEFAULT_LLM_MODEL = os.environ.get("OCT_LLM_MODEL", "gpt-4.1-mini")
 
 

@@ -1,107 +1,201 @@
-# T-021b ablation 結果ノート
+# T-021b / T-021c ablation 結果ノート
 
-このディレクトリは T-021b（Baseline Ladder × regime ablation）の実行結果を保管する。スクリプトは `experiments/runtime/scripts/run_ablation.py`、計画は `docs/09_ablation_plan.md`、研究上の位置付けは `docs/08_research_pivot.md §6` を参照。
+このディレクトリは T-021b（Baseline Ladder × regime ablation runner 実装）および
+T-021c（20日版 L1 / L3 sweep）の実行結果を保管する。スクリプトは
+`experiments/runtime/scripts/run_ablation.py`、計画は `docs/09_ablation_plan.md`、
+研究上の位置付けは `docs/08_research_pivot.md §6` を参照。
 
-実行コマンド (本ノートに記載した結果を再現する場合):
+## 0. 本ノートの対象データ
 
-```
+| フォルダ | max_days | 対象 levels | 対象 regimes | seeds | 主要用途 |
+|---|---|---|---|---|---|
+| `L1_*/` `L3_*/` (このディレクトリ直下) | **20** | L1, L3 | baseline, I1, I2 | 42, 43, 44 | **§1〜§4 の一次データ** |
+| `preliminary_8day/` | 8 | L1 | baseline, I1, I2 | 42, 43, 44 | 予備実験（PR #23）。長さ依存性の参考用 |
+
+T-021c で 20日版に揃え直した経緯は PR #24 のレビューコメントを参照。`docs/09_ablation_plan.md` の
+`max_days=20` 指定と `exp003c/exp004` の設定に整合させるため、8日版は `preliminary_8day/`
+に退避した。
+
+
+## 1. 実行サマリ（20日版 L1 + L3）
+
+3 シード × 3 regime × 2 levels = 18 セルを実行。L1 の所要時間は 1 セルあたり数ミリ秒、
+L3 は 165〜235 秒（gpt-4.1-mini）。
+
+### 再現コマンド
+
+```bash
 cd experiments/runtime
-python scripts/run_ablation.py --level L1 --all-regimes --seeds 42 43 44 --days 8
+.venv\Scripts\activate                    # Windows (see README.md)
+# L1 sweep (no API key required)
+python scripts/run_ablation.py --level L1 --all-regimes --seeds 42 43 44 --days 20
+# L3 sweep (requires .env / OPENAI_API_KEY; loaded via python-dotenv)
+python scripts/run_ablation.py --level L3 --all-regimes --seeds 42 43 44 --days 20
 ```
 
-## 1. 実行サマリ（L1 = RB-min）
+L1 と L3 を別々に走らせたため、最終的な `ablation_summary.json` は `merge_ablation.py`
+相当の集約スクリプトで L1 と L3 を結合している（スクリプトはコミットしていない）。
+集約後の値は下表の通り。
 
-3 シード × 3 regime = 9 セルを実行。各セルの単発所要時間は 1 ms 程度。トータル数秒。
+### 20日 L1 × regime
 
-| cell                  | n_seeds | mean_payments | mean_deviation | mean_errors | mean_dispatched_ok |
-|-----------------------|---------|---------------|----------------|-------------|--------------------|
-| L1_baseline           | 3       | 5.33          | 0              | 0           | 61.0               |
-| L1_intervention_I1    | 3       | 6.67          | 0              | 0           | 61.0               |
-| L1_intervention_I2    | 3       | 5.33          | 0              | 0           | 61.0               |
+| cell                | n | mean_payments | stdev | deviation | errors | mean_total_steps |
+|---------------------|---|---------------|-------|-----------|--------|------------------|
+| L1_baseline         | 3 | 21.67         | 3.22  | 0         | 0      | 166.7            |
+| L1_intervention_I1  | 3 | 22.33         | 3.79  | 0         | 0      | 164.3            |
+| L1_intervention_I2  | 3 | 21.67         | 3.22  | 0         | 0      | 166.7            |
 
-regime のパラメータは `run_ablation.py` の `REGIMES` を参照。簡略すると以下の通り。
+### 20日 L3 × regime（gpt-4.1-mini, temperature=0.8）
+
+| cell                | n | mean_payments | stdev | deviation | errors | mean_total_steps |
+|---------------------|---|---------------|-------|-----------|--------|------------------|
+| L3_baseline         | 3 | 18.67         | 2.31  | 0         | 0      | 162.0            |
+| L3_intervention_I1  | 3 | 21.00         | 3.00  | 0         | 0      | 162.3            |
+| L3_intervention_I2  | 3 | 18.00         | 2.65  | 0         | 0      | 159.3            |
+
+regime パラメータは `run_ablation.py::REGIMES` を参照。
 
 | regime          | approval_threshold | three_way_match | mean_daily_demands |
-|-----------------|--------------------|------------------|--------------------|
-| baseline        | 200,000            | True             | 1.5                |
-| intervention_I1 | 5,000,000          | True             | 1.5                |
-| intervention_I2 | 200,000            | False            | 1.5                |
+|-----------------|--------------------|-----------------|--------------------|
+| baseline        | 200,000            | True            | 1.5                |
+| intervention_I1 | 5,000,000          | True            | 1.5                |
+| intervention_I2 | 200,000            | False           | 1.5                |
 
-## 2. 観察事項
 
-### 2.1 RB-min は I1 介入でのみスループット差が出る
+## 2. 観察事項（20日版）
 
-I1（承認閾値を 200k → 5M に引き上げ）では平均支払件数が baseline の 5.33 → 6.67 に増加した。これは buyer が approver の処理を待たず直接 `place_order` に進めるため、approver_c のキャパシティがボトルネックでなくなることに対応する。`per_agent_actions` を見ると I1 の approver_c は `approve_request` を 0 回しか実行していない（baseline では 3 回）。
+### 2.1 L3 は baseline で L1 よりスループットが低い（18.67 vs 21.67）
 
-I2（三者照合無効化）では `mean_payments` が baseline と同じ 5.33 のままだった。RB-min の vendor_e は常に発注額そのままで `deliver` と `register_invoice` を行うため、三者照合があっても無くても結果が変わらない。これは仕様通りで、I2 介入による差は LLM 由来（または RB-score 由来）の opportunistic behavior が必要である、という第3回フィードバック §6.6 の triangulation 仮説を補強する一次証拠となる。
+20日 baseline の `mean_payments` は L1 > L3（21.67 > 18.67, 差 +3.00, stdev 0 を
+前提にすれば有意）。RB-min は `wait` を返す条件が非常に限定的で毎ターン何らかの
+アクションを選択するのに対し、LLM 側は状況判断で `wait` を選ぶ頻度が高く、
+`mean_total_steps` も L1 166.7 vs L3 162.0 と低い。ladder 上段ほど「判断のコスト」
+が上がるという docs/08 §6.1 の想定と整合する。
 
-### 2.2 deviation_count = 0 は L1 の特性として記録すべき
+### 2.2 L3 の方が I1 介入への応答が大きい
 
-3 regime × 3 seed すべてで `deviation_count = 0` だった。これは「RB-min は ladder の最下層であり deviation を起こす自由度を持たない」という設計通りの結果。第3回フィードバック §6.7 の批判 #3「RB と LLM で同じ波及が出るなら LLM は不要」への一次的な応答材料になる: **L1 では波及が起きないため、L3（LLM）で波及が観測されれば、それは ladder の上の段階に固有の現象である**ことが示せる。
+`I1 - baseline` の `mean_payments` 差分:
 
-ただしこれだけでは不十分で、L3 を未だ走らせていないため反証可能性が弱い。次の実験ステップ（§4）で L3 sweep を実行し、`mean_deviation_count` の差を確認する必要がある。
+- L1: +0.67（21.67 → 22.33, ±3.2 の stdev に埋もれる）
+- L3: +2.33（18.67 → 21.00, 同上の条件下で +12%）
 
-### 2.3 dispatched_ok = 61 はキャパシチェイン上の上限値
+承認閾値を 200k → 5M に上げたとき、RB-min ではキャパ差がほぼ出ないのに対し、
+LLM では buyer が approver 経由のステップを省略し、より積極的に `place_order` に
+進む挙動が定性的に観測される（cell ごとの `per_agent_actions` 内訳で確認可能）。
+docs/08 §6.6 の **triangulation** 仮説「L3 だけが介入応答を示せば、その応答は
+ladder 上段に固有である」の一次証拠。ただし seed 数 3 では統計的主張は保留する。
 
-5 agents × 8 days × 2 actions/day = 80 が理論上限だが、`wait_ends_turn=True` と `actions_per_agent_per_day=2` の組合せで agent あたり 1 日 1 wait 出ると次の turn が消費されない。実測 61 はその前提下で妥当。L3 でもこの上限近くで頭打ちになると予想される（LLM は wait をより頻繁に選ぶ可能性があるため）。
+### 2.3 I2 介入は両 ladder とも deviation を生まなかった
 
-### 2.4 errors = 0 は RB-min が action schema を絶対に守ることを示す
+`three_way_match_required=False` に切り替えても L1/L3 いずれでも `deviation_count=0`、
+`mean_payments` はむしろ若干減少（L3: 18.67 → 18.00, L1: 変化なし）。
+これは「三者照合を外しても、エージェントが vendor 側で虚偽金額 invoice を
+生成する自由度を持たない限り、deviation は観測されない」ことを示している。
 
-`decide_or_dispatch_errors = 0` がすべてのセルで成立した。これは RB-min が `Agent.decide` を経由した parser failure を起こさず、dispatcher に入っても schema 不一致を起こさないことを意味する。L3 の比較では、LLM 側の parser/dispatch 失敗率を「行為選択の信頼性」の指標として使える。
+- RB-min vendor_e は `order.order_amount` を忠実に `register_invoice` する
+  実装であり、三者照合の on/off に関わらず同じ金額を投入する
+- LLM vendor_e も現状の system prompt では金額逸脱を積極的には行わない
+
+これは docs/08 §6.7 の reviewer attack #3「RB と LLM が同じ波及しか生まないなら
+LLM は不要」への部分的な応答でもあり、同時に **opportunistic behavior を誘導する
+には追加の介入（例: vendor の incentive 設計変更、temperature 引き上げ、役割
+プロンプトの改変）が必要である** ことを示唆する（次ステップ §4 で議論）。
+
+### 2.4 deviation_count = 0 は両 ladder で共通
+
+20日 sweep のすべて 18 セルで `deviation_count = 0`。第3回 external review §6.7 が
+提起した「ladder 段差がそのまま deviation 波及を生むか」という論点について、
+**baseline regime / I1 / I2 のどれでも単独では deviation を発生させないこと** が
+確認できた。つまり intuition-failure frontier（docs/08 §6.2）を観測するには、
+より厳しい regime（例: 複数の制御を同時に緩める、ノイジーな demand、ambiguous な
+vendor プロンプト）を必要とする。T-022 以降の探索範囲設計に反映する。
+
+### 2.5 seed44 は両 ladder で低スループット（確認済みの外れ値）
+
+PR #23 の 8日実験で指摘されていた seed44 の低ステップ数傾向は、20日 sweep でも
+再現した。
+
+| regime          | L1 seed42 | L1 seed43 | L1 seed44 | L3 seed42 | L3 seed43 | L3 seed44 |
+|-----------------|-----------|-----------|-----------|-----------|-----------|-----------|
+| baseline        | 24        | 23        | 18        | 20        | 20        | 16        |
+| intervention_I1 | 25        | 24        | 18        | 24        | 21        | 18        |
+| intervention_I2 | 24        | 23        | 18        | 17        | 21        | 16        |
+
+seed44 は demand RNG 固有の「1日あたり demand 数が多くかつ初日から pipeline が
+詰まる」パターンを引くと仮説している。バグではないが、平均値の解釈時は stdev と
+併せて記載する。より大きい seed pool（例: 10 seed）を使う次回の sweep 設計では
+seed44 の扱いを再評価する。
+
 
 ## 3. ファイル構成
 
-各セルのトレースとサマリは以下の階層に保存される。
-
 ```
 experiments/ablation_t021/
-├── ablation_summary.json          # aggregate(combined) summary
-├── L1_baseline/
+├── ablation_summary.json           # 20日版 L1 + L3 集約サマリ
+├── L1_baseline/                    # 20日版 L1
 │   ├── seed42/{trace.json, summary.json}
 │   ├── seed43/{trace.json, summary.json}
 │   └── seed44/{trace.json, summary.json}
-├── L1_intervention_I1/
-│   ├── seed42/...
-│   ├── seed43/...
-│   └── seed44/...
+├── L1_intervention_I1/             # (同上)
 ├── L1_intervention_I2/
-│   ├── seed42/...
-│   ├── seed43/...
-│   └── seed44/...
+├── L3_baseline/                    # 20日版 L3
+├── L3_intervention_I1/
+├── L3_intervention_I2/
+├── preliminary_8day/               # PR #23 の 8日版（参考データ）
+│   ├── L1_baseline/...
+│   ├── L1_intervention_I1/...
+│   ├── L1_intervention_I2/...
+│   └── ablation_summary.json
 └── results.md                      # このファイル
 ```
 
-`ablation_summary.json` の `cells` キーに集約値、`raw_summaries` に全 9 セルの詳細が入っている。
+各セルの `summary.json` には `max_days`、`policy_complexity`、`seed`、
+`counts`、`per_agent_actions`、`errors` が記録される。
 
 ## 4. 次のステップ
 
-### 4.1 L3 (LLM) の実行 — このPRの範囲外
+### 4.1 Frontier 探索のための regime 拡張
 
-L3（LLM）sweep は `OPENAI_API_KEY` を環境変数に設定して以下を実行する:
+§2.3 で述べた通り、今回の baseline / I1 / I2 のどれも単独では deviation を
+発生させなかった。intuition-failure frontier を観測するには regime の軸を
+増やす必要がある。候補:
 
-```
-python scripts/run_ablation.py --level L3 --all-regimes --seeds 42 43 44 --days 8
-```
+1. **多要素同時介入**: I1 ∧ I2（閾値 5M かつ 三者照合無効化）を組み合わせた
+   regime を追加し、単独介入では出なかった波及が出るかを確認する。
+2. **Ambiguous vendor prompt**: vendor_e の system prompt を「納品遅延時に
+   invoice 金額を帳尻合わせに上乗せしてよい」と解釈余地のある文言に変え、
+   LLM 側の opportunistic behavior を誘発できるかを試す（L1 との差を観測）。
+3. **Higher temperature / more seeds**: 現行の temperature=0.8 / n=3 seed は
+   stdev ≒ 3 のノイズに対して弱い。temperature=1.0 かつ n=10 seed 程度で
+   再実行すると、§2.2 の +2.33 差分の信頼性が判定できる。
 
-実行コストは exp003c の実績から 1 セルあたり ~30〜90s 程度、9 セルで合計 5〜15 分程度を見込む（モデルにより変動）。`OCT_LLM_MODEL` 環境変数で `gpt-4.1-mini` 以外も指定可能。
+### 4.2 L0 と L2 の追加
 
-L3 を走らせた後で再度 `run_ablation.py --all-levels --all-regimes` を実行すれば、ablation_summary.json に L1 と L3 の両方が並ぶ。
+- **L0 (random)**: 現在 `_RandomLLM` が常に `wait` を返すスタブ。真の random は
+  agent ごとの action schema が必要なため、T-027 の trace metadata 整備と
+  合わせて実装する。
+- **L2 (RB-score)**: 重み付きスコア最大化。L1 ↔ L3 の差が十分大きくないと
+  ladder 上の「連続性」を測る指標にならないため、§4.1 の frontier 探索で
+  L1 と L3 の差が観測されたあとに実装優先度を判断する。
 
-### 4.2 比較分析
+### 4.3 Real-process anchoring と practitioner check
 
-L3 結果が揃った時点で以下の比較を行う:
+docs/08 §6.6 の 4 mitigations のうち、本 PR で進捗したのは **(2) Triangulation**
+の L1↔L3 一次比較のみ。残り3つ:
 
-1. `L1_baseline` vs `L3_baseline` の `mean_deviation_count` 差 → ladder の段差が deviation を生むかどうかの一次判定
-2. `L3_intervention_I1 - L3_baseline` vs `L1_intervention_I1 - L1_baseline` → 介入応答が ladder 段で異なるかどうか
-3. `L3_intervention_I2 - L3_baseline` → LLM vendor が三者照合無効化を「悪用」するかどうか（vendor_e の `register_invoice` 金額が `order.amount` から逸脱するか）
-
-これらが §2.1〜§2.2 の triangulation 仮説の検証に対応する。
-
-### 4.3 L0 と L2 の追加
-
-* **L0 (random)**: 現在は `_RandomLLM`（常に wait）でスタブされている。本物の random は agent ごとの action schema が必要なので、T-027 の trace metadata 整備と合わせて実装する。
-* **L2 (RB-score)**: 重み付きスコア最大化。L1 と L3 の差が大きい場合のみ追加実装する（第3回フィードバック §6.1 の優先順位通り）。
+- **(1) Real process anchoring**: exp001/exp002 の PO→GR→Invoice→Payment の実
+  SAP トレースを 1 本取得し、シミュレータの state transition と side-by-side で
+  可視化する（T-030 で計画）。
+- **(3) Practitioner check**: 現場担当者に deviation 定義の妥当性を確認する
+  インタビュープロトコルを docs/10 として起案する（T-031）。
+- **(4) ODD / TRACE 準拠**: モデル記述を ODD+D プロトコルに揃えた README セクション
+  を `experiments/runtime/ODD.md` として分離する（T-032）。
 
 ## 5. construct validity 上の留意点
 
-ここで観測した結果はすべて `experiments/runtime` 内の合成シミュレータ上のものであり、実在 ERP データとの照合はまだ行っていない。`docs/08 §6.6` の 4 対処のうち、本 PR は **(2) Triangulation across baselines** の最初の半分（L1 baseline 確立）のみを完了している。残り 3 対処（real-process anchoring / practitioner check / ODD-TRACE）は別タスクで取り組む。
+ここで観測した値はすべて `experiments/runtime` 合成シミュレータ上のものであり、
+実在 ERP データとの突合はまだ行っていない。また、LLM 側のランダム性は
+`temperature=0.8` に固定しているが、seed による multi-sample stability は
+n=3 では不十分である。20日 sweep の stdev（L3 baseline で 2.31 / 20日）は
+このノイズ水準で、§2 の差分解釈はすべて「定性的な方向性」の域を出ない。
+より強い統計的主張には n ≥ 10 seed または temperature 固定化が必要。

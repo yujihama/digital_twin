@@ -449,3 +449,212 @@ def test_buyer_a_awaiting_receipt_filters_own_orders_only():
     obs_b = obs_buyer_b(state, "buyer_b")
     assert len(obs_b["awaiting_receipt_orders"]) == 1
     assert obs_b["awaiting_receipt_orders"][0]["order_id"] == order_b.id 
+
+
+
+# ---- T-022: vendor incentive / strategic action schema --------------------
+#
+# These tests pin the new contract added in T-022:
+#   1. ControlParameters carries 4 vendor-incentive fields with stable defaults
+#   2. vendor_e.build_observation exposes those fields as `business_context`
+#   3. The dispatcher routes 3 strategic actions: deliver_partial /
+#      invoice_with_markup / delay_delivery
+#   4. RB-min vendor is untouched: it still emits plain deliver at PO amount.
+
+
+def test_control_parameters_vendor_incentive_defaults():
+    from oct.environment import ControlParameters
+    cp = ControlParameters()
+    assert cp.vendor_profit_margin == 0.15
+    assert cp.vendor_cash_pressure == 0.0
+    assert cp.vendor_payment_delay_days == 0
+    assert cp.vendor_detection_risk == 0.8
+
+
+def test_vendor_e_observation_includes_business_context():
+    state = EnvironmentState(current_day=0)
+    # Mutate controls to non-default values so we can detect pass-through.
+    state.controls.vendor_profit_margin = -0.05
+    state.controls.vendor_cash_pressure = 0.7
+    state.controls.vendor_payment_delay_days = 14
+    state.controls.vendor_detection_risk = 0.2
+
+    obs = obs_vendor_e(state, "vendor_e")
+    assert "business_context" in obs
+    ctx = obs["business_context"]
+    assert ctx["profit_margin"] == -0.05
+    assert ctx["cash_pressure"] == 0.7
+    assert ctx["payment_delay_days"] == 14
+    assert ctx["detection_risk"] == 0.2
+
+
+def test_dispatcher_routes_deliver_partial_at_default_fraction():
+    state = EnvironmentState(current_day=0)
+    env = PurchaseDispatcher(state)
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=50000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+    from oct.agent import AgentAction
+
+    action = AgentAction(
+        action_type="deliver_partial",
+        parameters={"order_id": "ord_00001"},
+    )
+    result = env.dispatch("vendor_e", action)
+    assert result["ok"] is True
+    # Default fraction is 0.8 -> 50000 * 0.8 = 40000
+    assert state.receipts[0].delivered_amount == 40000
+    assert result["details"]["fraction"] == 0.8
+    assert result["details"]["po_amount"] == 50000
+
+
+def test_dispatcher_routes_deliver_partial_with_explicit_fraction():
+    state = EnvironmentState(current_day=0)
+    env = PurchaseDispatcher(state)
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=50000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+    from oct.agent import AgentAction
+
+    action = AgentAction(
+        action_type="deliver_partial",
+        parameters={"order_id": "ord_00001", "fraction": 0.5},
+    )
+    result = env.dispatch("vendor_e", action)
+    assert result["ok"] is True
+    assert state.receipts[0].delivered_amount == 25000
+    assert result["details"]["fraction"] == 0.5
+
+
+def test_dispatcher_deliver_partial_clamps_fraction_out_of_range():
+    state = EnvironmentState(current_day=0)
+    env = PurchaseDispatcher(state)
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=10000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+    from oct.agent import AgentAction
+
+    # fraction > 1 should clamp to 1 (full delivery)
+    action = AgentAction(
+        action_type="deliver_partial",
+        parameters={"order_id": "ord_00001", "fraction": 1.8},
+    )
+    result = env.dispatch("vendor_e", action)
+    assert result["ok"] is True
+    assert result["details"]["fraction"] == 1.0
+    assert state.receipts[0].delivered_amount == 10000
+
+
+def test_dispatcher_routes_invoice_with_markup_at_default_ratio():
+    state = EnvironmentState(current_day=0)
+    env = PurchaseDispatcher(state)
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=50000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+    from oct.rules import record_receipt
+    record_receipt(state, buyer="buyer_a", order_id="ord_00001", delivered_amount=50000)
+
+    from oct.agent import AgentAction
+    action = AgentAction(
+        action_type="invoice_with_markup",
+        parameters={"order_id": "ord_00001"},
+    )
+    result = env.dispatch("vendor_e", action)
+    assert result["ok"] is True
+    # Default markup 10% -> 55000
+    assert state.invoices[0].amount == 55000
+    assert result["details"]["markup_ratio"] == 0.10
+    assert result["details"]["po_amount"] == 50000
+
+
+def test_dispatcher_routes_invoice_with_markup_explicit_ratio():
+    state = EnvironmentState(current_day=0)
+    env = PurchaseDispatcher(state)
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=100000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+    from oct.rules import record_receipt
+    record_receipt(state, buyer="buyer_a", order_id="ord_00001", delivered_amount=100000)
+
+    from oct.agent import AgentAction
+    action = AgentAction(
+        action_type="invoice_with_markup",
+        parameters={"order_id": "ord_00001", "markup_ratio": 0.25},
+    )
+    result = env.dispatch("vendor_e", action)
+    assert result["ok"] is True
+    assert state.invoices[0].amount == 125000
+
+
+def test_dispatcher_invoice_with_markup_clamps_negative_markup():
+    state = EnvironmentState(current_day=0)
+    env = PurchaseDispatcher(state)
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=10000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+    from oct.rules import record_receipt
+    record_receipt(state, buyer="buyer_a", order_id="ord_00001", delivered_amount=10000)
+
+    from oct.agent import AgentAction
+    action = AgentAction(
+        action_type="invoice_with_markup",
+        parameters={"order_id": "ord_00001", "markup_ratio": -0.3},
+    )
+    result = env.dispatch("vendor_e", action)
+    assert result["ok"] is True
+    assert result["details"]["markup_ratio"] == 0.0
+    assert state.invoices[0].amount == 10000
+
+
+def test_dispatcher_routes_delay_delivery_is_noop():
+    state = EnvironmentState(current_day=0)
+    env = PurchaseDispatcher(state)
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=50000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+    from oct.agent import AgentAction
+
+    action = AgentAction(
+        action_type="delay_delivery",
+        parameters={"order_id": "ord_00001"},
+    )
+    result = env.dispatch("vendor_e", action)
+    assert result["ok"] is True
+    # No receipt, no invoice, no payment created
+    assert state.receipts == []
+    assert state.invoices == []
+    assert state.payments == []
+    assert result["details"]["action"] == "delay_delivery"
+    assert result["details"]["order_id"] == "ord_00001"
+
+
+def test_rb_min_vendor_unchanged_emits_full_deliver_after_t022():
+    """Guard: RB-min vendor must still emit plain `deliver` at PO amount,
+    not any of the T-022 strategic actions."""
+    from oct.agents.rb_min import RBMinVendorAgent
+
+    state = EnvironmentState(current_day=0)
+    # Create an undelivered order for vendor_e
+    req = draft_request(
+        state, requester="buyer_a", vendor="vendor_e", item="bolt", amount=42000
+    )
+    place_order(state, buyer="buyer_a", request_id=req.id)
+
+    agent = RBMinVendorAgent(
+        agent_id="vendor_e",
+        role="vendor",
+        persona="rb-min vendor",
+        available_actions=[],
+    )
+    obs = obs_vendor_e(state, "vendor_e")
+    action = agent.decide(None, obs)
+    assert action.action_type == "deliver"
+    assert action.parameters["order_id"] == "ord_00001"
+    assert action.parameters["delivered_amount"] == 42000

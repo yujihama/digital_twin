@@ -256,6 +256,97 @@ def _handle_deliver(
     return {"receipt_id": receipt.id, "delivered_amount": receipt.delivered_amount}
 
 
+# T-022 — strategic vendor actions. These are deliberately distinct from
+# `deliver` / `register_invoice` (which accept an arbitrary amount anyway) so
+# that the vendor's *intent* is legible in the trace. They also fix the
+# deviation direction so the ablation measures a clean treatment effect:
+#
+#   deliver_partial       — delivers strictly *less* than PO (GR < PO)
+#   invoice_with_markup   — invoices strictly *more* than PO (Inv > PO)
+#   delay_delivery        — defers delivery to a later day (trace-legible wait)
+#
+# Both `fraction` and `markup_ratio` are optional; defaults are chosen so that
+# three-way-match fails with the default `three_way_match_tolerance = 0`.
+
+
+def _handle_deliver_partial(
+    state: EnvironmentState, agent_id: str, params: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Deliver goods at a fraction of the ordered amount.
+
+    The caller may specify ``fraction`` in [0, 1]; defaults to 0.8 (i.e. a
+    20% shortfall which always breaks three-way match under tolerance 0).
+    """
+    order_id = str(params["order_id"])
+    order = state.get_order(order_id)
+    if order is None:
+        raise TransitionError(f"Order {order_id} not found")
+    try:
+        fraction = float(params.get("fraction", 0.8))
+    except (TypeError, ValueError):
+        fraction = 0.8
+    fraction = max(0.0, min(1.0, fraction))
+    delivered = int(round(order.amount * fraction))
+    receipt = record_receipt(
+        state,
+        buyer=agent_id,
+        order_id=order_id,
+        delivered_amount=delivered,
+    )
+    return {
+        "receipt_id": receipt.id,
+        "delivered_amount": receipt.delivered_amount,
+        "fraction": fraction,
+        "po_amount": order.amount,
+    }
+
+
+def _handle_invoice_with_markup(
+    state: EnvironmentState, agent_id: str, params: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Issue an invoice at (1 + markup_ratio) x PO.
+
+    ``markup_ratio`` defaults to 0.10 (a 10% markup, which breaks three-way
+    match under tolerance 0). Negative values are clamped to 0 because the
+    semantic of this action is "strictly higher than PO".
+    """
+    order_id = str(params["order_id"])
+    order = state.get_order(order_id)
+    if order is None:
+        raise TransitionError(f"Order {order_id} not found")
+    try:
+        markup_ratio = float(params.get("markup_ratio", 0.10))
+    except (TypeError, ValueError):
+        markup_ratio = 0.10
+    markup_ratio = max(0.0, markup_ratio)
+    amount = int(round(order.amount * (1.0 + markup_ratio)))
+    invoice = register_invoice(
+        state,
+        order_id=order_id,
+        amount=amount,
+    )
+    return {
+        "invoice_id": invoice.id,
+        "amount": invoice.amount,
+        "markup_ratio": markup_ratio,
+        "po_amount": order.amount,
+    }
+
+
+def _handle_delay_delivery(
+    state: EnvironmentState, agent_id: str, params: Dict[str, Any]
+) -> Dict[str, Any]:
+    """No-op action that is legible in the trace as a deferral.
+
+    Does not consume capacity (same as ``wait``) so that the vendor can still
+    choose other actions on the same day. The point is to give the vendor a
+    *named* way to decline delivery today without the choice being erased as
+    a plain ``wait``.
+    """
+    order_id = str(params.get("order_id", ""))
+    return {"action": "delay_delivery", "order_id": order_id}
+
+
 def _handle_reject_request(
     state: EnvironmentState, agent_id: str, params: Dict[str, Any]
 ) -> Dict[str, Any]:
@@ -282,7 +373,10 @@ _ACTION_HANDLERS = {
     "place_order": _handle_place_order,
     "record_receipt": _handle_record_receipt,
     "deliver": _handle_deliver,
+    "deliver_partial": _handle_deliver_partial,
     "register_invoice": _handle_register_invoice,
+    "invoice_with_markup": _handle_invoice_with_markup,
+    "delay_delivery": _handle_delay_delivery,
     "pay_order": _handle_pay_order,
     "wait": _handle_wait,
 }

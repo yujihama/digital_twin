@@ -5,7 +5,7 @@
 
 > **命名変更（2026-04-07）**: Organizational Causal Twin (OCT) → Executable Organizational Model (EOM)。経緯は docs/08_research_pivot.md を参照。
 
-最終更新: 2026-04-11 (T-021c L1/L3 20日sweep + venv/.env整備)
+最終更新: 2026-04-11 (T-022 vendor incentive observation ablation)
 
 ---
 
@@ -31,7 +31,7 @@
 | M5 | 介入 I1 シミュレーション実行 (Phase 3) | 2026-06 | ✅ 完了 |
 | M6 | 三層検証プロトコル実施 (Phase 4) | 2026-07 | ✅ 完了（Layer 1-3全完了） |
 | **M7** | **ablation: Baseline Ladder (L0/L1/L2/L3)** | **2026-04** | **🟢 進行中（L1/L3 20日 sweep 完了、L0/L2 と frontier 探索が次段階）** |
-| M8 | vendor incentive設計 + reverse stress testing (frontier) | 2026-05 | ⬜ 未着手 |
+| M8 | vendor incentive設計 + reverse stress testing (frontier) | 2026-05 | 🟢 進行中（T-022 で observation-level incentive 拡張済。narrative framing / temperature sweep が次段階） |
 | M9 | 論文初稿作成 | 2026-08 | ⬜ 未着手 |
 
 状態: ✅ 完了 / 🟢 進行中 / 🟡 次に着手 / ⬜ 未着手 / 🔴 ブロック中
@@ -42,14 +42,15 @@
 
 ### 🟢 In Progress
 
-- [ ] **T-021** Baseline Ladder ablation。L1 / L3 の 20日 sweep（baseline / I1 / I2 × seed 42-44）完了。L0 と L2 の実装、および frontier を観測する regime 拡張が残り。
+- [ ] **T-021** Baseline Ladder ablation。L1 / L3 の 20日 sweep（baseline / I1 / I2 / combined_I1_I2 / high_pressure × seed 42-44）完了（T-022）。L0 と L2 の実装、および narrative-level vendor prompt 改変 / temperature sweep による frontier 探索が残り。
 
 ### 🟡 Next Up
 
-- [ ] **T-021d** frontier 探索のための regime 拡張（I1∧I2 同時介入、vendor prompt ambiguity、temperature / seed 数増強）。results.md §4.1 参照。
-- [ ] **T-022** vendor incentive設計（Level 2+4: 行動空間固定、state/payoff/memoryを変更）
-- [ ] **T-023** reverse stress testing実装（目標: deviation_count > 0 の最小条件集合 / MCS探索）
-- [ ] **T-024** Mode R強化版（段階的推論、自己整合付きbaseline）
+- [ ] **T-021d** frontier 探索のための regime 拡張（T-022 で combined_I1_I2 / high_pressure を追加済。次は temperature sweep と narrative framing）。results.md §4.1 参照。
+- [ ] **T-023** narrative-level vendor prompt 改変で opportunistic action を誘発する介入実験（T-022 §6.1）
+- [ ] **T-024** Temperature sweep（T ∈ {0.5, 0.8, 1.0, 1.3} × high_pressure × seed 5〜10）で opportunistic action 境界を探索（T-022 §6.2）
+- [ ] **T-028** reverse stress testing実装（目標: deviation_count > 0 の最小条件集合 / MCS探索）
+- [ ] **T-029** Mode R強化版（段階的推論、自己整合付きbaseline）
 - [ ] **T-026** frontier可視化（probability field × QSD field、heatmap → contour → PRIM box）
 - [ ] **T-027** policy_complexity フィールドのtraceメタデータへの追加
 
@@ -63,6 +64,7 @@
 
 ### ✅ Done
 
+- [x] **T-022** vendor incentive 観測拡張。`ControlParameters` に `vendor_profit_margin` / `vendor_cash_pressure` / `vendor_payment_delay_days` / `vendor_detection_risk` の 4 フィールドを追加し、`vendor_e.build_observation` に `business_context` として渡す。`deliver_partial` / `invoice_with_markup` / `delay_delivery` の 3 action を全条件固定で追加（RB-min vendor_e は不変）。2 新 regime（`combined_I1_I2` / `high_pressure`）を含む 5 regime × L1/L3 × 3 seed × 20日で計 30 セル sweep。**全セル deviation_count=0、LLM vendor_e は新規 3 action を 0 回選択**。Observation level の incentive 情報だけでは LLM の opportunism を誘発できない negative result。10 新規ユニットテスト追加（115→125）（2026-04-11）
 - [x] **T-021c** 20日 sweep で L1 / L3 × 3 regime × 3 seed を実行、venv/.env 整備（`requirements.txt` / `pyproject.toml` / `README.md` / `run_ablation.py` に dotenv 読み込み追加、DEFAULT_MAX_DAYS=20）、8日版 L1 は `preliminary_8day/` に退避、`results.md` を 20日データに更新。L3_baseline 18.67 vs L1_baseline 21.67、L3 の I1 応答 +2.33 vs L1 +0.67、全 18 セルで deviation_count=0（2026-04-11）
 - [x] **T-021b (impl + L1 exec)** ablation runner `scripts/run_ablation.py` 実装 + L1 sweep 9 セル実行 + `experiments/ablation_t021/results.md` 作成。test_llm.py の8件失敗（anthropic未インストール）も解消（2026-04-11）
 - [x] **T-021a** RB-minエージェント実装（`oct/agents/rb_min.py`）+ 14件のユニット/統合テスト（2026-04-11）
@@ -96,6 +98,7 @@
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|----|
+| 2026-04-11 | **T-022 vendor incentive observation ablation**。`ControlParameters` に 4 つの vendor incentive フィールド（profit_margin / cash_pressure / payment_delay_days / detection_risk）を追加。`vendor_e` persona に `deliver_partial` / `invoice_with_markup` / `delay_delivery` の 3 action を全条件固定で追加（RB-min は不変）。`combined_I1_I2` と `high_pressure` の 2 regime を追加し、L1/L3 × 5 regime × 3 seed × 20日 = 30 セル sweep 実行。**30 セルすべてで `deviation_count=0`**、LLM vendor_e は赤字マージン × 資金枯渇 × 検知リスク 10% という極端な条件下でも新規 3 action を 1 回も選ばなかった。Observation level の incentive 情報だけでは LLM の opportunism を誘発できないことを示す negative result。10 件のユニットテスト追加（115→125） | #26 |
 | 2026-04-11 | **T-021c 20日 sweep + venv/.env 整備**。L1/L3 × 3 regime × 3 seed を `--days 20` で再実行。L3_baseline=18.67, L3_I1=21.00, L3_I2=18.00, L1_baseline=21.67, L1_I1=22.33, L1_I2=21.67。全 18 セルで deviation=0。`requirements.txt` / `pyproject.toml` をバージョン固定し、`python-dotenv` を追加。`run_ablation.py` は `experiments/runtime/.env` を dotenv で読み込み、DEFAULT_MAX_DAYS=20 に変更。8日版 L1 は `preliminary_8day/` に退避 | #24 |
 | 2026-04-11 | **T-021b ablation runner**。`scripts/run_ablation.py` 実装。L1 (RB-min) sweep 完了 (3 regime × 3 seed, 8日版): mean_payments は baseline=5.33, I1=6.67, I2=5.33。全セル deviation_count=0、errors=0。L3 sweep は API key 環境下で別途実行。test_llm.py の anthropic 未インストール問題も解消 | #23 |
 | 2026-04-11 | **第3回外部ヒアリング反映**。Baseline Ladder (L0/L1/L2/L3) 導入、frontierをprobability field × QSD fieldとして形式化、MCS（τ-sufficient/subset-minimal）定義、construct validity 4対処、想定査読批判7件。RB-minエージェント実装 + 14件のテスト | #22 |
@@ -149,3 +152,4 @@
 - **vendor incentive設計**: ablation完了後に着手。行動空間は固定（quote_standard, quote_with_fee, delay, partial_ship, split_invoice, dispute, comply）。state/payoff/memoryのみ変更。
 - **プロセスマイニング閉ループ**: 最初の論文では付録レベル。trace-signature実証のみ。
 - **命名**: システム名=EOM、方法名=Organizational Reverse Stress Testing、評価名=QSD。
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         

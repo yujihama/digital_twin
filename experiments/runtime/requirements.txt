@@ -1,4 +1,10 @@
-pydantic>=2.6.0
-pytest>=8.0.0
-anthropic>=0.40.0
-openai>=1.50.0
+# Pinned dependency versions for reproducible experiments.
+# To regenerate after intentional upgrades: `pip install -U <pkg>` then `pip freeze > requirements.txt`.
+# Runtime
+pydantic==2.12.5
+python-dotenv==1.2.2
+# LLM clients
+anthropic==0.94.0
+openai==2.31.0
+# Dev / test
+pytest==9.0.3

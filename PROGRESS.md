@@ -5,7 +5,7 @@
 
 > **命名変更（2026-04-07）**: Organizational Causal Twin (OCT) → Executable Organizational Model (EOM)。経緯は docs/08_research_pivot.md を参照。
 
-最終更新: 2026-04-11 (T-021b ablation runner実装 + L1 sweep実行)
+最終更新: 2026-04-11 (T-021c L1/L3 20日sweep + venv/.env整備)
 
 ---
 
@@ -30,7 +30,7 @@
 | M4 | Mode R 回答収集 (Phase 2) | 2026-06 | ✅ 完了 |
 | M5 | 介入 I1 シミュレーション実行 (Phase 3) | 2026-06 | ✅ 完了 |
 | M6 | 三層検証プロトコル実施 (Phase 4) | 2026-07 | ✅ 完了（Layer 1-3全完了） |
-| **M7** | **ablation: Baseline Ladder (L0/L1/L2/L3)** | **2026-04** | **🟢 進行中（RB-min実装完了、実験は次のPR）** |
+| **M7** | **ablation: Baseline Ladder (L0/L1/L2/L3)** | **2026-04** | **🟢 進行中（L1/L3 20日 sweep 完了、L0/L2 と frontier 探索が次段階）** |
 | M8 | vendor incentive設計 + reverse stress testing (frontier) | 2026-05 | ⬜ 未着手 |
 | M9 | 論文初稿作成 | 2026-08 | ⬜ 未着手 |
 
@@ -42,11 +42,11 @@
 
 ### 🟢 In Progress
 
-- [ ] **T-021** Baseline Ladder ablation。L1 sweep（baseline / I1 / I2 × seed 42-44）完了。L3 sweep は OPENAI_API_KEY 環境下で `run_ablation.py --level L3 --all-regimes` を実行する段階。
+- [ ] **T-021** Baseline Ladder ablation。L1 / L3 の 20日 sweep（baseline / I1 / I2 × seed 42-44）完了。L0 と L2 の実装、および frontier を観測する regime 拡張が残り。
 
 ### 🟡 Next Up
 
-- [ ] **T-021c** L3 (LLM) sweep 実行 + L1/L3 比較分析（results.md §4.2）
+- [ ] **T-021d** frontier 探索のための regime 拡張（I1∧I2 同時介入、vendor prompt ambiguity、temperature / seed 数増強）。results.md §4.1 参照。
 - [ ] **T-022** vendor incentive設計（Level 2+4: 行動空間固定、state/payoff/memoryを変更）
 - [ ] **T-023** reverse stress testing実装（目標: deviation_count > 0 の最小条件集合 / MCS探索）
 - [ ] **T-024** Mode R強化版（段階的推論、自己整合付きbaseline）
@@ -63,6 +63,7 @@
 
 ### ✅ Done
 
+- [x] **T-021c** 20日 sweep で L1 / L3 × 3 regime × 3 seed を実行、venv/.env 整備（`requirements.txt` / `pyproject.toml` / `README.md` / `run_ablation.py` に dotenv 読み込み追加、DEFAULT_MAX_DAYS=20）、8日版 L1 は `preliminary_8day/` に退避、`results.md` を 20日データに更新。L3_baseline 18.67 vs L1_baseline 21.67、L3 の I1 応答 +2.33 vs L1 +0.67、全 18 セルで deviation_count=0（2026-04-11）
 - [x] **T-021b (impl + L1 exec)** ablation runner `scripts/run_ablation.py` 実装 + L1 sweep 9 セル実行 + `experiments/ablation_t021/results.md` 作成。test_llm.py の8件失敗（anthropic未インストール）も解消（2026-04-11）
 - [x] **T-021a** RB-minエージェント実装（`oct/agents/rb_min.py`）+ 14件のユニット/統合テスト（2026-04-11）
 - [x] **第3回外部ヒアリング反映** Baseline Ladder導入、frontier形式定義、MCS定義、construct validity 4対処、想定査読批判7件をdocs/08 §6に追記（2026-04-11）
@@ -95,7 +96,8 @@
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|----|
-| 2026-04-11 | **T-021b ablation runner**。`scripts/run_ablation.py` 実装。L1 (RB-min) sweep 完了 (3 regime × 3 seed): mean_payments は baseline=5.33, I1=6.67, I2=5.33。全セル deviation_count=0、errors=0。L3 sweep は API key 環境下で別途実行。test_llm.py の anthropic 未インストール問題も解消 | #23 |
+| 2026-04-11 | **T-021c 20日 sweep + venv/.env 整備**。L1/L3 × 3 regime × 3 seed を `--days 20` で再実行。L3_baseline=18.67, L3_I1=21.00, L3_I2=18.00, L1_baseline=21.67, L1_I1=22.33, L1_I2=21.67。全 18 セルで deviation=0。`requirements.txt` / `pyproject.toml` をバージョン固定し、`python-dotenv` を追加。`run_ablation.py` は `experiments/runtime/.env` を dotenv で読み込み、DEFAULT_MAX_DAYS=20 に変更。8日版 L1 は `preliminary_8day/` に退避 | #24 |
+| 2026-04-11 | **T-021b ablation runner**。`scripts/run_ablation.py` 実装。L1 (RB-min) sweep 完了 (3 regime × 3 seed, 8日版): mean_payments は baseline=5.33, I1=6.67, I2=5.33。全セル deviation_count=0、errors=0。L3 sweep は API key 環境下で別途実行。test_llm.py の anthropic 未インストール問題も解消 | #23 |
 | 2026-04-11 | **第3回外部ヒアリング反映**。Baseline Ladder (L0/L1/L2/L3) 導入、frontierをprobability field × QSD fieldとして形式化、MCS（τ-sufficient/subset-minimal）定義、construct validity 4対処、想定査読批判7件。RB-minエージェント実装 + 14件のテスト | #22 |
 | 2026-04-07 | **研究方向性転換**。外部ヒアリング2回を経て、OCT→EOMに改称。中心主張を「DAG-free因果推論」から「intuition-failure frontierの発見」に変更。ablation実験計画策定。詳細はdocs/08_research_pivot.md | #21 |
 | 2026-04-06 | T-018 exp005完了。S-005はLLMバイアスと判定 | #20 |

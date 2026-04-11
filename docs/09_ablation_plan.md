@@ -28,16 +28,24 @@ exp003c/exp004で観察された波及効果（vendor_e間接活性化、account
 
 最低限必要なのは「全LLM」と「全RB」の比較。「どの役割でLLMが必要か」を特定するために役割別の置換を行う。
 
-**軸2: policy familyの段階**
+**軸2: Baseline Ladder（policy complexityの単調増加）**
 
-| family | 内容 | 複雑度 |
-|--------|------|--------|
-| RB-min | 固定優先順位ルールのみ（urgency高→古い順） | 最低 |
-| RB-score | urgency, age, backlog等の重み付きスコア最大化 | 中 |
-| RB-memory | 過去数回の結果を要約して判断に使う | 高 |
-| LLM | 現行（gpt-4.1-mini / gpt-5.4-mini） | 最高 |
+第3回ヒアリングで `RB vs LLM` の二項対比から **Baseline Ladder** に再定義した（詳細は docs/08_research_pivot.md §6.1）。各段でQSDがどう変化するかを見ることで、「どの複雑度の階段を上がったときに新しい現象が出るか」を特定できる。
 
-初回のablationはRB-minのみで十分。RB-minでもLLMと同じパターンが出れば、RB-score/RB-memoryのテストは不要。
+| level | family | 内容 | policy complexity |
+|-------|--------|------|--------|
+| L0 | random | 行動空間からuniform sampling | 最低 |
+| L1 | RB-min | 固定優先順位ルールのみ（urgency高→古い順） | 低 |
+| L2 | RB-score | urgency, age, backlog等の重み付きスコア最大化 | 中 |
+| L3 | LLM | 現行（gpt-4.1-mini / gpt-5.4-mini） | 高 |
+
+初回のablationはL1（RB-min）とL3（LLM）の比較で十分。同じパターンが出ればL0/L2は省略可能。違いが出た場合はL0とL2を追加して、ladderのどの段で現象が現れたかを特定する。
+
+**実装上の要請: policy complexity の記録**
+
+各実験のtraceメタデータに `policy_complexity` フィールド（"L0" / "L1" / "L2" / "L3"）を必ず記録する。後段の分析では、この値を横軸とした「QSD vs policy complexity」プロットを生成する。これによりladderに沿った可視化が可能になり、frontierの解釈に必要な情報源となる。
+
+なお、L3（LLM）を構成するモデル名（gpt-4.1-mini, gpt-5.4-mini, claude-sonnet 等）はサブカテゴリとして別フィールドに記録する。
 
 **軸3: regime（環境条件）**
 

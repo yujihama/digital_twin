@@ -77,13 +77,21 @@ if str(RUNTIME_ROOT) not in sys.path:
 def _load_dotenv() -> None:
     """Load ``experiments/runtime/.env`` so L3 can pick up ``OPENAI_API_KEY``.
 
-    Uses :mod:`python-dotenv` (pinned in ``requirements.txt``) when available,
-    but via ``dotenv_values`` so we can strip a leading UTF-8 BOM from the
-    first key — BOMs are common on Windows-edited ``.env`` files and cause
-    ``load_dotenv`` to silently mis-name the first entry. Falls back to the
-    same hand-rolled parser that ``scripts/run_multi_seed.py`` uses if
-    python-dotenv is missing. Existing environment variables are never
-    overwritten.
+    Two code paths, both of which handle a leading UTF-8 BOM on the first
+    line (common on Windows-edited ``.env`` files, and the original reason
+    for this helper):
+
+    1. Preferred: :mod:`python-dotenv` (pinned in ``requirements.txt``) via
+       :func:`dotenv_values`. We avoid :func:`load_dotenv` because it does
+       **not** strip a BOM, so the first key ends up named ``\\ufeffKEY``
+       and silently misses ``os.environ``. Instead we read the dict and
+       ``lstrip`` the BOM off each key before assigning.
+    2. Fallback (python-dotenv not installed): the same hand-rolled parser
+       that ``scripts/run_multi_seed.py`` uses. It opens the file with
+       ``encoding='utf-8-sig'`` so the BOM is consumed by the decoder
+       before the loop ever sees it — no per-key stripping is needed there.
+
+    In both paths, existing environment variables are never overwritten.
     """
     env_path = RUNTIME_ROOT / ".env"
     if not env_path.exists():

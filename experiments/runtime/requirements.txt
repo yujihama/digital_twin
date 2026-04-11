@@ -1,5 +1,9 @@
 # Pinned dependency versions for reproducible experiments.
-# To regenerate after intentional upgrades: `pip install -U <pkg>` then `pip freeze > requirements.txt`.
+# Only *direct* dependencies are listed here; transitive versions are resolved by pip
+# against whatever is already on PyPI. To upgrade a single package intentionally,
+# run `pip install -U <pkg>` and then bump its pin here *and* in pyproject.toml by hand.
+# Do NOT `pip freeze > requirements.txt` — that pulls in every transitive and
+# environment-specific package and defeats the point of a short pin list.
 # Runtime
 pydantic==2.12.5
 python-dotenv==1.2.2

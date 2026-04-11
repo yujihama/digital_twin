@@ -26,16 +26,27 @@ L3 は 165〜235 秒（gpt-4.1-mini）。
 
 ```bash
 cd experiments/runtime
-.venv\Scripts\activate                    # Windows (see README.md)
+.venv\Scripts\Activate.ps1                # Windows (macOS/Linux: source .venv/bin/activate)
+
 # L1 sweep (no API key required)
 python scripts/run_ablation.py --level L1 --all-regimes --seeds 42 43 44 --days 20
+
 # L3 sweep (requires .env / OPENAI_API_KEY; loaded via python-dotenv)
 python scripts/run_ablation.py --level L3 --all-regimes --seeds 42 43 44 --days 20
+
+# L1 と L3 を別々に走らせた後に ablation_summary.json を再集約
+python scripts/aggregate_ablation.py
 ```
 
-L1 と L3 を別々に走らせたため、最終的な `ablation_summary.json` は `merge_ablation.py`
-相当の集約スクリプトで L1 と L3 を結合している（スクリプトはコミットしていない）。
-集約後の値は下表の通り。
+L1 と L3 を別々に走らせると、2 回目の `run_ablation.py` 実行が
+`ablation_summary.json` を上書きしてしまい、前回 sweep のセルが消える。
+これを防ぐため、最終集約は `scripts/aggregate_ablation.py`（PR #25 で追加）で
+per-cell `summary.json` をスキャンして `stdev_payments` / `payments_by_seed` /
+`stdev_total_steps` を含む形で書き直している。`preliminary_8day/` 以下は
+集約対象から自動的に除外される。
+
+なお、`run_ablation.py::DEFAULT_MAX_DAYS` は PR #24 で従来の `5` から `20`
+（docs/09 準拠）に変更したため、`--days` 未指定時の挙動が変わっている点に注意。
 
 ### 20日 L1 × regime
 
@@ -150,7 +161,10 @@ experiments/ablation_t021/
 ```
 
 各セルの `summary.json` には `max_days`、`policy_complexity`、`seed`、
-`counts`、`per_agent_actions`、`errors` が記録される。
+`counts`、`per_agent_actions`、`errors` が記録される。`ablation_summary.json`
+は `experiments/runtime/scripts/aggregate_ablation.py` によって per-cell
+`summary.json` から再構築されるため、セル単位の再実行とトップレベル集約は
+分離できる（PR #25）。
 
 ## 4. 次のステップ
 

@@ -7,11 +7,20 @@
 
 ### 仮想環境の作成
 
+Windows (PowerShell):
+
+```powershell
+cd experiments/runtime
+py -3.11 -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+macOS / Linux:
+
 ```bash
 cd experiments/runtime
-py -3.11 -m venv .venv            # Windows (または `python3.11 -m venv .venv`)
-.venv\Scripts\activate            # Windows
-# source .venv/bin/activate       # macOS / Linux
+python3.11 -m venv .venv
+source .venv/bin/activate
 ```
 
 ### 依存パッケージのインストール
@@ -27,28 +36,55 @@ pip install -e .[dev]                  # editable install + pytest などの dev
 ```
 
 バージョンを意図的に上げる場合は、個別に `pip install -U <package>` したうえで、
-`pip freeze | Select-String pydantic,anthropic,openai,python-dotenv,pytest`
-（PowerShell）または `pip freeze | grep -E 'pydantic|anthropic|openai|python-dotenv|pytest'`
-（bash）で固定版を取得し、両ファイルを手動で更新すること。
+固定したいバージョンを確認し、`requirements.txt` と `pyproject.toml` の該当行を
+手動で更新すること（直接依存のみをピン留めする方針のため `pip freeze > requirements.txt`
+は使わない）。
+
+```powershell
+# PowerShell
+pip show pydantic anthropic openai python-dotenv pytest | Select-String '^(Name|Version):'
+```
+
+```bash
+# bash
+pip show pydantic anthropic openai python-dotenv pytest | grep -E '^(Name|Version):'
+```
 
 ### API キー設定 (.env)
 
 LLM エージェント（L3）を使うスクリプト（`run_multi_seed.py` / `run_ablation.py`）は、
 `experiments/runtime/.env` から `OPENAI_API_KEY` を読み込む。`.env` は `.gitignore`
-対象でリポジトリにはコミットされない。
+対象でリポジトリにはコミットされない。`.env.example` をコピーして使うこと。
 
+```powershell
+# PowerShell
+Copy-Item .env.example .env
+notepad .env
 ```
-OPENAI_API_KEY=sk-...
-# 任意: ANTHROPIC_API_KEY=sk-ant-...
+
+```bash
+# bash
+cp .env.example .env
+$EDITOR .env
 ```
 
 `.env` が無い場合、L3 cell はスキップされる（L0/L1/L2 は API キー不要なので実行される）。
 
 ## テスト実行
 
+Windows (PowerShell):
+
+```powershell
+cd experiments/runtime
+.venv\Scripts\Activate.ps1
+pytest
+```
+
+macOS / Linux:
+
 ```bash
 cd experiments/runtime
-.venv\Scripts\activate
+source .venv/bin/activate
 pytest
 ```
 
@@ -58,19 +94,25 @@ pytest
 
 ## スクリプト実行
 
+Windows (PowerShell) の場合は `.venv\Scripts\Activate.ps1`、macOS / Linux は
+`source .venv/bin/activate` で仮想環境を有効化してから実行する。
+
 ```bash
 cd experiments/runtime
-.venv\Scripts\activate
 
 # Multi-seed baseline (L3 のみ、既存)
 python scripts/run_multi_seed.py
 
-# Baseline Ladder アブレーション (L0/L1/L2/L3 × regimes × seeds)
-python scripts/run_ablation.py --levels L1 --regimes baseline,intervention_I1,intervention_I2 --seeds 42,43,44 --days 20
+# Baseline Ladder アブレーション (L0/L1/L3 × regimes × seeds)
+python scripts/run_ablation.py --level L1 --all-regimes --seeds 42 43 44
+
+# L1/L3 を別々に走らせた後、per-cell summary.json を再集約する
+python scripts/aggregate_ablation.py
 ```
 
-`--days` のデフォルトは `docs/09_ablation_plan.md` 準拠で **20 日**。過去の予備実験
-（PR #23, 8 日版）と比較する場合は `--days 8` を明示的に指定する。
+`run_ablation.py --days` のデフォルトは `docs/09_ablation_plan.md` 準拠で
+**20 日**（PR #24 で `5 → 20` に変更）。過去の予備実験（PR #23, 8 日版）と
+比較する場合は `--days 8` を明示的に指定する。
 
 ## パッケージ構成
 
@@ -83,6 +125,7 @@ python scripts/run_ablation.py --levels L1 --regimes baseline,intervention_I1,in
 | `oct/runner.py` | シミュレーションループ（PurchaseDispatcher / EnvironmentAdapter） |
 | `scripts/run_multi_seed.py` | L3 multi-seed baseline（既存） |
 | `scripts/run_ablation.py` | Baseline Ladder × regime × seed アブレーションドライバ |
+| `scripts/aggregate_ablation.py` | per-cell `summary.json` から `ablation_summary.json` を再集約するヘルパ（PR #25） |
 | `tests/` | pytest ベースのユニットテスト |
 
 ## 設計原則

@@ -5,7 +5,7 @@
 
 > **命名変更（2026-04-07）**: Organizational Causal Twin (OCT) → Executable Organizational Model (EOM)。経緯は docs/08_research_pivot.md を参照。
 
-最終更新: 2026-04-07 (研究方向性転換 / EOMへ改称 / ablation実験計画策定)
+最終更新: 2026-04-11 (第3回外部ヒアリング反映 / Baseline Ladder導入 / RB-minエージェント実装)
 
 ---
 
@@ -30,8 +30,8 @@
 | M4 | Mode R 回答収集 (Phase 2) | 2026-06 | ✅ 完了 |
 | M5 | 介入 I1 シミュレーション実行 (Phase 3) | 2026-06 | ✅ 完了 |
 | M6 | 三層検証プロトコル実施 (Phase 4) | 2026-07 | ✅ 完了（Layer 1-3全完了） |
-| **M7** | **ablation: RB-min vs LLMの切り分け** | **2026-04** | **🟢 進行中** |
-| M8 | vendor incentive設計 + reverse stress testing | 2026-05 | ⬜ 未着手 |
+| **M7** | **ablation: Baseline Ladder (L0/L1/L2/L3)** | **2026-04** | **🟢 進行中（RB-min実装完了、実験は次のPR）** |
+| M8 | vendor incentive設計 + reverse stress testing (frontier) | 2026-05 | ⬜ 未着手 |
 | M9 | 論文初稿作成 | 2026-08 | ⬜ 未着手 |
 
 状態: ✅ 完了 / 🟢 進行中 / 🟡 次に着手 / ⬜ 未着手 / 🔴 ブロック中
@@ -42,13 +42,16 @@
 
 ### 🟢 In Progress
 
-- [ ] **T-021** RB-minエージェント実装（`oct/agents/rb_min.py`）+ ablation実験実行（全RB vs 全LLM × baseline/intervention）
+- [ ] **T-021** RB-min ablation実験実行（L1 vs L3 × baseline/intervention）。RB-minエージェント実装は完了（PR #22）。実験スクリプト + 結果記録は次PR
 
 ### 🟡 Next Up
 
+- [ ] **T-021b** ablation実験スクリプト（`run_ablation.py`）+ `experiments/ablation_t021/results.md`
 - [ ] **T-022** vendor incentive設計（Level 2+4: 行動空間固定、state/payoff/memoryを変更）
-- [ ] **T-023** reverse stress testing実装（目標: deviation_count > 0 の最小条件集合探索）
+- [ ] **T-023** reverse stress testing実装（目標: deviation_count > 0 の最小条件集合 / MCS探索）
 - [ ] **T-024** Mode R強化版（段階的推論、自己整合付きbaseline）
+- [ ] **T-026** frontier可視化（probability field × QSD field、heatmap → contour → PRIM box）
+- [ ] **T-027** policy_complexity フィールドのtraceメタデータへの追加
 
 ### ⬜ Backlog
 
@@ -60,6 +63,8 @@
 
 ### ✅ Done
 
+- [x] **T-021a** RB-minエージェント実装（`oct/agents/rb_min.py`）+ 14件のユニット/統合テスト（2026-04-11）
+- [x] **第3回外部ヒアリング反映** Baseline Ladder導入、frontier形式定義、MCS定義、construct validity 4対処、想定査読批判7件をdocs/08 §6に追記（2026-04-11）
 - [x] **T-018 / exp005** I2介入実験（三者照合無効化）。S-005はLLMバイアスと判定。vendor_eは三者照合有無に関わらずdeviation_count=0（2026-04-06）
 - [x] **T-017** reject_requestハンドラ追加（2026-04-06）
 - [x] **T-015** buyer_a awaiting_receipt非対称性修正（2026-04-06）
@@ -89,6 +94,7 @@
 
 | 日付 | 更新内容 | コミット / PR |
 |------|---------|----|
+| 2026-04-11 | **第3回外部ヒアリング反映**。Baseline Ladder (L0/L1/L2/L3) 導入、frontierをprobability field × QSD fieldとして形式化、MCS（τ-sufficient/subset-minimal）定義、construct validity 4対処、想定査読批判7件。RB-minエージェント実装 + 14件のテスト | #22 |
 | 2026-04-07 | **研究方向性転換**。外部ヒアリング2回を経て、OCT→EOMに改称。中心主張を「DAG-free因果推論」から「intuition-failure frontierの発見」に変更。ablation実験計画策定。詳細はdocs/08_research_pivot.md | #21 |
 | 2026-04-06 | T-018 exp005完了。S-005はLLMバイアスと判定 | #20 |
 | 2026-04-06 | T-017/T-015バグ修正 + 実験計画拡張 | #19 |
@@ -130,7 +136,10 @@
 
 ## オープンな論点・意思決定待ち
 
-- **[最優先] ablationの結果次第で研究の軸が分岐**: ルールベースでも同じ波及 → 実行可能シミュレータの価値。LLM固有の現象あり → LLMのpolicy価値。どちらでもreverse stress testingには進める。
+- **[最優先] Baseline Ladderの結果次第で研究の軸が分岐**: L1（RB-min）でL3（LLM）と同じ波及 → 実行可能シミュレータの価値。L3で固有の現象あり → LLMのpolicy価値。どちらでもreverse stress testing / frontier発見には進める。
+- **論文の構造**: option C（EOMを統一フレームとして提示し、QSDとfrontierを中心指標、ablationは補助実験）を採用。
+- **投稿先**: 第1論文はMABS@AAMAS / JASSS / CMOTを主軸、HICSS / ICAILは候補。
+- **construct validity対処**: 4本柱（実プロセスへのanchoring、ladder triangulation、practitioner sanity check、ODD/TRACE準拠）をsupplementaryに同梱。
 - **Emergence Ratio → QSDへの名称変更**: ドキュメント全体でEmergence RatioをQuery-Simulation Divergence (QSD) に更新。S-005除外後の修正値 = 4/7 = 57.1%。
 - **gpt-5.4-miniへの切替え**: ablation後のPhase 2で実施。過去実験の再実行要否はablation結果に依存。
 - **vendor incentive設計**: ablation完了後に着手。行動空間は固定（quote_standard, quote_with_fee, delay, partial_ship, split_invoice, dispute, comply）。state/payoff/memoryのみ変更。

@@ -228,3 +228,99 @@ Mode R を「候補提案器」、Mode S を「審判」として分離。LLM-as
 3. reverse stress testing で、deviation_count > 0 になる最小条件集合は何か
 4. intuition-failure frontier は seed/model をまたいで頑健か
 5. 強化 Mode R でも QSD > 0 が維持されるか
+
+## 6. 外部ヒアリング — 第3回（設計の検証）
+
+第2回フィードバックを踏まえてablation実験計画を起案した後、計画自体の妥当性を再度問うために第3回のヒアリングを実施した。論点は「ablationの軸の取り方」「frontierの形式的定義」「最小条件集合の形式化」「論文の構造と投稿先」「construct validityの弱さへの対処」「想定される批判」の6つ。
+
+### 6.1 ablation設計の修正 — Baseline Ladder
+
+第2回の提案では `RB-min / RB-score / RB-memory / LLM` を「policy familyの段階」と呼んでいたが、これは「LLMがどの能力で寄与するか」を測る軸として整理されていなかった。第3回フィードバックではこれを **Baseline Ladder（policy complexityの単調増加）** として再定義することが提案された。
+
+```
+L0 (random)         : ランダム選択（行動空間からuniform sampling）
+L1 (RB-min)         : 固定優先順位ルールのみ
+L2 (RB-score)       : 重み付きスコア最大化（urgency, age, backlog 等）
+L3 (LLM)            : 自然言語推論を伴う適応的判断
+```
+
+ladderの各段でQSDがどう変化するかを観察することで、「どの複雑度の階段を上がったときに新しい現象が出るか」を特定できる。これは単発の `RB vs LLM` 比較よりも情報量が大きい。
+
+各実験のtraceには **policy complexity** をメタデータとして記録する（後段の分析でladderに沿った可視化を可能にするため）。
+
+### 6.2 frontierの形式的定義 — probability field と frontier band
+
+第2回までは「intuition-failure frontier」を直感的な概念として扱っていたが、第3回では明示的な数学的定義が要求された。フィードバックの整理:
+
+* 環境条件 \(x \in \mathcal{X}\) を入力として、event発生の **probability field** \(p_E(x)\) と、Mode R と Mode S の **divergence field** \(d_{QSD}(x)\) の二つを別々に推定する。
+* **frontier** は \(p_E(x)\) の等高線ではなく、「\(p_E(x)\) が低く、かつ \(d_{QSD}(x)\) が高い領域」 — つまり「実務者の直感では起きないと思われがちだが、実際には起きるかもしれない領域」 — として定義される。
+* 可視化は、heatmap → contour → PRIM box の順で粒度を上げる（PRIM = Patient Rule Induction Method。frontierを矩形領域として近似する）。
+* frontier band は、seed/model間の不確実性を含めた帯として表現する（点や線ではない）。
+
+### 6.3 最小条件集合（MCS）の形式化
+
+reverse stress testingで「deviation_count > 0 になる最小条件集合」を探索する際の「最小」を、以下の3つの基準で形式化する。
+
+```
+τ-sufficient   : 条件集合 C が deviation を確率 τ 以上で誘発する
+subset-minimal : C のいかなる真部分集合でも τ-sufficient にならない
+```
+
+その上で、複数のsubset-minimalな解候補から1つを選ぶ基準を以下のいずれかから選ぶ:
+
+| 基準        | 意味                                          | 用途                  |
+|-------------|-----------------------------------------------|-----------------------|
+| sparsest MCS | 条件数が最も少ない                             | 説明可能性            |
+| nearest MCS  | baseline からの距離が最も小さい                | 「すぐ起きる」リスク  |
+| robust MCS   | seed/model 間で再現する確率が最も高い          | 監査・規制応用        |
+
+論文ではいずれか1つを主要指標とし、残りは付録で報告する。
+
+### 6.4 論文の構造（option C）
+
+第2回で提案された構造に対し、第3回では以下の3案が比較された:
+
+* **option A**: ablationを中心に据える。「LLMは workflow structure と区別できる新しい現象を生むか？」を主問とする。
+* **option B**: reverse stress testing を中心に据える。「組織直感が壊れる境界はどこか？」を主問とする。
+* **option C**: 両者を貫く統一フレームとして EOM を提示し、QSD と frontier を中心指標とする。ablation は frontier の解釈を支える補助実験として配置する。
+
+→ **option C を採用**。理由は、ablation だけでは「LLMの価値の有無」しか議論できず、frontier だけでは「なぜ LLM を使うのか」が説明できないため。両者は補完関係にある。
+
+### 6.5 投稿先候補
+
+```
+JASSS / CMOT          : computational social science / agent-based simulation
+MABS @ AAMAS          : multi-agent based simulation の主要ワークショップ
+HICSS                 : org sciences track + IS audit/risk track
+ICAIL                 : audit analytics 寄りに振る場合
+arXiv (preprint)      : 上記と並行して常時公開
+```
+
+第1論文は MABS @ AAMAS または JASSS を主軸にし、auditing 系の文脈は section 7 (discussion) で触れる程度に留める。
+
+### 6.6 construct validity の弱さと4つの対処
+
+第3回フィードバックで最も鋭く指摘された弱点が **construct validity** — 「シミュレータの中で観察される deviation が、現実の組織で起きる deviation と本当に対応しているか」 — であった。完全には解けないが、以下の4つで弱さを補強する。
+
+1. **Anchoring to a real process**: 実在するERP/event logの一部を入力として使い、initial state と demand pattern を実データに較正する。最低限 day-0 の在庫・demand 強度・ベンダー数だけでも実データに合わせる。
+2. **Triangulation across baselines**: 同じ frontier が L0/L1/L2/L3 のうち少なくとも 2 段で再現されることを要求する。L3 のみで現れる frontier は「LLM artifact」として別カテゴリに分類する。
+3. **Practitioner sanity check**: 抽出された frontier の上位 5 件を、実務者（監査人・購買マネージャ）にレビューしてもらう（informal な structured walkthrough）。
+4. **ODD / TRACE protocol準拠**: ABM/シミュレーションの再現性に関する標準（ODD = Overview, Design concepts, Details / TRACE = TRAnsparent and Comprehensive model Evaludation）に沿った supplementary material を添付する。
+
+### 6.7 想定される批判（査読対策）
+
+第3回フィードバックで列挙された、想定される7つの査読批判と、それぞれへの一次的な応答方針:
+
+| # | 批判                                                            | 応答方針                                                                     |
+|---|-----------------------------------------------------------------|------------------------------------------------------------------------------|
+| 1 | DAG は環境ルール・state 表現の中に隠れているだけ                | DAG の概念ではなく **observability assumption** に置き換えていることを明示  |
+| 2 | LLM の確率性で全てが説明できる                                  | seed 間の variance を frontier 抽出時に明示的に分離する（robust MCS）        |
+| 3 | RB と LLM で同じ波及が出るならLLMは不要                          | frontier の **形** の違いを示す。同じ deviation でも条件分布は異なりうる    |
+| 4 | "intuition-failure" は post-hoc に作られた評価軸                | Mode R を **事前** に取得し、Mode S と比較することで post-hoc を回避        |
+| 5 | "trace signature" は naming だけの concept で内容がない         | trace variant の clustering と stability test を付録で実施                  |
+| 6 | 実データとの calibration が無いから現実の組織にはマッピングできない | construct validity 4 対処 (6.6) を予め添付。limitations にも明記           |
+| 7 | benchmark task が無いから他研究と比較できない                    | sandbox + fixture を公開し、再現可能な ablation suite を提供                |
+
+これら7点は論文の **threats to validity** セクションで先回りして言及する。
+
+---

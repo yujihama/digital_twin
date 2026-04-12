@@ -72,6 +72,7 @@ class PurchaseDispatcher:
         narrative_mode: bool = False,
         ambiguity_enabled: bool = False,
         ambiguity_rng_seed: Optional[int] = None,
+        ambiguity_branch: str = "all",
     ) -> None:
         self.state = state
         self.state.ensure_capacity_initialized()
@@ -94,6 +95,12 @@ class PurchaseDispatcher:
         # baseline run for the same seed.
         self.ambiguity_enabled = ambiguity_enabled
         self.state.controls.ambiguity_enabled = ambiguity_enabled
+        # T-028c — branch attribution. Validation lives in
+        # rules._generate_order_ambiguity (raised on the first PO) so we
+        # don't need to import the constant here. The default "all" keeps
+        # backward compatibility with PR #27 / T-028 Phase A.
+        self.ambiguity_branch = ambiguity_branch
+        self.state.controls.ambiguity_branch = ambiguity_branch
         if ambiguity_enabled:
             if ambiguity_rng_seed is None:
                 # Derive from demand_rng_seed deterministically. The XOR

@@ -242,45 +242,82 @@ class AmbiguityConfig:
 DEFAULT_AMBIGUITY_CONFIG = AmbiguityConfig()
 
 
+VALID_AMBIGUITY_BRANCHES = ("all", "tax_only", "prior_only", "quantity_only")
+
+
 def _generate_order_ambiguity(
     amount: float,
     rng: random.Random,
     config: AmbiguityConfig = DEFAULT_AMBIGUITY_CONFIG,
+    branch: str = "all",
 ) -> Tuple[Optional[bool], float, str]:
     """Return (tax_included, prior_adjustment, quantity_spec) for a new Order.
 
-    Deterministic: same (amount, rng state) → same output. The rng is
-    advanced by exactly three random() calls plus (when a prior_adjustment
-    is rolled) one uniform() call; no nested choices() or shuffles are used
-    so the rng stream is easy to reason about in tests.
+    Deterministic: same (amount, rng state, branch) → same output. The rng
+    is advanced by exactly three ``random()`` calls plus (when a
+    ``prior_adjustment`` is rolled) one ``uniform()`` call regardless of
+    the ``branch`` value, so the rng stream is byte-identical across
+    branches and ``branch="all"`` reproduces the pre-T-028c behavior
+    exactly.
+
+    T-028c — ``branch`` controls which sub-channel(s) are *visible* to
+    downstream code:
+
+      - "all": tax / prior / quantity all use their rolled values
+      - "tax_only": only tax_included uses its rolled value; prior &
+        quantity are masked back to their "no ambiguity" defaults
+        (0.0 / "exact"). The rolls themselves still happen so the rng
+        stream stays aligned with the "all" baseline.
+      - "prior_only" / "quantity_only": symmetric.
+
+    Unknown branch values raise ValueError so typos in the CLI flag are
+    caught at run start, not silently ignored.
     """
+    if branch not in VALID_AMBIGUITY_BRANCHES:
+        raise ValueError(
+            f"unknown ambiguity branch: {branch!r} "
+            f"(expected one of {VALID_AMBIGUITY_BRANCHES})"
+        )
+
     # --- tax_included ---
     tax_roll = rng.random()
     if tax_roll < config.p_tax_none:
-        tax_included: Optional[bool] = None
+        tax_rolled: Optional[bool] = None
     elif tax_roll < config.p_tax_none + config.p_tax_included_true:
-        tax_included = True
+        tax_rolled = True
     else:
-        tax_included = False
+        tax_rolled = False
 
-    # --- prior_adjustment ---
+    # --- prior_adjustment (always advance rng identically) ---
     adj_roll = rng.random()
     if adj_roll < config.p_prior_adjustment:
         pct = rng.uniform(-config.prior_adjustment_max_pct, config.prior_adjustment_max_pct)
-        prior_adjustment = float(round(amount * pct))
+        prior_adjustment_rolled = float(round(amount * pct))
     else:
-        prior_adjustment = 0.0
+        prior_adjustment_rolled = 0.0
 
     # --- quantity_spec ---
     qty_roll = rng.random()
     if qty_roll < config.p_qty_exact:
-        quantity_spec = "exact"
+        quantity_rolled = "exact"
     elif qty_roll < config.p_qty_exact + config.p_qty_approximate:
-        quantity_spec = "approximate"
+        quantity_rolled = "approximate"
     else:
-        quantity_spec = "as_available"
+        quantity_rolled = "as_available"
 
-    return tax_included, prior_adjustment, quantity_spec
+    # --- branch masking ---
+    # The "all" baseline is byte-equivalent to the pre-T-028c behavior:
+    # every channel reports its rolled value. Single-channel branches
+    # report only their own rolled value and reset the others to the
+    # canonical "no ambiguity" defaults.
+    if branch == "all":
+        return tax_rolled, prior_adjustment_rolled, quantity_rolled
+    if branch == "tax_only":
+        return tax_rolled, 0.0, "exact"
+    if branch == "prior_only":
+        return None, prior_adjustment_rolled, "exact"
+    # branch == "quantity_only"
+    return None, 0.0, quantity_rolled
 
 
 # ---------------------------------------------------------------------------
@@ -381,7 +418,9 @@ def place_order(state: EnvironmentState, buyer: str, request_id: str) -> Order:
     quantity_spec: str = "exact"
     if state.controls.ambiguity_enabled and state._ambiguity_rng is not None:
         tax_included, prior_adjustment, quantity_spec = _generate_order_ambiguity(
-            req.amount, state._ambiguity_rng
+            req.amount,
+            state._ambiguity_rng,
+            branch=state.controls.ambiguity_branch,
         )
 
     order = Order(

@@ -222,6 +222,19 @@ class ControlParameters(BaseModel):
             "sees them in its observation."
         ),
     )
+    ambiguity_branch: str = Field(
+        default="all",
+        description=(
+            "T-028c — which ambiguity sub-channel(s) to expose to the agent. "
+            "'all' (default) keeps the T-028 Phase A behavior: tax_included, "
+            "prior_adjustment and quantity_spec are all rolled. The single-"
+            "branch values 'tax_only' / 'prior_only' / 'quantity_only' still "
+            "advance the rng for every roll (so the rng stream is identical "
+            "to 'all' for byte-level reproducibility) but mask the inactive "
+            "channels back to their 'no ambiguity' defaults. Used by the "
+            "T-028c branch-attribution sweep."
+        ),
+    )
 
     # --- Vendor business context (T-022) -----------------------------------
     #

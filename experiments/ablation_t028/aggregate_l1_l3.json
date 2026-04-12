@@ -1,0 +1,486 @@
+{
+  "phase_a": [
+    {
+      "cell": "L1_baseline",
+      "level": "L1",
+      "regime": "baseline",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 21.667,
+      "mean_dispatched_ok": 166.667,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L1_intervention_I1",
+      "level": "L1",
+      "regime": "intervention_I1",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 22.333,
+      "mean_dispatched_ok": 164.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L1_intervention_I2",
+      "level": "L1",
+      "regime": "intervention_I2",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 21.667,
+      "mean_dispatched_ok": 166.667,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L1_combined_I1_I2",
+      "level": "L1",
+      "regime": "combined_I1_I2",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 22.333,
+      "mean_dispatched_ok": 164.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L1_high_pressure",
+      "level": "L1",
+      "regime": "high_pressure",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 26.333,
+      "mean_dispatched_ok": 174.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_baseline",
+      "level": "L3",
+      "regime": "baseline",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 16.667,
+      "mean_dispatched_ok": 154.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_intervention_I1",
+      "level": "L3",
+      "regime": "intervention_I1",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 21.0,
+      "mean_dispatched_ok": 162.667,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_intervention_I2",
+      "level": "L3",
+      "regime": "intervention_I2",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.667,
+      "mean_error_count": 0.0,
+      "mean_payments": 18.667,
+      "mean_dispatched_ok": 161.667,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          2
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_combined_I1_I2",
+      "level": "L3",
+      "regime": "combined_I1_I2",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.333,
+      "mean_error_count": 0.0,
+      "mean_payments": 21.333,
+      "mean_dispatched_ok": 165.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          1
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_high_pressure",
+      "level": "L3",
+      "regime": "high_pressure",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 24.0,
+      "mean_dispatched_ok": 173.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    }
+  ],
+  "phase_b": [
+    {
+      "cell": "L1_baseline",
+      "level": "L1",
+      "regime": "baseline",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 21.667,
+      "mean_dispatched_ok": 166.667,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L1_intervention_I1",
+      "level": "L1",
+      "regime": "intervention_I1",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 22.333,
+      "mean_dispatched_ok": 164.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L1_intervention_I2",
+      "level": "L1",
+      "regime": "intervention_I2",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 21.667,
+      "mean_dispatched_ok": 166.667,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L1_combined_I1_I2",
+      "level": "L1",
+      "regime": "combined_I1_I2",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 22.333,
+      "mean_dispatched_ok": 164.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L1_high_pressure",
+      "level": "L1",
+      "regime": "high_pressure",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 26.333,
+      "mean_dispatched_ok": 174.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_baseline",
+      "level": "L3",
+      "regime": "baseline",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 19.0,
+      "mean_dispatched_ok": 160.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_intervention_I1",
+      "level": "L3",
+      "regime": "intervention_I1",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 20.333,
+      "mean_dispatched_ok": 162.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_intervention_I2",
+      "level": "L3",
+      "regime": "intervention_I2",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 17.333,
+      "mean_dispatched_ok": 155.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_combined_I1_I2",
+      "level": "L3",
+      "regime": "combined_I1_I2",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 20.333,
+      "mean_dispatched_ok": 162.667,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    },
+    {
+      "cell": "L3_high_pressure",
+      "level": "L3",
+      "regime": "high_pressure",
+      "n_seeds": 3,
+      "mean_deviation_count": 0.0,
+      "mean_error_count": 0.0,
+      "mean_payments": 25.667,
+      "mean_dispatched_ok": 173.333,
+      "per_seed_deviations": [
+        [
+          42,
+          0
+        ],
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ]
+    }
+  ]
+}

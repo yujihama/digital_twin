@@ -5,7 +5,7 @@
 
 > **命名変更（2026-04-07）**: Organizational Causal Twin (OCT) → Executable Organizational Model (EOM)。経緯は docs/08_research_pivot.md を参照。
 
-最終更新: 2026-04-11 (T-023 narrative vendor framing — 最初の deviation_count>0 観測)
+最終更新: 2026-04-11 (T-028 interpretive ambiguity × three-way match tolerance — Phase A で drift 3 件を観測、Phase B で全て吸収)
 
 ---
 
@@ -31,7 +31,7 @@
 | M5 | 介入 I1 シミュレーション実行 (Phase 3) | 2026-06 | ✅ 完了 |
 | M6 | 三層検証プロトコル実施 (Phase 4) | 2026-07 | ✅ 完了（Layer 1-3全完了） |
 | **M7** | **ablation: Baseline Ladder (L0/L1/L2/L3)** | **2026-04** | **🟢 進行中（L1/L3 20日 sweep 完了、L0/L2 と frontier 探索が次段階）** |
-| M8 | vendor incentive設計 + reverse stress testing (frontier) | 2026-05 | 🟢 進行中（T-023 で narrative framing により L3_high_pressure seed=43 で deviation_count=1 を初観測。branch attribution / temperature sweep が次段階） |
+| M8 | vendor incentive設計 + reverse stress testing (frontier) | 2026-05 | 🟢 進行中（T-023 で narrative framing チャネル、T-028 で interpretive ambiguity チャネルの 2 本が独立に deviation_count>0 を誘発。Phase A tolerance=0 で 3 件／15 L3 セル、Phase B tolerance=0.05 で全吸収。seed 幅・tolerance sweep・branch attribution が次段階） |
 | M9 | 論文初稿作成 | 2026-08 | ⬜ 未着手 |
 
 状態: ✅ 完了 / 🟢 進行中 / 🟡 次に着手 / ⬜ 未着手 / 🔴 ブロック中
@@ -42,13 +42,16 @@
 
 ### 🟢 In Progress
 
-- [ ] **T-021** Baseline Ladder ablation。L1 / L3 の 20日 sweep（baseline / I1 / I2 / combined_I1_I2 / high_pressure × seed 42-44）完了（T-022）。narrative framing での L3 再実行も完了し、L3_high_pressure で deviation_count=1 を初観測（T-023）。L0 / L2 の実装と frontier の regime 拡張が残り。
+- [ ] **T-021** Baseline Ladder ablation。L1 / L3 の 20日 sweep（baseline / I1 / I2 / combined_I1_I2 / high_pressure × seed 42-44）完了（T-022）。narrative framing での L3 再実行（T-023）、interpretive ambiguity × tolerance の 2 phase sweep（T-028）も完了。L0 / L2 の実装と frontier の regime 拡張が残り。
 
 ### 🟡 Next Up
 
 - [ ] **T-021d** frontier 探索のための regime 拡張（T-022 で combined_I1_I2 / high_pressure を追加済。次は temperature sweep と narrative framing）。results.md §4.1 参照。
 - [ ] **T-024** Temperature sweep（T ∈ {0.5, 0.8, 1.0, 1.3} × high_pressure × seed 5〜10）で opportunistic action 境界を探索（T-022 §6.2）
-- [ ] **T-028** reverse stress testing実装（目標: deviation_count > 0 の最小条件集合 / MCS探索）
+- [ ] **T-028a** Phase-A anomaly の seed 幅確認（`L3_intervention_I2` / `L3_combined_I1_I2` × ambiguity × seed 42-51）。per-cell drift rate の点推定と seed=43 outlier 検定（T-028 §6）
+- [ ] **T-028b** Tolerance sweep（tolerance_rate ∈ {0, 0.005, 0.01, 0.02, 0.03, 0.05} × `L3_intervention_I2` × seed 42-44）で吸収閾値を特定（T-028 §6）
+- [ ] **T-028c** Ambiguity branch attribution（tax / prior_adjustment / quantity_spec を 1 つずつ ON、他は default）× `intervention_I2` / `combined_I1_I2` × seed 42-44（T-028 §6）
+- [ ] **T-028d** narrative × ambiguity 合成（`L3_high_pressure --narrative --ambiguity` × Phase A × seed 42-44）で 2 チャネルの加法／干渉を検証（T-028 §6）
 - [ ] **T-029** Mode R強化版（段階的推論、自己整合付きbaseline）
 - [ ] **T-026** frontier可視化（probability field × QSD field、heatmap → contour → PRIM box）
 - [ ] **T-027** policy_complexity フィールドのtraceメタデータへの追加
@@ -63,6 +66,7 @@
 
 ### ✅ Done
 
+- [x] **T-028** interpretive ambiguity × three-way match tolerance probe。`Order` に 3 つの解釈曖昧性フィールド（`tax_included` / `prior_adjustment` / `quantity_spec`）を追加し、`EnvironmentState._ambiguity_rng`（`demand_rng_seed ^ 0xA28B` で seed）で決定的に生成。`three_way_match` に `tolerance_rate` を導入し、実効トレランスを `max(tolerance_abs, amount * tolerance_rate)` に拡張（`tolerance_rate=0` は従来挙動）。`run_ablation.py` に `--ambiguity` / `--tolerance-rate` / `--out` フラグ、`analyze_trace.py` に `analyze_amount_deltas` / `## T-028 PO vs Actual Amount Deltas` セクションを追加。**Phase A（tolerance_rate=0）と Phase B（tolerance_rate=0.05）の 2 phase sweep**（narrative OFF × ambiguity ON × L1/L3 × 5 regime × seed 42-44 × 20日 = 60 セル）を実行。Phase A で 3 件の deviation を観測（`L3_intervention_I2` seed=43 ×2、`L3_combined_I1_I2` seed=43 ×1、いずれも ±2.5% 以内の drift）、Phase B では 5% band に全て吸収されて 0 件。L1 15 セルは両 phase で byte-for-byte 一致、RB-min 不変性を確認。14 件のユニットテスト追加（130→144）。narrative framing（T-023）と直交する第 2 の deviation 誘発チャネルを確立し、「quiet drift」現象を定量化（2026-04-11）
 - [x] **T-023** narrative-level vendor framing × deviation frontier probe。`_render_business_context` ヘルパーで `ControlParameters` の 4 incentive フィールドを決定的な日本語の経営状況ナラティブに変換し、`vendor_e.build_observation(narrative_mode=True)` でLLM に渡す（RB-min vendor_e / 他エージェント観測は不変）。`run_ablation.py` に `--narrative` フラグを追加。narrative ON × L1/L3 × {combined_I1_I2, high_pressure} × seed 42-44 × 20日 = 12 セル sweep を実行。**L3_high_pressure で `mean_deviation_count = 0.333`、seed=43 day=2 に 1 件の `deliver_partial`（ord_00002, fraction=0.5, PO=646,130 JPY）**。T-021→T-023 の全系列で初めての非ゼロ deviation で、LLM の reasoning はnarrative のキャッシュプレッシャー分岐を明示的に引用。L1 全 6 セルは T-022 と byte-for-byte 一致、backward-compat を確認。5 件のユニットテスト追加（125→130）。T-022 §6.1 仮説の弱形肯定（2026-04-11）
 - [x] **T-022** vendor incentive 観測拡張。`ControlParameters` に `vendor_profit_margin` / `vendor_cash_pressure` / `vendor_payment_delay_days` / `vendor_detection_risk` の 4 フィールドを追加し、`vendor_e.build_observation` に `business_context` として渡す。`deliver_partial` / `invoice_with_markup` / `delay_delivery` の 3 action を全条件固定で追加（RB-min vendor_e は不変）。2 新 regime（`combined_I1_I2` / `high_pressure`）を含む 5 regime × L1/L3 × 3 seed × 20日で計 30 セル sweep。**全セル deviation_count=0、LLM vendor_e は新規 3 action を 0 回選択**。Observation level の incentive 情報だけでは LLM の opportunism を誘発できない negative result。10 新規ユニットテスト追加（115→125）（2026-04-11）
 - [x] **T-021c** 20日 sweep で L1 / L3 × 3 regime × 3 seed を実行、venv/.env 整備（`requirements.txt` / `pyproject.toml` / `README.md` / `run_ablation.py` に dotenv 読み込み追加、DEFAULT_MAX_DAYS=20）、8日版 L1 は `preliminary_8day/` に退避、`results.md` を 20日データに更新。L3_baseline 18.67 vs L1_baseline 21.67、L3 の I1 応答 +2.33 vs L1 +0.67、全 18 セルで deviation_count=0（2026-04-11）
@@ -153,3 +157,4 @@
 - **vendor incentive設計**: ablation完了後に着手。行動空間は固定（quote_standard, quote_with_fee, delay, partial_ship, split_invoice, dispute, comply）。state/payoff/memoryのみ変更。
 - **プロセスマイニング閉ループ**: 最初の論文では付録レベル。trace-signature実証のみ。
 - **命名**: システム名=EOM、方法名=Organizational Reverse Stress Testing、評価名=QSD。
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       

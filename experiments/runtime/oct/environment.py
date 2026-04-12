@@ -13,6 +13,7 @@ state container manipulated by the transition rules in `rules.py`.
 
 from __future__ import annotations
 
+import random
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Dict, List, Optional
@@ -86,6 +87,32 @@ class Order(BaseModel):
     vendor: str
     amount: float = Field(gt=0.0)
     placed_day: int = Field(ge=0)
+
+    # ---- T-028: interpretive ambiguity hints ----------------------------
+    #
+    # These fields describe the *gray zone* around a PO's amount and
+    # quantity semantics. They do NOT change the canonical PO amount
+    # (that remains `amount`); they only describe how the amount may be
+    # interpreted downstream. The research question is whether an LLM
+    # vendor agent, shown an ambiguous PO, chooses an interpretation that
+    # silently breaks three-way-match — i.e. whether fraud emerges from
+    # accumulated gray-zone judgments rather than a binary bad-actor
+    # decision (see experiments/ablation_t028/results.md §1).
+    #
+    # All three default to "no ambiguity" so existing regimes that were
+    # run without T-028 (PR #24 / PR #26 / PR #27) keep identical traces.
+    #
+    # - `tax_included`: None = "unspecified — not stated in the PO",
+    #                   True = tax already baked in, False = tax-exclusive.
+    #   When None, vendor_e has legitimate discretion to add or not add tax.
+    # - `prior_adjustment`: carry-over credit/debit from previous transactions
+    #   that the vendor may roll into this PO (currency units; may be +/-).
+    # - `quantity_spec`: "exact" = deliver exactly the ordered quantity,
+    #                    "approximate" = ±small tolerance acceptable,
+    #                    "as_available" = deliver what stock allows.
+    tax_included: Optional[bool] = None
+    prior_adjustment: float = 0.0
+    quantity_spec: str = "exact"
 
 
 class Receipt(BaseModel):
@@ -165,6 +192,35 @@ class ControlParameters(BaseModel):
         default=0.0,
         ge=0.0,
         description="Allowed absolute difference in three-way match (in currency units).",
+    )
+    three_way_match_tolerance_rate: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=1.0,
+        description=(
+            "Fractional tolerance in three-way match, expressed as a share of PO amount "
+            "(0.05 = 5% of PO). The effective tolerance is "
+            "max(three_way_match_tolerance, order.amount * three_way_match_tolerance_rate). "
+            "Introduced by T-028 to model Phase B (tolerance=5%) — see "
+            "experiments/ablation_t028/results.md."
+        ),
+    )
+
+    # --- T-028: interpretive ambiguity injection --------------------------
+    #
+    # When True, rules.place_order() injects gray-zone ambiguity fields
+    # (tax_included / prior_adjustment / quantity_spec) into every Order it
+    # creates, using a deterministic rng attached to the EnvironmentState by
+    # the dispatcher. When False, all orders carry the "no ambiguity"
+    # defaults (tax_included=None, prior_adjustment=0.0, quantity_spec="exact")
+    # so existing regimes reproduce earlier PR numbers exactly.
+    ambiguity_enabled: bool = Field(
+        default=False,
+        description=(
+            "If True, generate interpretive ambiguity fields on each new Order "
+            "(T-028). RB-min vendor_e ignores these fields; L3 LLM vendor_e "
+            "sees them in its observation."
+        ),
     )
 
     # --- Vendor business context (T-022) -----------------------------------
@@ -247,6 +303,11 @@ class EnvironmentState(BaseModel):
 
     # Bookkeeping
     _next_id_counters: Dict[str, int] = PrivateAttr(default_factory=dict)
+    # T-028 — deterministic rng used by rules.place_order() when
+    # `controls.ambiguity_enabled` is True. Kept as a PrivateAttr so
+    # reproducibility is preserved across regimes without leaking the rng
+    # into serialized state. The dispatcher seeds it in its __init__.
+    _ambiguity_rng: Optional[random.Random] = PrivateAttr(default=None)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # ------------------------------------------------------------------

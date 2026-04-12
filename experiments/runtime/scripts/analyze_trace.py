@@ -9,6 +9,15 @@ Usage:
 
 Example:
     python scripts/analyze_trace.py ../exp003_full_pipeline/trace_seed42.json
+
+T-028 extension
+---------------
+The report now includes a "PO vs Actual Amount Deltas" section that lists,
+for every order in the trace, (PO amount, delivered amount, invoiced amount)
+plus the relative deltas. This surfaces the T-028 ambiguity effect: when
+interpretive ambiguity is ON and vendor_e is an LLM, non-zero deltas appear
+even though vendor_e's action schema is unchanged from T-022. RB-min
+(L1) always produces zero deltas because it ignores the ambiguity fields.
 """
 from __future__ import annotations
 
@@ -16,12 +25,138 @@ import json
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 def load_trace(path: Path) -> Dict[str, Any]:
     """Load and return the trace JSON."""
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _extract_action_params(step: Dict[str, Any]) -> Dict[str, Any]:
+    action = step.get("action") or {}
+    return action.get("parameters", {}) or {}
+
+
+def _extract_details(step: Dict[str, Any]) -> Dict[str, Any]:
+    dr = step.get("dispatch_result", {}) or {}
+    return dr.get("details", {}) or {}
+
+
+def analyze_amount_deltas(steps: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """T-028 — reconstruct (PO, GR, Invoice) amounts per order from the trace.
+
+    Walks the action log and groups events by ``order_id``. For each order
+    we record the PO amount (from place_order or deliver_partial/invoice
+    details), the delivered amount (from deliver / deliver_partial /
+    record_receipt), and the invoice amount (from register_invoice /
+    invoice_with_markup). Deltas are computed relative to the PO amount.
+
+    Only orders for which we see a place_order event are included so the
+    baseline is unambiguous. Orders that never got delivered or invoiced
+    still appear in the per-order list with ``gr_amount=None`` /
+    ``inv_amount=None``.
+
+    Returns a dict with:
+      - ``per_order``: list of dicts, one per order_id, with fields
+        ``order_id``, ``po_amount``, ``gr_amount``, ``gr_delta``,
+        ``gr_delta_pct``, ``inv_amount``, ``inv_delta``, ``inv_delta_pct``.
+      - ``summary``: aggregate counts & percentiles.
+    """
+    po_amounts: Dict[str, float] = {}
+    gr_amounts: Dict[str, float] = {}
+    inv_amounts: Dict[str, float] = {}
+
+    for step in steps:
+        action = step.get("action") or {}
+        action_type = action.get("action_type")
+        params = _extract_action_params(step)
+        details = _extract_details(step)
+        dr = step.get("dispatch_result", {}) or {}
+        if not dr.get("ok"):
+            continue
+
+        # PO amount is primarily established by place_order. The strategic
+        # vendor actions (deliver_partial / invoice_with_markup) also expose
+        # po_amount in their details so we capture it there as a safety net
+        # in case the trace got spliced or truncated upstream.
+        if action_type == "place_order":
+            order_id = details.get("order_id") or params.get("request_id")
+            amt = details.get("amount")
+            if order_id is not None and amt is not None:
+                po_amounts.setdefault(str(order_id), float(amt))
+        elif action_type in ("deliver_partial", "invoice_with_markup"):
+            order_id = params.get("order_id") or details.get("order_id")
+            po = details.get("po_amount")
+            if order_id is not None and po is not None:
+                po_amounts.setdefault(str(order_id), float(po))
+
+        # Goods receipt
+        if action_type in ("deliver", "record_receipt", "deliver_partial"):
+            order_id = params.get("order_id") or details.get("order_id")
+            delivered = details.get("delivered_amount")
+            if delivered is None:
+                delivered = params.get("delivered_amount")
+            if order_id is not None and delivered is not None:
+                gr_amounts[str(order_id)] = float(delivered)
+
+        # Invoice
+        if action_type in ("register_invoice", "invoice_with_markup"):
+            order_id = params.get("order_id") or details.get("order_id")
+            amt = details.get("amount")
+            if amt is None:
+                amt = params.get("amount")
+            if order_id is not None and amt is not None:
+                inv_amounts[str(order_id)] = float(amt)
+
+    per_order: List[Dict[str, Any]] = []
+    for order_id in sorted(po_amounts.keys()):
+        po = po_amounts[order_id]
+        gr = gr_amounts.get(order_id)
+        inv = inv_amounts.get(order_id)
+        entry: Dict[str, Any] = {
+            "order_id": order_id,
+            "po_amount": po,
+            "gr_amount": gr,
+            "gr_delta": (gr - po) if gr is not None else None,
+            "gr_delta_pct": ((gr - po) / po * 100.0) if (gr is not None and po) else None,
+            "inv_amount": inv,
+            "inv_delta": (inv - po) if inv is not None else None,
+            "inv_delta_pct": ((inv - po) / po * 100.0) if (inv is not None and po) else None,
+        }
+        per_order.append(entry)
+
+    # Aggregate stats. We report how many orders have a non-zero delta and
+    # the worst-case percentage so reviewers can see the tail of the
+    # distribution at a glance.
+    def _nonzero(vals: List[Optional[float]]) -> int:
+        return sum(1 for v in vals if v is not None and v != 0.0)
+
+    def _max_abs_pct(vals: List[Optional[float]]) -> Optional[float]:
+        nums = [abs(v) for v in vals if v is not None]
+        return round(max(nums), 3) if nums else None
+
+    def _mean_abs_pct(vals: List[Optional[float]]) -> Optional[float]:
+        nums = [abs(v) for v in vals if v is not None]
+        return round(sum(nums) / len(nums), 3) if nums else None
+
+    gr_deltas = [e["gr_delta"] for e in per_order]
+    inv_deltas = [e["inv_delta"] for e in per_order]
+    gr_delta_pcts = [e["gr_delta_pct"] for e in per_order]
+    inv_delta_pcts = [e["inv_delta_pct"] for e in per_order]
+
+    summary = {
+        "n_orders": len(per_order),
+        "n_with_gr": sum(1 for e in per_order if e["gr_amount"] is not None),
+        "n_with_invoice": sum(1 for e in per_order if e["inv_amount"] is not None),
+        "n_gr_delta_nonzero": _nonzero(gr_deltas),
+        "n_inv_delta_nonzero": _nonzero(inv_deltas),
+        "max_abs_gr_delta_pct": _max_abs_pct(gr_delta_pcts),
+        "max_abs_inv_delta_pct": _max_abs_pct(inv_delta_pcts),
+        "mean_abs_gr_delta_pct": _mean_abs_pct(gr_delta_pcts),
+        "mean_abs_inv_delta_pct": _mean_abs_pct(inv_delta_pcts),
+    }
+    return {"per_order": per_order, "summary": summary}
 
 
 def analyze(trace: Dict[str, Any]) -> Dict[str, Any]:
@@ -110,6 +245,9 @@ def analyze(trace: Dict[str, Any]) -> Dict[str, Any]:
         "demands_fulfilled": counts.get("demands_fulfilled", 0),
     }
 
+    # --- T-028 amount deltas ---
+    amount_deltas = analyze_amount_deltas(steps)
+
     return {
         "total_steps": total_steps,
         "dispatched_ok": ok_count,
@@ -121,6 +259,7 @@ def analyze(trace: Dict[str, Any]) -> Dict[str, Any]:
         "three_way_match": {"matched": matched, "unmatched": unmatched},
         "approvals": approvals,
         "pipeline": pipeline,
+        "amount_deltas": amount_deltas,
         "final_snapshot": final_snapshot,
     }
 
@@ -187,6 +326,47 @@ def format_report(result: Dict[str, Any], trace_path: str) -> str:
         lines.append("## Errors: none")
     lines.append("")
 
+    # T-028 amount delta section
+    ad = result.get("amount_deltas", {})
+    summary = ad.get("summary", {}) if ad else {}
+    if summary:
+        lines.append("## T-028 PO vs Actual Amount Deltas")
+        lines.append(f"  n_orders              : {summary.get('n_orders', 0)}")
+        lines.append(f"  n_with_gr             : {summary.get('n_with_gr', 0)}")
+        lines.append(f"  n_with_invoice        : {summary.get('n_with_invoice', 0)}")
+        lines.append(f"  n_gr_delta_nonzero    : {summary.get('n_gr_delta_nonzero', 0)}")
+        lines.append(f"  n_inv_delta_nonzero   : {summary.get('n_inv_delta_nonzero', 0)}")
+        lines.append(f"  max_abs_gr_delta_pct  : {summary.get('max_abs_gr_delta_pct')}")
+        lines.append(f"  max_abs_inv_delta_pct : {summary.get('max_abs_inv_delta_pct')}")
+        lines.append(f"  mean_abs_gr_delta_pct : {summary.get('mean_abs_gr_delta_pct')}")
+        lines.append(f"  mean_abs_inv_delta_pct: {summary.get('mean_abs_inv_delta_pct')}")
+        lines.append("")
+
+        # Show up to 10 orders with non-zero deltas so reviewers can spot
+        # patterns (e.g. always-5%-markup) without scrolling through the
+        # full list.
+        flagged = [
+            o for o in ad.get("per_order", [])
+            if (o.get("gr_delta") not in (None, 0.0))
+            or (o.get("inv_delta") not in (None, 0.0))
+        ]
+        if flagged:
+            lines.append("  Non-zero deltas (up to 10):")
+            header = "  order_id       po          gr          gr_Δ%      inv         inv_Δ%"
+            lines.append(header)
+            for o in flagged[:10]:
+                gr_pct = o.get("gr_delta_pct")
+                inv_pct = o.get("inv_delta_pct")
+                lines.append(
+                    f"  {o['order_id']:<14}"
+                    f" {o['po_amount']:<11.0f}"
+                    f" {('-' if o['gr_amount'] is None else f'{o[chr(103)+chr(114)+chr(95)+chr(97)+chr(109)+chr(111)+chr(117)+chr(110)+chr(116)]:.0f}'):<11}"
+                    f" {('-' if gr_pct is None else f'{gr_pct:+.2f}%'):<10}"
+                    f" {('-' if o['inv_amount'] is None else f'{o[chr(105)+chr(110)+chr(118)+chr(95)+chr(97)+chr(109)+chr(111)+chr(117)+chr(110)+chr(116)]:.0f}'):<11}"
+                    f" {('-' if inv_pct is None else f'{inv_pct:+.2f}%')}"
+                )
+            lines.append("")
+
     # Markdown table for results.md
     lines.append("## results.md Table (copy-paste ready)")
     lines.append("")
@@ -197,6 +377,10 @@ def format_report(result: Dict[str, Any], trace_path: str) -> str:
     for key in ["purchase_requests", "approvals", "orders", "receipts",
                 "invoices", "payments", "demands_fulfilled"]:
         lines.append(f"| {key} | {p[key]} |")
+    if summary:
+        lines.append(f"| n_gr_delta_nonzero | {summary.get('n_gr_delta_nonzero', 0)} |")
+        lines.append(f"| n_inv_delta_nonzero | {summary.get('n_inv_delta_nonzero', 0)} |")
+        lines.append(f"| max_abs_inv_delta_pct | {summary.get('max_abs_inv_delta_pct')} |")
     lines.append("")
 
     lines.append("| agent | " + " | ".join([

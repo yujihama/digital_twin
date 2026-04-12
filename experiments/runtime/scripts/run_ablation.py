@@ -36,6 +36,17 @@ deterministic natural-language rendering. See
 orthogonal to ``--level`` / ``--regime`` and is recorded in every cell's
 summary under ``narrative_mode``.
 
+T-028 adds two additional orthogonal flags that are also recorded per cell:
+
+  --ambiguity          Inject interpretive ambiguity fields (tax_included /
+                       prior_adjustment / quantity_spec) into every new PO.
+                       L1 RB-min ignores them; L3 vendor_e sees them in its
+                       observation. Recorded as ``ambiguity_enabled``.
+  --tolerance-rate R   Set the three-way-match tolerance as a share of PO
+                       amount (0.05 = 5%). Phase A uses rate=0 (strict),
+                       Phase B uses rate=0.05. Recorded as
+                       ``three_way_match_tolerance_rate``.
+
 Usage examples
 --------------
 ::
@@ -56,6 +67,16 @@ Usage examples
     python scripts/run_ablation.py \\
         --level L3 --regime combined_I1_I2 --seeds 42 43 44 \\
         --narrative --out ../ablation_t023
+
+    # T-028 Phase A — ambiguity ON, strict tolerance, write to fresh dir
+    python scripts/run_ablation.py \\
+        --level L3 --all-regimes --seeds 42 43 44 \\
+        --ambiguity --out ../ablation_t028/phase_a
+
+    # T-028 Phase B — ambiguity ON + 5% tolerance rate
+    python scripts/run_ablation.py \\
+        --level L3 --all-regimes --seeds 42 43 44 \\
+        --ambiguity --tolerance-rate 0.05 --out ../ablation_t028/phase_b
 
 Output layout
 -------------
@@ -340,6 +361,8 @@ def run_cell(
     model: str,
     out_root: Path,
     narrative_mode: bool = False,
+    ambiguity_enabled: bool = False,
+    three_way_match_tolerance_rate: float = 0.0,
 ) -> Dict[str, Any]:
     """Run one (level, regime, seed) cell and return its summary dict."""
     cell_tag = f"{level}_{regime.name}"
@@ -349,6 +372,9 @@ def run_cell(
     state = EnvironmentState(current_day=0)
     state.controls.approval_threshold = regime.approval_threshold
     state.controls.three_way_match_required = regime.three_way_match_required
+    # T-028 — tolerance_rate is a cross-cutting flag (not a regime field)
+    # so we apply it uniformly to every cell in this run.
+    state.controls.three_way_match_tolerance_rate = three_way_match_tolerance_rate
     # T-022 vendor incentive — apply only when the regime overrides a field so
     # existing regimes keep their ControlParameters defaults (and therefore
     # their PR #24 numbers).
@@ -366,6 +392,11 @@ def run_cell(
         demand_config=DemandConfig(mean_daily_demands=regime.mean_daily_demands),
         demand_rng_seed=seed,
         narrative_mode=narrative_mode,
+        # T-028 — ambiguity injection. The dispatcher derives a dedicated
+        # ambiguity rng from `seed` so the demand stream is unaffected and
+        # Phase A / Phase B / baseline remain directly comparable for the
+        # same seed value.
+        ambiguity_enabled=ambiguity_enabled,
     )
 
     agents = _build_agents(level)
@@ -427,6 +458,10 @@ def run_cell(
         "vendor_detection_risk": state.controls.vendor_detection_risk,
         # T-023 — record which observation channel vendor_e saw this run.
         "narrative_mode": narrative_mode,
+        # T-028 — record ambiguity + tolerance_rate so Phase A / Phase B
+        # / baseline cells can be distinguished from the summary alone.
+        "ambiguity_enabled": ambiguity_enabled,
+        "three_way_match_tolerance_rate": three_way_match_tolerance_rate,
         # --- KPIs ------------------------------------------------------
         "deviation_count": snap.get("deviation_count", 0),
         "error_count": snap.get("error_count", 0),
@@ -522,6 +557,26 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     p.add_argument(
+        "--ambiguity",
+        action="store_true",
+        help=(
+            "T-028 — inject interpretive ambiguity fields (tax_included / "
+            "prior_adjustment / quantity_spec) into every new Order. L1 "
+            "RB-min ignores the fields; L3 vendor_e sees them in its "
+            "observation. Recorded per-cell as `ambiguity_enabled`."
+        ),
+    )
+    p.add_argument(
+        "--tolerance-rate",
+        type=float,
+        default=0.0,
+        help=(
+            "T-028 — three-way-match tolerance as a share of PO amount "
+            "(0.05 = 5%%). Phase A uses 0.0, Phase B uses 0.05. Recorded "
+            "per-cell as `three_way_match_tolerance_rate`."
+        ),
+    )
+    p.add_argument(
         "--out",
         type=Path,
         default=OUTPUT_BASE,
@@ -562,7 +617,8 @@ def main() -> int:
 
     print(
         f"[run_ablation] levels={levels} regimes={[r.name for r in regimes]} "
-        f"seeds={args.seeds} days={args.days} narrative={args.narrative}",
+        f"seeds={args.seeds} days={args.days} narrative={args.narrative} "
+        f"ambiguity={args.ambiguity} tolerance_rate={args.tolerance_rate}",
         file=sys.stderr,
     )
 
@@ -579,6 +635,8 @@ def main() -> int:
                         model=args.model,
                         out_root=out_root,
                         narrative_mode=args.narrative,
+                        ambiguity_enabled=args.ambiguity,
+                        three_way_match_tolerance_rate=args.tolerance_rate,
                     )
                 )
 
@@ -594,6 +652,8 @@ def main() -> int:
                     "days": args.days,
                     "model": args.model,
                     "narrative_mode": args.narrative,
+                    "ambiguity_enabled": args.ambiguity,
+                    "three_way_match_tolerance_rate": args.tolerance_rate,
                 },
                 "cells": aggregated,
                 "raw_summaries": summaries,

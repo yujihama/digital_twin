@@ -70,6 +70,8 @@ class PurchaseDispatcher:
         demand_rng_seed: Optional[int] = None,
         isolated_mode: bool = False,
         narrative_mode: bool = False,
+        ambiguity_enabled: bool = False,
+        ambiguity_rng_seed: Optional[int] = None,
     ) -> None:
         self.state = state
         self.state.ensure_capacity_initialized()
@@ -81,6 +83,28 @@ class PurchaseDispatcher:
         # observe()).
         self.narrative_mode = narrative_mode
         self._demand_rng = random.Random(demand_rng_seed) if demand_config else None
+
+        # T-028 — interpretive ambiguity injection. When enabled we seed a
+        # dedicated rng (derived from the cell's master seed when not given
+        # explicitly) and attach it to the state via PrivateAttr so
+        # rules.place_order() can reach it without threading extra kwargs
+        # through every action handler. Using a separate rng (not the
+        # demand rng) means toggling ambiguity does NOT perturb the demand
+        # stream, so Phase A / Phase B stays comparable to the T-021b
+        # baseline run for the same seed.
+        self.ambiguity_enabled = ambiguity_enabled
+        self.state.controls.ambiguity_enabled = ambiguity_enabled
+        if ambiguity_enabled:
+            if ambiguity_rng_seed is None:
+                # Derive from demand_rng_seed deterministically. The XOR
+                # salt (0xA28B) is arbitrary but fixed, and the fallback
+                # keeps reproducibility when no demand_rng_seed was given.
+                base = demand_rng_seed if demand_rng_seed is not None else 0
+                ambiguity_rng_seed = base ^ 0xA28B
+            self.state._ambiguity_rng = random.Random(ambiguity_rng_seed)
+        else:
+            self.state._ambiguity_rng = None
+
         # Seed day-0 demands so buyers have something to act on immediately
         if self.demand_config is not None and self._demand_rng is not None:
             generate_demands(self.state, self.demand_config, self._demand_rng)

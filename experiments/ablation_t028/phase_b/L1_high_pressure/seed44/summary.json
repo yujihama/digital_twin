@@ -1,0 +1,62 @@
+{
+  "tag": "L1_high_pressure",
+  "level": "L1",
+  "policy_complexity": "L1",
+  "regime": "high_pressure",
+  "seed": 44,
+  "max_days": 20,
+  "model": null,
+  "elapsed_seconds": 0.006,
+  "approval_threshold": 5000000.0,
+  "three_way_match_required": false,
+  "mean_daily_demands": 3.0,
+  "actions_per_agent_per_day": 2,
+  "vendor_profit_margin": -0.1,
+  "vendor_cash_pressure": 0.9,
+  "vendor_payment_delay_days": 0,
+  "vendor_detection_risk": 0.1,
+  "narrative_mode": false,
+  "ambiguity_enabled": true,
+  "three_way_match_tolerance_rate": 0.05,
+  "deviation_count": 0,
+  "error_count": 0,
+  "counts": {
+    "purchase_requests": 31,
+    "approvals": 0,
+    "orders": 31,
+    "receipts": 30,
+    "invoices": 28,
+    "payments": 27,
+    "demands_total": 60,
+    "demands_pending": 29,
+    "demands_fulfilled": 31
+  },
+  "total_steps": 177,
+  "dispatched_ok": 177,
+  "decide_or_dispatch_errors": 0,
+  "per_agent_actions": {
+    "approver_c": {
+      "wait": 20
+    },
+    "buyer_b": {
+      "draft_request": 16,
+      "place_order": 16,
+      "record_receipt": 8
+    },
+    "vendor_e": {
+      "deliver": 12,
+      "register_invoice": 28
+    },
+    "buyer_a": {
+      "draft_request": 15,
+      "place_order": 15,
+      "record_receipt": 10
+    },
+    "accountant_d": {
+      "pay_order": 27,
+      "wait": 10
+    }
+  },
+  "errors": [],
+  "api_calls": null
+}

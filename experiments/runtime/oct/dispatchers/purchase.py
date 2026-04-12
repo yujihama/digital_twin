@@ -32,12 +32,16 @@ from oct.rules import (
 
 
 # Observation builder registry: agent_id -> callable(state, agent_id) -> dict
+#
+# NOTE (T-023): vendor_e is intentionally *not* in this registry because it
+# takes an additional ``narrative_mode`` kwarg. Dispatching to it happens
+# directly in :meth:`PurchaseDispatcher.observe` so non-vendor builders
+# don't need a pass-through kwarg they would ignore.
 _OBSERVATION_BUILDERS = {
     "buyer_a": build_buyer_a_observation,
     "buyer_b": build_buyer_b_observation,
     "approver_c": build_approver_c_observation,
     "accountant_d": build_accountant_d_observation,
-    "vendor_e": build_vendor_e_observation,
 }
 
 
@@ -65,11 +69,17 @@ class PurchaseDispatcher:
         demand_config: Optional[DemandConfig] = None,
         demand_rng_seed: Optional[int] = None,
         isolated_mode: bool = False,
+        narrative_mode: bool = False,
     ) -> None:
         self.state = state
         self.state.ensure_capacity_initialized()
         self.demand_config = demand_config
         self.isolated_mode = isolated_mode
+        # T-023 — when True, vendor_e's observation block includes a
+        # natural-language rendering of its business_context. Other agents
+        # are unaffected (the flag is only read in the vendor_e branch of
+        # observe()).
+        self.narrative_mode = narrative_mode
         self._demand_rng = random.Random(demand_rng_seed) if demand_config else None
         # Seed day-0 demands so buyers have something to act on immediately
         if self.demand_config is not None and self._demand_rng is not None:
@@ -78,10 +88,20 @@ class PurchaseDispatcher:
     # ---- EnvironmentAdapter Protocol ---------------------------------------
 
     def observe(self, agent_id: str) -> Dict[str, Any]:
-        builder = _OBSERVATION_BUILDERS.get(agent_id)
-        if builder is None:
-            raise KeyError(f"No observation builder registered for agent_id={agent_id!r}")
-        obs = builder(self.state, agent_id)
+        if agent_id == "vendor_e":
+            # vendor_e takes an extra kwarg (T-023). Keep it out of the
+            # generic builder registry so non-vendor builders don't need
+            # a pass-through they would ignore.
+            obs = build_vendor_e_observation(
+                self.state, agent_id, narrative_mode=self.narrative_mode
+            )
+        else:
+            builder = _OBSERVATION_BUILDERS.get(agent_id)
+            if builder is None:
+                raise KeyError(
+                    f"No observation builder registered for agent_id={agent_id!r}"
+                )
+            obs = builder(self.state, agent_id)
         if self.isolated_mode:
             obs = self._apply_isolation(agent_id, obs)
         return obs

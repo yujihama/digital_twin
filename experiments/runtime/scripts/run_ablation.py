@@ -26,7 +26,15 @@ This script implements the experiment plan in ``docs/09_ablation_plan.md``:
                               so result files line up with the planned
                               ladder when L2 lands.)
   axis 3 (regime)           : baseline / intervention_I1 (high threshold) /
-                              intervention_I2 (no three-way match)
+                              intervention_I2 (no three-way match) /
+                              combined_I1_I2 / high_pressure
+
+T-023 also adds an optional ``--narrative`` flag that switches vendor_e's
+``business_context`` observation block from a plain numeric dict to a
+deterministic natural-language rendering. See
+``experiments/ablation_t023/results.md`` for the motivation; the flag is
+orthogonal to ``--level`` / ``--regime`` and is recorded in every cell's
+summary under ``narrative_mode``.
 
 Usage examples
 --------------
@@ -43,6 +51,11 @@ Usage examples
 
     # Full ladder × regime sweep (skips L3 if no API key is configured)
     python scripts/run_ablation.py --all-levels --all-regimes --seeds 42 43 44
+
+    # T-023 — narrative ON for the two Phase-B regimes, write to a fresh dir
+    python scripts/run_ablation.py \\
+        --level L3 --regime combined_I1_I2 --seeds 42 43 44 \\
+        --narrative --out ../ablation_t023
 
 Output layout
 -------------
@@ -326,6 +339,7 @@ def run_cell(
     max_days: int,
     model: str,
     out_root: Path,
+    narrative_mode: bool = False,
 ) -> Dict[str, Any]:
     """Run one (level, regime, seed) cell and return its summary dict."""
     cell_tag = f"{level}_{regime.name}"
@@ -351,6 +365,7 @@ def run_cell(
         state,
         demand_config=DemandConfig(mean_daily_demands=regime.mean_daily_demands),
         demand_rng_seed=seed,
+        narrative_mode=narrative_mode,
     )
 
     agents = _build_agents(level)
@@ -410,6 +425,8 @@ def run_cell(
         "vendor_cash_pressure": state.controls.vendor_cash_pressure,
         "vendor_payment_delay_days": state.controls.vendor_payment_delay_days,
         "vendor_detection_risk": state.controls.vendor_detection_risk,
+        # T-023 — record which observation channel vendor_e saw this run.
+        "narrative_mode": narrative_mode,
         # --- KPIs ------------------------------------------------------
         "deviation_count": snap.get("deviation_count", 0),
         "error_count": snap.get("error_count", 0),
@@ -496,6 +513,15 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--days", type=int, default=DEFAULT_MAX_DAYS, help="max_days")
     p.add_argument("--model", default=DEFAULT_LLM_MODEL, help="L3 LLM model name")
     p.add_argument(
+        "--narrative",
+        action="store_true",
+        help=(
+            "T-023 — render vendor_e's business_context as a natural-language "
+            "narrative before handing it to the LLM. Recorded per-cell as "
+            "`narrative_mode`; does not affect RB-min (L1) behavior."
+        ),
+    )
+    p.add_argument(
         "--out",
         type=Path,
         default=OUTPUT_BASE,
@@ -536,7 +562,7 @@ def main() -> int:
 
     print(
         f"[run_ablation] levels={levels} regimes={[r.name for r in regimes]} "
-        f"seeds={args.seeds} days={args.days}",
+        f"seeds={args.seeds} days={args.days} narrative={args.narrative}",
         file=sys.stderr,
     )
 
@@ -552,6 +578,7 @@ def main() -> int:
                         max_days=args.days,
                         model=args.model,
                         out_root=out_root,
+                        narrative_mode=args.narrative,
                     )
                 )
 
@@ -566,6 +593,7 @@ def main() -> int:
                     "seeds": args.seeds,
                     "days": args.days,
                     "model": args.model,
+                    "narrative_mode": args.narrative,
                 },
                 "cells": aggregated,
                 "raw_summaries": summaries,

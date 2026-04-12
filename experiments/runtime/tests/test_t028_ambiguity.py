@@ -24,6 +24,7 @@ from oct.environment import EnvironmentState
 from oct.personas.vendor_e import build_observation as build_vendor_e_observation
 from oct.rules import (
     DEFAULT_AMBIGUITY_CONFIG,
+    VALID_AMBIGUITY_BRANCHES,
     DemandConfig,
     _generate_order_ambiguity,
     draft_request,
@@ -306,6 +307,214 @@ def test_rb_min_vendor_ignores_ambiguity() -> None:
     # prior_adjustment or any interpretation of tax/quantity ambiguity.
     assert action.parameters["delivered_amount"] == order.amount
     assert action.parameters["order_id"] == order.id
+
+
+# ---------------------------------------------------------------------------
+# 6. T-028c — branch attribution (--ambiguity-branch)
+# ---------------------------------------------------------------------------
+#
+# The branch flag must satisfy three properties so the T-028c attribution
+# experiment is interpretable:
+#
+#   (a) Single-branch modes mask the inactive channels back to the
+#       "no ambiguity" defaults (None / 0.0 / "exact"). The active
+#       channel still carries its rolled value.
+#   (b) The rng stream is byte-identical across branches: the same seed
+#       advances the rng by the same number of calls regardless of which
+#       branch is selected. This means a "tax_only" run reuses exactly
+#       the same tax_roll the "all" run would have seen for the same PO
+#       — so any difference in deviation_count is attributable to channel
+#       masking, not to a divergent rng stream.
+#   (c) branch="all" is byte-equivalent to omitting the flag entirely
+#       (PR #27 / T-028 Phase A reproducibility).
+
+
+def test_ambiguity_branch_all_matches_default() -> None:
+    """branch='all' must produce identical output to the default for the
+    same rng state — this is the backward-compat guarantee for PR #27."""
+    rng_default = random.Random(2026)
+    rng_all = random.Random(2026)
+    for _ in range(50):
+        d = _generate_order_ambiguity(150_000.0, rng_default)
+        a = _generate_order_ambiguity(150_000.0, rng_all, branch="all")
+        assert d == a
+
+
+def test_ambiguity_branch_tax_only_keeps_others_default() -> None:
+    """tax_only: prior_adjustment is always 0.0 and quantity_spec is always
+    'exact', regardless of how the rng would have rolled them. tax_included
+    matches what the 'all' branch would have produced for the same rng
+    state (because the rolls happen in the same order).
+    """
+    rng_branch = random.Random(7)
+    rng_all = random.Random(7)
+    for _ in range(40):
+        tax_b, prior_b, qty_b = _generate_order_ambiguity(
+            200_000.0, rng_branch, branch="tax_only"
+        )
+        tax_a, prior_a, qty_a = _generate_order_ambiguity(
+            200_000.0, rng_all, branch="all"
+        )
+        # masked channels
+        assert prior_b == 0.0
+        assert qty_b == "exact"
+        # active channel matches the 'all' baseline (rng stream identical)
+        assert tax_b == tax_a
+
+
+def test_ambiguity_branch_prior_only_keeps_others_default() -> None:
+    """prior_only: tax_included is always None and quantity_spec is always
+    'exact'. prior_adjustment matches the 'all' baseline for the same rng.
+    """
+    rng_branch = random.Random(11)
+    rng_all = random.Random(11)
+    for _ in range(40):
+        tax_b, prior_b, qty_b = _generate_order_ambiguity(
+            200_000.0, rng_branch, branch="prior_only"
+        )
+        tax_a, prior_a, qty_a = _generate_order_ambiguity(
+            200_000.0, rng_all, branch="all"
+        )
+        assert tax_b is None
+        assert qty_b == "exact"
+        assert prior_b == prior_a
+
+
+def test_ambiguity_branch_quantity_only_keeps_others_default() -> None:
+    """quantity_only: tax_included is always None and prior_adjustment is
+    always 0.0. quantity_spec matches the 'all' baseline for the same rng.
+    """
+    rng_branch = random.Random(13)
+    rng_all = random.Random(13)
+    for _ in range(40):
+        tax_b, prior_b, qty_b = _generate_order_ambiguity(
+            200_000.0, rng_branch, branch="quantity_only"
+        )
+        tax_a, prior_a, qty_a = _generate_order_ambiguity(
+            200_000.0, rng_all, branch="all"
+        )
+        assert tax_b is None
+        assert prior_b == 0.0
+        assert qty_b == qty_a
+
+
+def test_ambiguity_branch_rng_stream_byte_identical_across_branches() -> None:
+    """Property (b): the rng is advanced by the *same* number of calls for
+    any branch value. We probe this by reading rng.random() AFTER the
+    generator and asserting all four branches leave it in the same state.
+    """
+    next_values = []
+    for branch in VALID_AMBIGUITY_BRANCHES:
+        rng = random.Random(31337)
+        for _ in range(10):
+            _generate_order_ambiguity(120_000.0, rng, branch=branch)
+        next_values.append(rng.random())
+    assert len(set(next_values)) == 1, (
+        f"rng stream diverged across branches: {dict(zip(VALID_AMBIGUITY_BRANCHES, next_values))}"
+    )
+
+
+def test_ambiguity_branch_invalid_value_raises() -> None:
+    """Typos in --ambiguity-branch must fail loud at the first roll."""
+    rng = random.Random(0)
+    try:
+        _generate_order_ambiguity(100_000.0, rng, branch="not_a_real_branch")
+    except ValueError as exc:
+        assert "not_a_real_branch" in str(exc)
+    else:  # pragma: no cover - assertion failure path
+        raise AssertionError("expected ValueError for unknown branch")
+
+
+def test_dispatcher_records_branch_on_state_controls() -> None:
+    """PurchaseDispatcher must propagate ambiguity_branch onto state.controls
+    so place_order picks it up via state.controls.ambiguity_branch.
+    """
+    state = _make_state()
+    state.controls.approval_threshold = 10_000_000.0
+    PurchaseDispatcher(
+        state,
+        demand_config=DemandConfig(mean_daily_demands=1.0),
+        demand_rng_seed=99,
+        ambiguity_enabled=True,
+        ambiguity_branch="prior_only",
+    )
+    assert state.controls.ambiguity_branch == "prior_only"
+
+
+def test_place_order_branch_tax_only_masks_other_channels() -> None:
+    """End-to-end: with branch=tax_only every Order has prior_adjustment=0
+    and quantity_spec='exact', but tax_included is allowed to vary.
+    """
+    state = _make_state()
+    state.controls.approval_threshold = 10_000_000.0
+    PurchaseDispatcher(
+        state,
+        demand_config=DemandConfig(mean_daily_demands=1.0),
+        demand_rng_seed=42,
+        ambiguity_enabled=True,
+        ambiguity_branch="tax_only",
+    )
+    for i in range(30):
+        req = draft_request(state, "buyer_a", "vendor_e", f"item_{i}", amount=180_000.0)
+        place_order(state, "buyer_a", req.id)
+
+    for o in state.orders:
+        assert o.prior_adjustment == 0.0, (
+            f"prior_adjustment leaked through tax_only: {o.prior_adjustment}"
+        )
+        assert o.quantity_spec == "exact", (
+            f"quantity_spec leaked through tax_only: {o.quantity_spec}"
+        )
+    # And we still want at least one non-default tax value (otherwise the
+    # branch would be indistinguishable from "no ambiguity" and the test
+    # could pass for the wrong reason).
+    assert any(o.tax_included is True or o.tax_included is False for o in state.orders), (
+        "expected at least one rolled True/False tax_included under tax_only"
+    )
+
+
+def test_place_order_branch_prior_only_masks_other_channels() -> None:
+    state = _make_state()
+    state.controls.approval_threshold = 10_000_000.0
+    PurchaseDispatcher(
+        state,
+        demand_config=DemandConfig(mean_daily_demands=1.0),
+        demand_rng_seed=42,
+        ambiguity_enabled=True,
+        ambiguity_branch="prior_only",
+    )
+    for i in range(30):
+        req = draft_request(state, "buyer_a", "vendor_e", f"item_{i}", amount=180_000.0)
+        place_order(state, "buyer_a", req.id)
+
+    for o in state.orders:
+        assert o.tax_included is None
+        assert o.quantity_spec == "exact"
+    assert any(o.prior_adjustment != 0.0 for o in state.orders), (
+        "expected at least one non-zero prior_adjustment under prior_only"
+    )
+
+
+def test_place_order_branch_quantity_only_masks_other_channels() -> None:
+    state = _make_state()
+    state.controls.approval_threshold = 10_000_000.0
+    PurchaseDispatcher(
+        state,
+        demand_config=DemandConfig(mean_daily_demands=1.0),
+        demand_rng_seed=42,
+        ambiguity_enabled=True,
+        ambiguity_branch="quantity_only",
+    )
+    for i in range(30):
+        req = draft_request(state, "buyer_a", "vendor_e", f"item_{i}", amount=180_000.0)
+        place_order(state, "buyer_a", req.id)
+
+    for o in state.orders:
+        assert o.tax_included is None
+        assert o.prior_adjustment == 0.0
+    assert any(o.quantity_spec != "exact" for o in state.orders), (
+        "expected at least one non-exact quantity_spec under quantity_only"
+    )
 
 
 def test_rb_min_register_invoice_unchanged_under_ambiguity() -> None:

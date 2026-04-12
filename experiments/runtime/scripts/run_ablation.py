@@ -362,6 +362,7 @@ def run_cell(
     out_root: Path,
     narrative_mode: bool = False,
     ambiguity_enabled: bool = False,
+    ambiguity_branch: str = "all",
     three_way_match_tolerance_rate: float = 0.0,
 ) -> Dict[str, Any]:
     """Run one (level, regime, seed) cell and return its summary dict."""
@@ -397,6 +398,9 @@ def run_cell(
         # Phase A / Phase B / baseline remain directly comparable for the
         # same seed value.
         ambiguity_enabled=ambiguity_enabled,
+        # T-028c — restrict the active ambiguity sub-channel for branch
+        # attribution. "all" reproduces T-028 Phase A byte-for-byte.
+        ambiguity_branch=ambiguity_branch,
     )
 
     agents = _build_agents(level)
@@ -461,6 +465,10 @@ def run_cell(
         # T-028 — record ambiguity + tolerance_rate so Phase A / Phase B
         # / baseline cells can be distinguished from the summary alone.
         "ambiguity_enabled": ambiguity_enabled,
+        # T-028c — record which sub-channel was active. "all" reproduces
+        # the original T-028 Phase A; "tax_only" / "prior_only" /
+        # "quantity_only" are the branch-attribution conditions.
+        "ambiguity_branch": ambiguity_branch,
         "three_way_match_tolerance_rate": three_way_match_tolerance_rate,
         # --- KPIs ------------------------------------------------------
         "deviation_count": snap.get("deviation_count", 0),
@@ -567,6 +575,19 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     p.add_argument(
+        "--ambiguity-branch",
+        choices=("all", "tax_only", "prior_only", "quantity_only"),
+        default="all",
+        help=(
+            "T-028c — restrict the active ambiguity sub-channel for branch "
+            "attribution. 'all' (default) reproduces T-028 Phase A. The "
+            "single-branch values keep all rng rolls but mask the inactive "
+            "channels back to the 'no ambiguity' defaults so the rng stream "
+            "stays aligned with the 'all' baseline. Only meaningful when "
+            "--ambiguity is also set. Recorded per-cell as `ambiguity_branch`."
+        ),
+    )
+    p.add_argument(
         "--tolerance-rate",
         type=float,
         default=0.0,
@@ -618,7 +639,8 @@ def main() -> int:
     print(
         f"[run_ablation] levels={levels} regimes={[r.name for r in regimes]} "
         f"seeds={args.seeds} days={args.days} narrative={args.narrative} "
-        f"ambiguity={args.ambiguity} tolerance_rate={args.tolerance_rate}",
+        f"ambiguity={args.ambiguity} ambiguity_branch={args.ambiguity_branch} "
+        f"tolerance_rate={args.tolerance_rate}",
         file=sys.stderr,
     )
 
@@ -636,6 +658,7 @@ def main() -> int:
                         out_root=out_root,
                         narrative_mode=args.narrative,
                         ambiguity_enabled=args.ambiguity,
+                        ambiguity_branch=args.ambiguity_branch,
                         three_way_match_tolerance_rate=args.tolerance_rate,
                     )
                 )
@@ -653,6 +676,7 @@ def main() -> int:
                     "model": args.model,
                     "narrative_mode": args.narrative,
                     "ambiguity_enabled": args.ambiguity,
+                    "ambiguity_branch": args.ambiguity_branch,
                     "three_way_match_tolerance_rate": args.tolerance_rate,
                 },
                 "cells": aggregated,

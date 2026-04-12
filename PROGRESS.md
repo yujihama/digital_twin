@@ -5,7 +5,7 @@
 
 > **命名変更（2026-04-07）**: Organizational Causal Twin (OCT) → Executable Organizational Model (EOM)。経緯は docs/08_research_pivot.md を参照。
 
-最終更新: 2026-04-12 (T-028 follow-up 4 実験完了 — quiet drift 25% 再現率、tolerance 閾値 3.0%、複合曖昧さ効果、チャネル間非干渉を確認)
+最終更新: 2026-04-12 (T-029 多方向探索フェーズ完了 — 67 cells, 4 ストリーム: quiet drift はモデル固有 (gpt-4.1-mini 25%, claude-sonnet 0%), persona compliance が strategic behavior を抑制, temperature 非単調)
 
 ---
 
@@ -31,7 +31,7 @@
 | M5 | 介入 I1 シミュレーション実行 (Phase 3) | 2026-06 | ✅ 完了 |
 | M6 | 三層検証プロトコル実施 (Phase 4) | 2026-07 | ✅ 完了（Layer 1-3全完了） |
 | **M7** | **ablation: Baseline Ladder (L0/L1/L2/L3)** | **2026-04** | **🟢 進行中（L1/L3 20日 sweep 完了、L0/L2 と frontier 探索が次段階）** |
-| M8 | vendor incentive設計 + reverse stress testing (frontier) | 2026-05 | 🟢 進行中（T-028 follow-up 完了: 68 L3 セルで quiet drift 25% 再現率、tol=3.0% 吸収閾値、複合曖昧さ効果、narrative×ambiguity 非干渉を確認。reverse stress testing T-029 が次段階） |
+| M8 | vendor incentive設計 + reverse stress testing (frontier) | 2026-05 | 🟢 進行中（T-029 多方向探索完了: 67 cells で quiet drift はモデル固有現象と確認、reverse stress testing の MCS 列挙が次段階） |
 | M9 | 論文初稿作成 | 2026-08 | ⬜ 未着手 |
 
 状態: ✅ 完了 / 🟢 進行中 / 🟡 次に着手 / ⬜ 未着手 / 🔴 ブロック中
@@ -47,8 +47,6 @@
 ### 🟡 Next Up
 
 - [ ] **T-021d** frontier 探索のための regime 拡張（T-022 で combined_I1_I2 / high_pressure を追加済。次は temperature sweep と narrative framing）。results.md §4.1 参照。
-- [ ] **T-024** Temperature sweep（T ∈ {0.5, 0.8, 1.0, 1.3} × high_pressure × seed 5〜10）で opportunistic action 境界を探索（T-022 §6.2）
-- [ ] **T-029** Reverse stress testing 本格実装（intuition-failure-frontier の τ-sufficient / subset-minimal / robust MCS 列挙）。T-028 follow-up の frontier map（25% drift 再現率、tol=0.030 吸収閾値、複合曖昧さ効果）を出発点に、deviation>0 を保つ最小条件集合を逆向きに探索する。tol=0.005 の非単調性（soft-pass 副作用）も検証候補
 - [ ] **T-029-old** Mode R強化版（段階的推論、自己整合付きbaseline）
 - [ ] **T-026** frontier可視化（probability field × QSD field、heatmap → contour → PRIM box）
 - [ ] **T-027** policy_complexity フィールドのtraceメタデータへの追加
@@ -63,6 +61,7 @@
 
 ### ✅ Done
 
+- [x] **T-029a/b/c/d** 多方向探索フェーズ。(a) tol=0.005 non-monotonicity deep dive: 10 seeds で dev rate 20%、tol=0.000 の 25% と同水準、soft-pass 副作用は否定。(b) buyer_a order splitting: 20 L3 + 6 L1 cells、高額需要カタログで 0/20 split events、persona 制約が strategic behavior を完全に抑制。(c) temperature sweep: 0.5–1.2 × 5 seeds = 25 cells、deviation rate 0–20% で temperature と非単調、正方向 drift (+0.90%) の初出。(d) Claude Sonnet re-execution: 6 cells 全て deviation=0、gpt-4.1-mini の seed=43 drift は claude-sonnet-4 では不発生 — quiet drift はモデル固有現象。`--temperature` / `--high-amount-catalog` フラグ、`_build_llm()` AnthropicClient 検出、`DEMAND_CATALOG_HIGH_AMOUNT`、order-splitting trace 分析を実装。19 テスト追加（154→173）。67 cells 実行。結果は `experiments/ablation_multi_explore/results.md`（2026-04-12）
 - [x] **T-028a/b/c/d** T-028 follow-up 4 実験。(a) seed 拡大 10×2=20 セルで 25% 再現率（90% CI: 12.7-43.2%）、seed=43 は outlier ではない。(b) tolerance sweep 8 値×3 seed=24 セルで tol=0.030 が完全吸収閾値。(c) branch attribution 3×2×3=18 セルで単一ブランチでは drift 不発生、全チャネル同時活性化でのみ出現（複合曖昧さ効果）。(d) narrative×ambiguity 合成 2×3=6 セルで dominant channel 型（非加算的・非干渉）。`--ambiguity-branch` 実装、10 テスト追加（144→154）。68 L3 cells, wall time 74 min。結果は `experiments/ablation_t028/results_followup.md`（2026-04-12）
 - [x] **T-028** interpretive ambiguity × three-way match tolerance probe。`Order` に 3 つの解釈曖昧性フィールド（`tax_included` / `prior_adjustment` / `quantity_spec`）を追加し、`EnvironmentState._ambiguity_rng`（`demand_rng_seed ^ 0xA28B` で seed）で決定的に生成。`three_way_match` に `tolerance_rate` を導入し、実効トレランスを `max(tolerance_abs, amount * tolerance_rate)` に拡張（`tolerance_rate=0` は従来挙動）。`run_ablation.py` に `--ambiguity` / `--tolerance-rate` / `--out` フラグ、`analyze_trace.py` に `analyze_amount_deltas` / `## T-028 PO vs Actual Amount Deltas` セクションを追加。**Phase A（tolerance_rate=0）と Phase B（tolerance_rate=0.05）の 2 phase sweep**（narrative OFF × ambiguity ON × L1/L3 × 5 regime × seed 42-44 × 20日 = 60 セル）を実行。Phase A で 3 件の deviation を観測（`L3_intervention_I2` seed=43 ×2、`L3_combined_I1_I2` seed=43 ×1、いずれも ±2.5% 以内の drift）、Phase B では 5% band に全て吸収されて 0 件。L1 15 セルは両 phase で byte-for-byte 一致、RB-min 不変性を確認。14 件のユニットテスト追加（130→144）。narrative framing（T-023）と直交する第 2 の deviation 誘発チャネルを確立し、「quiet drift」現象を定量化（2026-04-11）
 - [x] **T-023** narrative-level vendor framing × deviation frontier probe。`_render_business_context` ヘルパーで `ControlParameters` の 4 incentive フィールドを決定的な日本語の経営状況ナラティブに変換し、`vendor_e.build_observation(narrative_mode=True)` でLLM に渡す（RB-min vendor_e / 他エージェント観測は不変）。`run_ablation.py` に `--narrative` フラグを追加。narrative ON × L1/L3 × {combined_I1_I2, high_pressure} × seed 42-44 × 20日 = 12 セル sweep を実行。**L3_high_pressure で `mean_deviation_count = 0.333`、seed=43 day=2 に 1 件の `deliver_partial`（ord_00002, fraction=0.5, PO=646,130 JPY）**。T-021→T-023 の全系列で初めての非ゼロ deviation で、LLM の reasoning はnarrative のキャッシュプレッシャー分岐を明示的に引用。L1 全 6 セルは T-022 と byte-for-byte 一致、backward-compat を確認。5 件のユニットテスト追加（125→130）。T-022 §6.1 仮説の弱形肯定（2026-04-11）
